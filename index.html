@@ -124,8 +124,7 @@ nav > .nav-btn:not(.active):hover{color:#fff;}
 
 
 /* ── Topbar ── */
-.topbar{background:var(--white);border-bottom:1px solid var(--border);padding:0 28px;height:52px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;}
-.topbar-title{font-size:14px;font-weight:600;color:var(--navy);letter-spacing:-.2px;}
+.topbar{background:transparent;padding:0 28px;height:52px;display:flex;align-items:center;justify-content:flex-end;flex-shrink:0;}
 .topbar-right{display:flex;align-items:center;gap:10px;}
 .topbar-date{font-size:11px;color:var(--muted);background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);padding:4px 10px;}
 /* ── Clerk user button — ADDED 2026-08-21, ported from Cosmette's dashboard ── */
@@ -1157,9 +1156,6 @@ details.inci-toggle[open] summary::before{content:'▾ ';}
     <button class="nav-btn" onclick="showPage('inventory-external',this)">
       <svg viewBox="0 0 16 16"><path d="M1 5l7-4 7 4v7l-7 4-7-4V5z"/><path d="M8 1v14M1 5l7 4 7-4"/></svg>Inventory
     </button>
-    <button class="nav-btn" onclick="showPage('fulfillment',this)">
-      <svg viewBox="0 0 16 16"><rect x="1" y="5" width="14" height="9" rx="1.2"/><path d="M1 8h14M5 5V3a1 1 0 011-1h4a1 1 0 011 1v2"/><circle cx="4.5" cy="14" r="1.2"/><circle cx="11.5" cy="14" r="1.2"/></svg>Fulfillment
-    </button>
 
     <!-- Internal-only section — everything currently built lives below this line -->
     <div id="nav-internal-section" style="display:none;">
@@ -1210,7 +1206,6 @@ details.inci-toggle[open] summary::before{content:'▾ ';}
 
   <!-- Topbar -->
   <div class="topbar">
-    <span class="topbar-title" id="topbar-title">Home — Cloud Cafe</span>
     <div class="topbar-right">
       <div class="pdf-events-picker" id="pdf-events-picker" style="display:none;font-size:10.5px;color:var(--muted);align-items:center;gap:6px;flex-wrap:nowrap;white-space:nowrap;overflow-x:auto;max-width:60vw;">
         <span style="flex-shrink:0;">Include in PDF:</span>
@@ -1368,23 +1363,6 @@ details.inci-toggle[open] summary::before{content:'▾ ';}
       <div class="period-pills" id="ov-period-pills" style="display:flex;background:var(--white);border:1px solid var(--border);border-radius:999px;padding:4px;gap:2px;"></div>
     </div>
 
-    <div class="kpi-row">
-      <div class="kpi-card" id="ov-kpi-total-sales"><div class="kpi-label">Total Sales</div><div class="kpi-value">—</div><div class="kpi-mom flat">Loading…</div></div>
-      <div class="kpi-card" id="ov-kpi-units"><div class="kpi-label">Total Units Sold</div><div class="kpi-value">—</div><div class="kpi-mom flat">Loading…</div></div>
-      <div class="kpi-card" id="ov-kpi-orders"><div class="kpi-label">Total Orders</div><div class="kpi-value">—</div><div class="kpi-mom flat">Loading…</div></div>
-      <div class="kpi-card" id="ov-kpi-aov"><div class="kpi-label">Blended AOV</div><div class="kpi-value">—</div><div class="kpi-mom flat">Loading…</div></div>
-      <div class="kpi-card" id="ov-kpi-adspend"><div class="kpi-label">Ad Spend</div><div class="kpi-value">—</div><div class="kpi-mom flat">Loading…</div></div>
-      <div class="kpi-card" id="ov-kpi-acos"><div class="kpi-label">Blended ACOS</div><div class="kpi-value">—</div><div class="kpi-mom flat">Loading…</div></div>
-    </div>
-
-    <div class="kpi-row">
-      <div class="kpi-card" id="ov-kpi-organic-orders"><div class="kpi-label">MTD Organic Units</div><div class="kpi-value">—</div><div class="kpi-mom flat">Loading…</div></div>
-      <div class="kpi-card" id="ov-kpi-organic-sales"><div class="kpi-label">MTD Organic Sales</div><div class="kpi-value">—</div><div class="kpi-mom flat">Loading…</div></div>
-      <div class="kpi-card" id="ov-kpi-ad-orders"><div class="kpi-label">MTD Ad-Driven Units</div><div class="kpi-value">—</div><div class="kpi-mom flat">Loading…</div></div>
-      <div class="kpi-card" id="ov-kpi-ad-sales"><div class="kpi-label">MTD Ad Sales</div><div class="kpi-value">—</div><div class="kpi-mom flat">Loading…</div></div>
-      <div class="kpi-card" id="ov-kpi-pending"><div class="kpi-label">Pending Orders</div><div class="kpi-value">—</div><div class="kpi-mom flat">Loading…</div></div>
-    </div>
-
     <!-- Goals Tracker — added 2026-09-04 per Jaclyn. First pass/mockup,
          explicitly framed as v1 — see the [qa] console notes throughout
          the JS for the real data-structure quirks found while building
@@ -1409,9 +1387,21 @@ details.inci-toggle[open] summary::before{content:'▾ ';}
       </div>
     </div>
 
-    <div class="card" style="margin-bottom:22px;margin-top:0;">
-      <div class="card-title" id="ov-donut-title">Revenue by Channel — Month to Date</div>
-      <div style="position:relative;height:200px;"><canvas id="chart-ov-donut"></canvas></div>
+    <div class="kpi-row">
+      <div class="kpi-card" id="ov-kpi-total-sales"><div class="kpi-label">Total Sales</div><div class="kpi-value">—</div><div class="kpi-mom flat">Loading…</div></div>
+      <div class="kpi-card" id="ov-kpi-units"><div class="kpi-label">Total Units Sold</div><div class="kpi-value">—</div><div class="kpi-mom flat">Loading…</div></div>
+      <div class="kpi-card" id="ov-kpi-orders"><div class="kpi-label">Total Orders</div><div class="kpi-value">—</div><div class="kpi-mom flat">Loading…</div></div>
+      <div class="kpi-card" id="ov-kpi-aov"><div class="kpi-label">Blended AOV</div><div class="kpi-value">—</div><div class="kpi-mom flat">Loading…</div></div>
+      <div class="kpi-card" id="ov-kpi-adspend"><div class="kpi-label">Ad Spend</div><div class="kpi-value">—</div><div class="kpi-mom flat">Loading…</div></div>
+      <div class="kpi-card" id="ov-kpi-acos"><div class="kpi-label">Blended ACOS</div><div class="kpi-value">—</div><div class="kpi-mom flat">Loading…</div></div>
+    </div>
+
+    <div class="kpi-row">
+      <div class="kpi-card" id="ov-kpi-organic-orders"><div class="kpi-label">MTD Organic Units</div><div class="kpi-value">—</div><div class="kpi-mom flat">Loading…</div></div>
+      <div class="kpi-card" id="ov-kpi-organic-sales"><div class="kpi-label">MTD Organic Sales</div><div class="kpi-value">—</div><div class="kpi-mom flat">Loading…</div></div>
+      <div class="kpi-card" id="ov-kpi-ad-orders"><div class="kpi-label">MTD Ad-Driven Units</div><div class="kpi-value">—</div><div class="kpi-mom flat">Loading…</div></div>
+      <div class="kpi-card" id="ov-kpi-ad-sales"><div class="kpi-label">MTD Ad Sales</div><div class="kpi-value">—</div><div class="kpi-mom flat">Loading…</div></div>
+      <div class="kpi-card" id="ov-kpi-pending"><div class="kpi-label">Pending Orders</div><div class="kpi-value">—</div><div class="kpi-mom flat">Loading…</div></div>
     </div>
 
     <div class="card" style="margin-bottom:20px;">
@@ -1523,74 +1513,7 @@ details.inci-toggle[open] summary::before{content:'▾ ';}
   </div>
 
   <!-- ══ FULFILLMENT ══ -->
-  <div class="page" id="page-fulfillment">
-    <div class="page-hd">
-      <div><div class="page-title">Fulfillment</div><div class="page-sub">ShipStation · Processing performance</div></div>
-    </div>
-
-    <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:14px;margin-bottom:20px;">
-      <div class="kpi-card">
-        <div class="kpi-label">Shipped Website Orders • Last 30 Days</div>
-        <div class="kpi-value" id="ff-kpi-shipped30">—</div>
-      </div>
-      <div class="kpi-card">
-        <div class="kpi-label">Our Fulfillment Promise · Last 7 Days</div>
-        <div class="kpi-value" style="color:#1db88a;">100%</div>
-        <div style="font-size:11px;color:var(--muted);margin-top:4px;">Same Day Fulfilled · weekday orders before 1p</div>
-      </div>
-      <div class="kpi-card">
-        <div class="kpi-label">Avg Processing Time · Last 7 Days</div>
-        <div class="kpi-value" id="ff-kpi-proctime">—</div>
-        <div style="font-size:11px;color:var(--muted);margin-top:4px;">Business days · weekends excluded</div>
-      </div>
-      <div class="kpi-card">
-        <div class="kpi-label">Avg Shipping Cost · Last 7 Days</div>
-        <div class="kpi-value" id="ff-kpi-shipcost">—</div>
-      </div>
-      <div class="kpi-card">
-        <div class="kpi-label">Inventory Prepped</div>
-        <div class="kpi-value" id="ff-kpi-invprepped">—</div>
-        <div style="font-size:11px;color:var(--muted);margin-top:4px;">Units received this month</div>
-      </div>
-    </div>
-
-    <div class="ppc-card">
-      <div class="ppc-card-title">Website Orders Shipped by Date · Last 30 Days</div>
-      <div style="position:relative;height:320px;"><canvas id="ff-shipped-chart"></canvas></div>
-      <div class="ppc-note" id="ff-chart-footer">Loading…</div>
-    </div>
-
-    <div class="ppc-card">
-      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;">
-        <div class="ppc-card-title" style="margin-bottom:0;">Website Orders by State · Last 30 Days</div>
-        <div style="display:flex;align-items:center;gap:7px;font-size:11px;color:var(--muted);">
-          <span>Fewer</span>
-          <div style="width:80px;height:7px;border-radius:4px;background:linear-gradient(to right,#dce6f5,#001F60);"></div>
-          <span>More</span>
-        </div>
-      </div>
-      <div style="position:relative;padding:8px 0;">
-        <div class="ff-map-tooltip" id="ff-map-tip"></div>
-        <svg id="ff-us-svg" viewBox="0 0 959 593" style="width:100%;height:auto;display:block;"></svg>
-      </div>
-      <div class="ppc-note" id="ff-map-footer">Loading…</div>
-      <div style="border-top:1px solid var(--border);margin-top:12px;overflow-y:auto;max-height:400px;">
-        <table class="data-table">
-          <thead>
-            <tr>
-              <th>State</th><th>Orders</th>
-              <th>State</th><th>Orders</th>
-              <th>State</th><th>Orders</th>
-              <th>State</th><th>Orders</th>
-              <th>State</th><th>Orders</th>
-            </tr>
-          </thead>
-          <tbody id="ff-state-table-body"><tr><td colspan="10" style="color:var(--muted);">Loading…</td></tr></tbody>
-        </table>
-      </div>
-    </div>
-  </div>
-
+  
   <!-- ══ SALES ══ -->
   <div class="page" id="page-sales">
     <div class="sheet-link-menu">
@@ -2514,7 +2437,6 @@ details.inci-toggle[open] summary::before{content:'▾ ';}
     <div class="channel-tabs-row" style="margin-bottom:18px;">
       <div class="channel-tabs">
         <button class="ch-tab active" onclick="showChannel('inventory-external','ix-stock',this)">📦 Stock Levels</button>
-        <button class="ch-tab" onclick="showChannel('inventory-external','ix-inbound',this)">🚚 Inbound Shipments</button>
       </div>
     </div>
 
@@ -2549,32 +2471,7 @@ details.inci-toggle[open] summary::before{content:'▾ ';}
       </div>
     </div>
 
-    <!-- ── Inbound Shipments ── -->
-    <div class="channel-page" id="ix-inbound">
-      <div class="asn-header">
-        <div>
-          <div style="font-size:13px;color:var(--muted);">Upload a CSV to notify Medaltus of incoming inventory. Track open and received shipments here.</div>
-        </div>
-        <div class="asn-header-actions">
-          <button class="asn-btn-secondary" onclick="downloadAsnTemplate()">⬇ Download ASN Template</button>
-          <button class="asn-btn-primary" onclick="openAsnUploadModal()">⬆ Upload New ASN</button>
-        </div>
-      </div>
 
-      <div class="asn-subtabs">
-        <button class="asn-subtab active" onclick="showAsnSubTab('Open', this)">Open <span class="asn-subtab-count" id="asn-count-open">0</span></button>
-        <button class="asn-subtab" onclick="showAsnSubTab('Received', this)">Received <span class="asn-subtab-count" id="asn-count-received">0</span></button>
-      </div>
-
-      <div id="asn-list-open" class="asn-grid"></div>
-      <div id="asn-list-received" class="asn-grid" style="display:none;"></div>
-      <div id="asn-empty-state" class="asn-empty" style="display:none;">
-        <div class="asn-empty-icon">📭</div>
-        <div style="font-size:14px;font-weight:700;color:var(--navy);">No shipments yet</div>
-        <div style="font-size:12.5px;">Upload a CSV to create your first ASN.</div>
-      </div>
-      <div id="asn-error-state" class="asn-modal-error" style="display:none;margin-top:12px;"></div>
-    </div>
   </div>
 
   <!-- ── ASN Upload Modal ── -->
@@ -4890,7 +4787,6 @@ function showPage(id, btn) {
   document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
   document.getElementById('page-'+id).classList.add('active');
   btn.classList.add('active');
-  document.getElementById('topbar-title').textContent = pageTitles[id] || id;
 
   if (id === 'overview' && !window._overviewLiveInit && typeof window.initOverviewLive === 'function') window.initOverviewLive();
   // Fastest Path to Page 1 lives on the default "Insights" sub-tab of
@@ -11516,7 +11412,6 @@ async function initSnsExternal() {
     }
     if (typeof window.initPpcPage === 'function') window.initPpcPage();
     if (typeof window.initInventoryPage === 'function') window.initInventoryPage();
-    if (typeof window.initFulfillmentPage === 'function') window.initFulfillmentPage();
   });
 
 })();
@@ -16196,7 +16091,44 @@ async function loadInventoryPage() {
         discontinued: statusMap[skuUpper] === 'DELETED',
         isBundle: skuTypeMap[skuUpper] === 'BUNDLE',
       };
-    }).filter(r => !(r.discontinued && r.onHand === 0) && !r.isBundle);
+    });
+
+    // CLC0011 / CLC0011-stickerless — same physical product listed as two
+    // separate SKUs (sticker vs. stickerless packaging variant), per
+    // Jaclyn. Combined into a single CLC0011 row here so this page shows
+    // one true stock picture instead of splitting it across two rows.
+    // Quantity fields are summed; wfs/consignment stay summed only when
+    // at least one side has a real (non-'—') number, otherwise stay '—'.
+    // Status is recomputed off the combined Available, same OOS-override
+    // rule used per-row above; days keeps whichever side actually has a
+    // value (there's no combined 90-day-velocity denominator to compute
+    // a true merged figure from).
+    {
+      const isClc0011 = s => s === 'CLC0011' || s === 'CLC0011-STICKERLESS';
+      const clcRows = _invAllRows.filter(r => isClc0011((r.sku || '').trim().toUpperCase()));
+      if (clcRows.length > 1) {
+        const sumOrDash = (a, b) => (a === '' && b === '') ? '' : ((typeof a === 'number' ? a : 0) + (typeof b === 'number' ? b : 0));
+        const merged = clcRows.reduce((acc, r) => acc ? {
+          sku: 'CLC0011',
+          name: acc.name || r.name,
+          qtyAtAmazon: acc.qtyAtAmazon + r.qtyAtAmazon,
+          qtyAtMedaltus: acc.qtyAtMedaltus + r.qtyAtMedaltus,
+          allocated: acc.allocated + r.allocated,
+          available: acc.available + r.available,
+          onHand: acc.onHand + r.onHand,
+          wfs: sumOrDash(acc.wfs, r.wfs),
+          consignment: sumOrDash(acc.consignment, r.consignment),
+          days: acc.days !== '' ? acc.days : r.days,
+          discontinued: acc.discontinued && r.discontinued,
+          isBundle: acc.isBundle || r.isBundle,
+        } : { ...r, sku: 'CLC0011' }, null);
+        merged.status = merged.available === 0 ? 'oos' : invStatusFor(merged.days);
+        _invAllRows = _invAllRows.filter(r => !isClc0011((r.sku || '').trim().toUpperCase()));
+        _invAllRows.push(merged);
+      }
+    }
+
+    _invAllRows = _invAllRows.filter(r => !(r.discontinued && r.onHand === 0) && !r.isBundle);
 
     // Second half of the same diagnostic — shows what's left AFTER the
     // discontinued+zero-stock filter, plus the raw computed fields for
@@ -16365,9 +16297,23 @@ async function loadOosLog() {
   const body = document.getElementById('oos-log-body');
   if (!body) return;
   try {
-    const csv = await fetch(ovCsvUrl(window.SHEET_CFG.SHEET_PRODUCT_INVENTORY.fileId, window.SHEET_CFG.SHEET_PRODUCT_INVENTORY.gid)).then(r => r.ok ? r.text() : '').catch(() => '');
+    const [csv, statusCsv] = await Promise.all([
+      fetch(ovCsvUrl(window.SHEET_CFG.SHEET_PRODUCT_INVENTORY.fileId, window.SHEET_CFG.SHEET_PRODUCT_INVENTORY.gid)).then(r => r.ok ? r.text() : '').catch(() => ''),
+      // Master Product Short Name sheet's SKU Type column (col J:
+      // CATALOG / BUNDLE) — added per Jaclyn: this log should only ever
+      // track catalog products, never bundle SKUs. Same sheet/gid and
+      // same -SF-stripping convention as the Snapshot tab's own lookup.
+      fetch(ovCsvUrl('1NNRTRQxQl2r4XivAvH700CC39p49GD2xfZlyRNqahGA', '164358627')).then(r => r.ok ? r.text() : '').catch(() => ''),
+    ]);
     const rows = parseCsvToRows(csv);
     if (!rows.length) { body.innerHTML = '<div class="ppc-card" style="color:var(--muted);">No data</div>'; return; }
+
+    const skuTypeMap = {};
+    parseCsvToRows(statusCsv).forEach(r => {
+      const sku = (r.sku || '').trim().toUpperCase().replace(/-SF$/i, '');
+      const skuType = (r['sku type'] || r.sku_type || '').trim().toUpperCase();
+      if (sku && skuType) skuTypeMap[sku] = skuType;
+    });
 
     const todayStr = rows.reduce((max, r) => ((r.date || '') > max ? r.date : max), '');
 
@@ -16376,6 +16322,8 @@ async function loadOosLog() {
     rows.forEach(r => {
       const sku = (r.sku || '').trim();
       if (!sku) return;
+      const baseSku = sku.toUpperCase().replace(/-SF$/i, '');
+      if (skuTypeMap[baseSku] === 'BUNDLE') return; // bundles never enter the OOS log
       if (!bySku[sku]) bySku[sku] = { name: r.name || sku, rows: [] };
       bySku[sku].rows.push(r);
       if (r.name) bySku[sku].name = r.name; // keep the most recently seen name
@@ -16541,8 +16489,6 @@ const FF_SL = {
 };
 
 
-let ffShippedChartInstance = null;
-
 // Formats an ISO UTC timestamp as "MM-DD-YYYY 4p EST" — simplified,
 // Eastern time, single-letter am/pm. Returns '' for anything unparseable
 // rather than showing a raw/garbled string.
@@ -16560,103 +16506,7 @@ function ffFormatEst(isoString) {
   return `${p.month}-${p.day}-${p.year} ${p.hour}${ampm} EST`;
 }
 
-async function ffLoadKpis() {
-  try {
-    const csv = await fetch(ovCsvUrl(window.SHEET_CFG.SHEET_FULFILLMENT_DAILY_SHIPMENTS.fileId, '106183169')).then(r => r.ok ? r.text() : '').catch(() => '');
-    const rows = parseCsvToRows(csv).filter(r => (r.brand || '') === 'cloud-cafe');
-    const map = {};
-    rows.forEach(r => { if (r.metric) map[r.metric] = r.value; });
 
-    const shipped30 = document.getElementById('ff-kpi-shipped30');
-    const procTime  = document.getElementById('ff-kpi-proctime');
-    const shipCost   = document.getElementById('ff-kpi-shipcost');
-
-    if (shipped30) shipped30.textContent = map.shipped_orders_30d ? Number(map.shipped_orders_30d).toLocaleString() : '—';
-    if (procTime)   procTime.textContent  = map.avg_processing_time_7d ? `${map.avg_processing_time_7d} days` : '—';
-    if (shipCost)    shipCost.textContent  = map.avg_shipping_cost_7d ? `$${Number(map.avg_shipping_cost_7d).toFixed(2)}` : '—';
-  } catch (err) {
-    console.warn('[Fulfillment] KPI load failed:', err.message);
-  }
-}
-
-async function ffLoadShippedChart() {
-  const footer = document.getElementById('ff-chart-footer');
-  try {
-    const csv = await fetch(ovCsvUrl(window.SHEET_CFG.SHEET_FULFILLMENT_DAILY_SHIPMENTS.fileId, '356984145')).then(r => r.ok ? r.text() : '').catch(() => '');
-    const rows = parseCsvToRows(csv).filter(r => {
-      const day = new Date((r.date || '') + 'T12:00:00').getDay();
-      return day !== 0 && day !== 6; // weekends filtered defensively — the cron no longer writes them going forward, but old rows may still exist
-    });
-    if (!rows.length) { if (footer) footer.textContent = 'No data yet'; return; }
-
-    const sorted = [...rows].sort((a, b) => (a.date || '').localeCompare(b.date || ''));
-    const last30 = sorted.slice(-30);
-    const labels = last30.map(r => {
-      const d = new Date(r.date + 'T00:00:00');
-      return d.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
-    });
-    const totals = last30.map(r => parseInt(r.orders_shipped, 10) || 0);
-
-    const canvas = document.getElementById('ff-shipped-chart');
-    if (!canvas) return;
-
-    if (ffShippedChartInstance) {
-      ffShippedChartInstance.data.labels = labels;
-      ffShippedChartInstance.data.datasets[0].data = totals;
-      ffShippedChartInstance.update();
-    } else {
-      ffShippedChartInstance = window.ffShippedChartInstance = new Chart(canvas, {
-        type: 'line',
-        data: {
-          labels,
-          datasets: [{
-            label: 'Orders shipped',
-            data: totals,
-            borderColor: '#001F60',
-            backgroundColor: 'rgba(0,31,96,0.07)',
-            borderWidth: 2,
-            pointRadius: 0,
-            pointHoverRadius: 4,
-            pointHoverBackgroundColor: '#001F60',
-            pointHoverBorderColor: '#fff',
-            pointHoverBorderWidth: 2,
-            fill: true,
-            tension: 0.4,
-          }],
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          interaction: { mode: 'index', intersect: false },
-          plugins: {
-            legend: { display: false },
-            tooltip: {
-              backgroundColor: '#fff',
-              borderColor: 'rgba(0,31,96,0.1)',
-              borderWidth: 1,
-              titleColor: '#001F60',
-              bodyColor: '#6B7BA2',
-              padding: 12,
-              boxWidth: 8,
-              boxHeight: 8,
-              callbacks: { label: ctx => `  ${ctx.parsed.y.toLocaleString()} orders` },
-            },
-          },
-          scales: {
-            x: { border: { display: false }, ticks: { color: '#9ba8c0', maxTicksLimit: 10, maxRotation: 0 }, grid: { display: false } },
-            y: { beginAtZero: true, border: { display: false }, ticks: { color: '#9ba8c0' }, grid: { color: 'rgba(0,31,96,.04)' } },
-          },
-        },
-      });
-    }
-
-    const lastRow = sorted[sorted.length - 1];
-    if (footer) footer.textContent = lastRow ? `Last synced · ${ffFormatEst(lastRow.last_updated) || lastRow.date}` : '';
-  } catch (err) {
-    console.warn('[Fulfillment] chart load failed:', err.message);
-    if (footer) footer.textContent = 'Error loading';
-  }
-}
 
 function ffStateColorFor(val, stateData) {
   if (!val || val === 0) return '#eef1f8';
@@ -16755,44 +16605,6 @@ async function ffLoadStatesGeneric(sheetId, gid, svgId, tipId, tbodyId, footerId
   }
 }
 
-async function ffLoadStates() {
-  await ffLoadStatesGeneric(window.SHEET_CFG.SHEET_FULFILLMENT_STATES.fileId, '402779529', 'ff-us-svg', 'ff-map-tip', 'ff-state-table-body', 'ff-map-footer');
-}
-
-window.initFulfillmentPage = async function() {
-  // Independent fetches — no reason to wait on each other one at a time.
-  // Was sequential before; that added up as a real, perceptible delay
-  // once this page had 3 fetches of its own, on top of every other
-  // page's own eagerly-loaded fetches at initial page load.
-  await Promise.all([ffLoadKpis(), ffLoadShippedChart(), ffLoadStates(), ffLoadInventoryPrepped()]);
-};
-
-// Reuses the same self-contained mfc* helpers (mfcGvizCsvUrl, mfcIsCsv,
-// mfcParseCsvRows, mfcSumReceivedQtyForAsn, MFC_ASN_TRACKER_SHEET_ID/TAB)
-// built for the Marketing > Fulfillment & Customer Service tab — same
-// tracker sheet, same calculation, just a different target element ID.
-async function ffLoadInventoryPrepped() {
-  const el = document.getElementById('ff-kpi-invprepped');
-  if (!el) return;
-  try {
-    const csv = await fetch(mfcGvizCsvUrl(MFC_ASN_TRACKER_SHEET_ID, MFC_ASN_TRACKER_TAB)).then(r => r.ok ? r.text() : '').catch(() => '');
-    const rows = mfcIsCsv(csv) ? mfcParseCsvRows(csv) : [];
-
-    const now = new Date();
-    const thisMonthReceived = rows.filter(r => {
-      if (!r.shipmentid) return false;
-      if ((r.status || '').trim() !== 'Received') return false;
-      const d = new Date((r.receiveddate || '') + 'T00:00:00');
-      return !isNaN(d) && d.getFullYear() === now.getFullYear() && d.getMonth() === now.getMonth();
-    });
-    if (!thisMonthReceived.length) { el.textContent = '0'; return; }
-
-    const sums = await Promise.all(thisMonthReceived.map(r => mfcSumReceivedQtyForAsn(r.driveurl)));
-    el.textContent = sums.reduce((a, b) => a + b, 0).toLocaleString();
-  } catch (err) {
-    console.warn('[FulfillmentPage] Inventory Prepped load failed:', err.message);
-  }
-}
 
 // ═══════════════════════════════════════════════════════════════════
 // MARKETING > FULFILLMENT & CUSTOMER SERVICE — same KPI/chart/map as
@@ -20180,9 +19992,6 @@ async function loadAuditResultsFromSheet() {
     const heroRevLblEl = document.getElementById('ov-hero-revenue-lbl');
     if (heroRevLblEl) heroRevLblEl.textContent = cfg.isPartial ? 'Month-to-Date Revenue' : 'Last Month\u2019s Revenue';
 
-    const titleEl = document.getElementById('ov-donut-title');
-    if (titleEl) titleEl.textContent = `Revenue by Channel \u2014 ${monthNames[cfg.month - 1]} ${cfg.year}${cfg.isPartial ? ' MTD' : ''}`;
-
     try {
       // Added 2026-08-03 per Jaclyn: net MTD revenue/units against actual
       // returns rather than only gross order data. Returns sheets are
@@ -20729,61 +20538,6 @@ async function loadAuditResultsFromSheet() {
       // Switched to the net figures 2026-08-03 — using gross here while the
       // hero KPI above uses net would make the donut's total silently not
       // match the hero number, which is worse than either being wrong alone.
-      const donutTotal = amzMtdNetRevenue + webMtdNetRevenue + wmtMtdNetRevenue;
-      if (donutTotal > 0) {
-        // FIXED 2026-09-01 — confirmed live: "Canvas is already in use.
-        // Chart with ID 'X' must be destroyed before the canvas ... can
-        // be reused." This function used to run once per page load; now
-        // it can run again on every toggle click, and nothing was ever
-        // destroying the prior instance before creating a new one on the
-        // same canvas. window._ovDonutChart was already being assigned
-        // (tracked), just never actually used to clean up — same failure
-        // class as the PDF export canvas-reuse bug documented earlier.
-        if (window._ovDonutChart) { window._ovDonutChart.destroy(); window._ovDonutChart = null; }
-        const fmtDollar = n => '$' + n.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-        // ADDED 2026-09-04 per Jaclyn — "show totals" on this chart.
-        // Center-text plugin for the grand total (a real doughnut has no
-        // built-in center-text support in Chart.js), plus a custom
-        // tooltip formatter so hovering a segment shows a real dollar
-        // figure ("$2,496.47") instead of Chart.js's default raw,
-        // unformatted number. This is a live-dashboard-only plugin, not
-        // part of any PDF export capture path — the custom-plugin-text-
-        // invisible-to-font-scaling risk documented in the PDF export
-        // playbook doesn't apply here, but worth remembering if this
-        // chart is ever added to a PDF export later.
-        const centerTextPlugin = {
-          id: 'ovDonutCenterText',
-          afterDraw(chart) {
-            const { ctx, chartArea: { left, right, top, bottom } } = chart;
-            const cx = (left + right) / 2, cy = (top + bottom) / 2;
-            ctx.save();
-            ctx.textAlign = 'center';
-            ctx.textBaseline = 'middle';
-            ctx.font = '700 15px var(--font-subheader, sans-serif)';
-            ctx.fillStyle = '#001f60';
-            ctx.fillText(fmtDollar(donutTotal), cx, cy - 8);
-            ctx.font = '600 10px sans-serif';
-            ctx.fillStyle = '#6b7ba2';
-            ctx.fillText('TOTAL', cx, cy + 10);
-            ctx.restore();
-          }
-        };
-        window._ovDonutChart = new Chart(document.getElementById('chart-ov-donut'), {
-          type: 'doughnut',
-          data: {
-            labels: ['Amazon', 'Website', 'Walmart'],
-            datasets: [{ data: [amzMtdNetRevenue, webMtdNetRevenue, wmtMtdNetRevenue], backgroundColor: ['#001f60', '#24e9a3', '#6b7ba2'], borderWidth: 0 }]
-          },
-          options: {
-            responsive: true, maintainAspectRatio: false,
-            plugins: {
-              legend: { position: 'right', labels: { usePointStyle: true, boxWidth: 10, font: { size: 12 } } },
-              tooltip: { callbacks: { label: ctx => ` ${ctx.label}: ${fmtDollar(ctx.parsed)}` } },
-            }
-          },
-          plugins: [centerTextPlugin],
-        });
-      }
 
       // ═══════════════════════════════════════════════════════════════
       // GOALS TRACKER — Cloud Cafe. Ported from évolis's v1/mockup
@@ -21179,5 +20933,4 @@ window.addEventListener('load', async () => {
 </script>
 </body>
 </html>
- 
  
