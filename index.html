@@ -1420,16 +1420,10 @@ details.inci-toggle[open] summary::before{content:'▾ ';}
          prefix, no MTD/Last Full Month suffix — that's redundant with
          the page's own period toggle right above this section). -->
     <div class="card-title" style="font-size:16px;">Goal Tracker</div>
-    <div class="two-col" style="margin-bottom:22px;align-items:stretch;">
+    <div style="margin-bottom:22px;">
       <div class="card" id="ov-goals-card-amz" style="margin-top:0;background:var(--sand);border:none;border-top:3px solid var(--navy);">
         <div class="card-title" id="ov-goals-title-amz" style="font-size:16px;">Amazon + Walmart</div>
         <div id="ov-goals-body-amz" style="display:flex;gap:16px;">
-          <div style="color:var(--muted);flex:1;text-align:center;padding:20px;">Loading…</div>
-        </div>
-      </div>
-      <div class="card" id="ov-goals-card-web" style="margin-top:0;background:var(--sand);border:none;border-top:3px solid var(--navy);">
-        <div class="card-title" id="ov-goals-title-web" style="font-size:16px;">Website</div>
-        <div id="ov-goals-body-web" style="display:flex;gap:16px;">
           <div style="color:var(--muted);flex:1;text-align:center;padding:20px;">Loading…</div>
         </div>
       </div>
@@ -20816,37 +20810,35 @@ async function loadAuditResultsFromSheet() {
       }
 
       // ═══════════════════════════════════════════════════════════════
-      // GOALS TRACKER — added 2026-09-04 per Jaclyn. v1/mockup, framed
-      // explicitly as a first pass to react to, not a finished feature.
-      //
-      // Real data-structure findings from directly inspecting both real
-      // sheets before building this (not assumed):
-      //  - Column A is "MMM-YY" text (e.g. "Sep-26"), one row per MONTH,
-      //    not per day — this whole tracker reads ONE row per period,
-      //    not a range to sum.
-      //  - Column O ("Dollar Sales Goal") and AD ("Ads Sales Goal") are
-      //    confirmed real, consistently-used columns on both sheets.
-      //  - Column T is NOT what it looks like from the main header row
-      //    (blank there) — for most of this sheet's history it was a
-      //    free-text Notes column; only starting around Jun-26 did
-      //    someone repurpose it to hold real "Organic Goal" dollar
-      //    values, with a label placed directly on the Jun-26 row
-      //    itself rather than in the sheet's actual header row. Reading
-      //    older rows' column T as a goal number would silently read
-      //    garbled text instead — this only works reliably for the
-      //    recent months this tracker actually needs.
-      //  - Website's own AD column is confirmed BLANK for the last 3
-      //    months (Jul/Aug/Sep-26) — no separate Ads goal is currently
-      //    set for Website, Overall and Organic are identical. Handled
-      //    below by showing "No goal set" rather than a fake 0%.
+      // GOALS TRACKER — Cloud Cafe. Ported from évolis's v1/mockup
+      // (2026-09-04), which pulled the wrong sheet entirely for this
+      // brand. Corrected per Jaclyn:
+      //  - Real sheet: fileId 1trsHDgVSLprsOOjOuFWGZRDqVOV-eII3,
+      //    gid 1949875192 (one combined Amazon+Walmart tab — Cloud Cafe
+      //    has no Website/DTC channel, so évolis's separate Website
+      //    tab/card/fetch was dropped entirely rather than pointed at
+      //    a nonexistent equivalent).
+      //  - Real column positions for THIS sheet, confirmed by Jaclyn —
+      //    do not assume these carry over to any other brand's own goal
+      //    sheet: Total Sales Goal = column N (index 13), Organic Sales
+      //    Goal = column S (index 18), Ad Sales Goal = column Y
+      //    (index 24). évolis's own sheet used O/T/AD (14/19/29) with a
+      //    documented mid-history column-T relabeling gotcha — that
+      //    gotcha is specific to évolis's sheet and does not apply here,
+      //    but is exactly the class of thing to re-verify per brand
+      //    rather than assume.
+      //  - Column A is still assumed "MMM-YY" text (e.g. "Sep-26"), one
+      //    row per MONTH — carried over from évolis's finding, NOT
+      //    independently re-confirmed against Cloud Cafe's actual sheet.
+      //    Verify if findGoalsRow ever fails to match a row that visibly
+      //    exists.
       //  - "Count all pending orders since this is live data" — the
       //    rest of this page's Amazon aggregation (isValidAmazonRow)
       //    excludes pending status. This tracker uses a separate
       //    validity function that keeps pending, still excludes
-      //    cancelled and Vine. Walmart's and Website's EXISTING validity
-      //    functions already don't exclude pending at all — confirmed
-      //    by reading them directly rather than assuming — so no new
-      //    variant was needed for those two.
+      //    cancelled and Vine. Walmart's EXISTING validity function
+      //    already doesn't exclude pending at all — confirmed by reading
+      //    it directly rather than assuming.
       try {
         function goalsIsValidAmazonRow(r) {
           const status = (r.status || '').toLowerCase().trim();
@@ -20864,17 +20856,11 @@ async function loadAuditResultsFromSheet() {
           return rows.find(r => (r[0] || '').trim() === target) || null;
         }
 
-        const [goalsAmzCsv, goalsWebCsv] = await Promise.all([
-          fetch('https://docs.google.com/spreadsheets/d/1trsHDgVSLprsOOjOuFWGZRDqVOV-eII3/export?format=csv&gid=154860784' + `&_cb=${Date.now()}`).then(r => r.ok ? r.text() : '').catch(() => ''),
-          fetch('https://docs.google.com/spreadsheets/d/1trsHDgVSLprsOOjOuFWGZRDqVOV-eII3/export?format=csv&gid=1655791223' + `&_cb=${Date.now()}`).then(r => r.ok ? r.text() : '').catch(() => ''),
-        ]);
+        const goalsAmzCsv = await fetch('https://docs.google.com/spreadsheets/d/1trsHDgVSLprsOOjOuFWGZRDqVOV-eII3/export?format=csv&gid=1949875192' + `&_cb=${Date.now()}`).then(r => r.ok ? r.text() : '').catch(() => '');
         const goalsAmzRows = parseCsv2D(goalsAmzCsv);
-        const goalsWebRows = parseCsv2D(goalsWebCsv);
 
         const goalsRowAmz = findGoalsRow(goalsAmzRows, cfg.year, cfg.month);
-        const goalsRowWeb = findGoalsRow(goalsWebRows, cfg.year, cfg.month);
-        console.log('[GoalsTracker][qa] Amazon+Walmart goals row found:', !!goalsRowAmz, goalsRowAmz ? { overall: goalsRowAmz[14], organic: goalsRowAmz[19], ads: goalsRowAmz[29] } : null);
-        console.log('[GoalsTracker][qa] Website goals row found:', !!goalsRowWeb, goalsRowWeb ? { overall: goalsRowWeb[14], organic: goalsRowWeb[19], ads: goalsRowWeb[29] } : null);
+        console.log('[GoalsTracker][qa] Amazon+Walmart goals row found:', !!goalsRowAmz, goalsRowAmz ? { overall: goalsRowAmz[13], organic: goalsRowAmz[18], ads: goalsRowAmz[24] } : null);
 
         // Live actual revenue, pending-inclusive, netted against returns
         // (a returned sale shouldn't count toward a sales goal; a
@@ -20921,9 +20907,9 @@ async function loadAuditResultsFromSheet() {
 
         function renderGoalsGroup(actualOverall, actualAds, actualOrganic, goalRow) {
           if (!goalRow) return `<div style="color:var(--muted);font-size:13px;flex:1;text-align:center;padding:20px;">No goals row found for this month.</div>`;
-          const overallGoal = parseGoalsDollar(goalRow[14]);
-          const organicGoal = parseGoalsDollar(goalRow[19]);
-          const adsGoal = parseGoalsDollar(goalRow[29]);
+          const overallGoal = parseGoalsDollar(goalRow[13]);  // column N
+          const organicGoal = parseGoalsDollar(goalRow[18]);  // column S
+          const adsGoal = parseGoalsDollar(goalRow[24]);      // column Y
           const fmtD = n => '$' + n.toLocaleString(undefined, { maximumFractionDigits: 0 });
 
           function paceGauge(sublabel, actual, goal) {
@@ -20986,16 +20972,12 @@ async function loadAuditResultsFromSheet() {
         }
 
         const goalsBodyAmzEl = document.getElementById('ov-goals-body-amz');
-        const goalsBodyWebEl = document.getElementById('ov-goals-body-web');
         if (goalsBodyAmzEl) goalsBodyAmzEl.innerHTML = renderGoalsGroup(amzWmtActual, amzAdActual, amzOrganicActual, goalsRowAmz);
-        if (goalsBodyWebEl) goalsBodyWebEl.innerHTML = renderGoalsGroup(webGoalsActual, null, webGoalsActual, goalsRowWeb);
       } catch (err) {
         console.warn('[GoalsTracker] failed:', err.message);
         const goalsBodyAmzEl = document.getElementById('ov-goals-body-amz');
-        const goalsBodyWebEl = document.getElementById('ov-goals-body-web');
         const failHtml = '<div style="color:var(--danger);flex:1;text-align:center;padding:20px;">Goals Tracker failed to load — check console.</div>';
         if (goalsBodyAmzEl) goalsBodyAmzEl.innerHTML = failHtml;
-        if (goalsBodyWebEl) goalsBodyWebEl.innerHTML = failHtml;
       }
 
       // -- Ad Spend / Blended ACOS -- Amazon (prorated monthly estimate) + Website (real MTD) --
