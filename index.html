@@ -1405,6 +1405,22 @@ details.inci-toggle[open] summary::before{content:'▾ ';}
     </div>
 
     <div class="card" style="margin-bottom:20px;">
+      <div class="card-title">Ad Spend by Type (Amazon)</div>
+      <div style="display:flex;gap:20px;flex-wrap:wrap;align-items:flex-start;">
+        <div style="width:280px;flex-shrink:0;position:relative;height:200px;">
+          <canvas id="ov-adtype-donut"></canvas>
+        </div>
+        <div style="flex:1;min-width:280px;">
+          <table class="data-table" style="width:100%;">
+            <thead><tr><th>Ad Type</th><th># Campaigns</th><th>ACOS</th><th>Spend</th><th>Sales</th></tr></thead>
+            <tbody id="ov-adtype-tbody"><tr><td colspan="5" style="color:var(--muted);">Loading…</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+      <div class="ppc-note" id="ov-adtype-note" style="margin-top:10px;"></div>
+    </div>
+
+    <div class="card" style="margin-bottom:20px;">
       <div class="card-title">Top Selling Products <span style="font-weight:400;color:var(--muted);">(by Units, all channels, Month to Date)</span></div>
       <table class="tp-table" style="width:100%;border-collapse:collapse;font-size:12px;">
         <thead>
@@ -4234,6 +4250,22 @@ Paraben-free · Sulfate-free · Silicone-free · Phthalate-free · Color-safe ·
             </tbody>
           </table>
         </div>
+      </div>
+
+      <div class="ppc-card">
+        <div class="ppc-card-title">Ad Spend by Type (Amazon)</div>
+        <div style="display:flex;gap:20px;flex-wrap:wrap;align-items:flex-start;">
+          <div style="width:280px;flex-shrink:0;position:relative;height:200px;">
+            <canvas id="ppc-adtype-donut"></canvas>
+          </div>
+          <div style="flex:1;min-width:280px;">
+            <table class="data-table" style="width:100%;">
+              <thead><tr><th>Ad Type</th><th># Campaigns</th><th>ACOS</th><th>Spend</th><th>Sales</th></tr></thead>
+              <tbody id="ppc-adtype-tbody"><tr><td colspan="5" style="color:var(--muted);">Loading…</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+        <div class="ppc-note" id="ppc-adtype-note" style="margin-top:10px;"></div>
       </div>
 
       <div class="ppc-card">
@@ -14948,6 +14980,77 @@ async function ppcLoadBlendedPerformance(periodKey) {
 
     // Ads — month-level, pre-aggregated one row per channel per month
     const amzAd = pbFindAdRow(amzAdRows, cfg.year, cfg.month) || {};
+
+    // ── Ad Spend by Type (SP/SB/SD) — Amazon only. Identical logic/note
+    // handling to Overview's own version of this card; duplicated here
+    // rather than shared, since this <script> tag doesn't share scope
+    // with Overview's. Reuses amzAd (already fetched/matched above for
+    // this exact period) instead of adding a redundant new fetch. ──
+    (function renderPpcAdTypeBreakdown() {
+      const noteEl = document.getElementById('ppc-adtype-note');
+      const tbody = document.getElementById('ppc-adtype-tbody');
+      const canvasEl = document.getElementById('ppc-adtype-donut');
+      if (!tbody || !canvasEl) return;
+
+      const numOrBlank = v => (v === undefined || v === null || String(v).trim() === '') ? null : (parseFloat(v) || 0);
+      const types = [
+        { key: 'sp', label: 'Sponsored Products', color: '#001f60' },
+        { key: 'sb', label: 'Sponsored Brands', color: '#24e9a3' },
+        { key: 'sd', label: 'Sponsored Display', color: '#c87d2f' },
+      ].map(t => ({
+        ...t,
+        spend: numOrBlank(amzAd[t.key + '_spend']),
+        sales: numOrBlank(amzAd[t.key + '_sales']),
+        acos: numOrBlank(amzAd[t.key + '_acos']),
+        campaigns: numOrBlank(amzAd[t.key + '_campaigns_running']),
+      }));
+
+      if (window._ppcAdTypeChart) { window._ppcAdTypeChart.destroy(); window._ppcAdTypeChart = null; }
+
+      const hasBreakdown = types.some(t => t.spend !== null);
+      if (!hasBreakdown) {
+        if (noteEl) noteEl.textContent = 'ℹ Ad type breakdown not available for this period yet.';
+        tbody.innerHTML = types.map(t => `<tr><td>${t.label}</td><td><span class="tp-dash">—</span></td><td><span class="tp-dash">—</span></td><td><span class="tp-dash">—</span></td><td><span class="tp-dash">—</span></td></tr>`).join('');
+        return;
+      }
+
+      const totalSpend = types.reduce((s, t) => s + (t.spend || 0), 0);
+      tbody.innerHTML = types.map(t => `
+        <tr>
+          <td>${t.label}</td>
+          <td>${t.campaigns == null ? '<span class="tp-dash">—</span>' : t.campaigns.toLocaleString()}</td>
+          <td>${t.acos > 0 ? t.acos.toFixed(1) + '%' : '<span class="tp-dash">—</span>'}</td>
+          <td>${t.spend == null ? '<span class="tp-dash">—</span>' : '$' + t.spend.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+          <td>${t.sales == null ? '<span class="tp-dash">—</span>' : '$' + t.sales.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+        </tr>`).join('');
+
+      if (totalSpend === 0) {
+        if (noteEl) noteEl.textContent = 'ℹ No ad spend recorded for this period yet.';
+        return;
+      }
+
+      const activeTypes = types.filter(t => (t.spend || 0) > 0);
+      if (noteEl) {
+        noteEl.textContent = activeTypes.length === 1
+          ? `ℹ 100% ${activeTypes[0].label} this period — no active ${types.filter(t => t !== activeTypes[0]).map(t => t.label).join(' or ')} spend.`
+          : '';
+      }
+
+      window._ppcAdTypeChart = new Chart(canvasEl, {
+        type: 'doughnut',
+        data: {
+          labels: types.map(t => t.label),
+          datasets: [{ data: types.map(t => t.spend || 0), backgroundColor: types.map(t => t.color), borderWidth: 0 }]
+        },
+        options: {
+          responsive: true, maintainAspectRatio: false,
+          plugins: {
+            legend: { position: 'bottom', labels: { usePointStyle: true, boxWidth: 10, font: { size: 11 } } },
+            tooltip: { callbacks: { label: ctx => ` ${ctx.label}: $${ctx.parsed.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` } },
+          }
+        },
+      });
+    })();
     const wmtAd = pbFindAdRow(wmtAdRows, cfg.year, cfg.month) || {};
     const webAd = pbFindAdRow(webAdRows, cfg.year, cfg.month) || {};
 
@@ -20002,7 +20105,7 @@ async function loadAuditResultsFromSheet() {
       // already declared globally further down this file (used by the
       // existing "Returns Processed" KPI on Marketing → Fulfillment & CS),
       // reused here rather than redeclared.
-      const [amzCsv, webCsv, wmtCsv, adOrdersCsv, amzReturnsCsv, wmtReturnsCsv, webReturnsCsv, namesCsv, webAdsCsv, webShoppingCsv, bizCsv] = await Promise.all([
+      const [amzCsv, webCsv, wmtCsv, adOrdersCsv, amzReturnsCsv, wmtReturnsCsv, webReturnsCsv, namesCsv, webAdsCsv, webShoppingCsv, bizCsv, advCsv] = await Promise.all([
         fetch(sheetCsvUrl(window.SHEET_CFG.SHEET_ORDERS.fileId, window.SHEET_CFG.SHEET_ORDERS.gid) + `&_cb=${Date.now()}`).then(r => r.ok ? r.text() : '').catch(() => ''),
         fetch(sheetCsvUrl(window.SHEET_CFG.SHOPIFY_ORDERS_SHEET.fileId, window.SHEET_CFG.SHOPIFY_ORDERS_SHEET.gid) + `&_cb=${Date.now()}`).then(r => r.ok ? r.text() : '').catch(() => ''),
         fetch(sheetCsvUrl(window.SHEET_CFG.SHEET_WALMART_ORDERS.fileId, window.SHEET_CFG.SHEET_WALMART_ORDERS.gid) + `&_cb=${Date.now()}`).then(r => r.ok ? r.text() : '').catch(() => ''),
@@ -20037,8 +20140,96 @@ async function loadAuditResultsFromSheet() {
         // already confirmed and used elsewhere on this dashboard (PPC
         // Blended Context, Brand Momentum).
         fetch(ovCsvUrl(window.SHEET_CFG.SHEET_BUSINESS_REPORT.fileId, window.SHEET_CFG.SHEET_BUSINESS_REPORT.gid) + `&_cb=${Date.now()}`).then(r => r.ok ? r.text() : '').catch(() => ''),
+        // Advertising Cache — added for the Ad Spend by Type (SP/SB/SD)
+        // card. Local fileId/gid read straight off window.SHEET_CFG here
+        // (not a bare const reused from elsewhere) — this script tag
+        // doesn't share scope with any other <script> block in this file,
+        // so a constant declared in one is not reachable from another;
+        // window.SHEET_CFG itself is the one thing that's genuinely global.
+        fetch(ovCsvUrl(window.SHEET_CFG.SHEET_ADVERTISING.fileId, window.SHEET_CFG.SHEET_ADVERTISING.gid) + `&_cb=${Date.now()}`).then(r => r.ok ? r.text() : '').catch(() => ''),
       ]);
       const bizRows = parseCsvToRows(bizCsv);
+
+      // ── Ad Spend by Type (SP/SB/SD) — Amazon only. Ported from évolis's
+      // Overview page, September 2026. Row matched locally (not via a
+      // shared helper from another <script> block — this file's script
+      // tags don't share scope, confirmed the hard way once already on
+      // this exact feature: a bare const that looked reachable from
+      // elsewhere in the file threw ReferenceError because it was scoped
+      // to a different tag entirely). ──
+      (function renderOvAdTypeBreakdown() {
+        const advRows = parseCsvToRows(advCsv);
+        const advRow = advRows.find(r => parseInt(r.year, 10) === cfg.year && parseInt(r.month, 10) === cfg.month) || null;
+        const noteEl = document.getElementById('ov-adtype-note');
+        const tbody = document.getElementById('ov-adtype-tbody');
+        const canvasEl = document.getElementById('ov-adtype-donut');
+        if (!tbody || !canvasEl) return;
+
+        // A field can be genuinely blank (this period predates SP/SB/SD
+        // tracking for this brand — confirmed real for Cloud Cafe's own
+        // May/June/July 2026 rows) or genuinely 0 (tracked, just no spend
+        // of that type). Those are different situations and need
+        // different messaging — never collapse them into one "no data".
+        const numOrBlank = v => (v === undefined || v === null || String(v).trim() === '') ? null : (parseFloat(v) || 0);
+        const types = [
+          { key: 'sp', label: 'Sponsored Products', color: '#001f60' },
+          { key: 'sb', label: 'Sponsored Brands', color: '#24e9a3' },
+          { key: 'sd', label: 'Sponsored Display', color: '#c87d2f' },
+        ].map(t => ({
+          ...t,
+          spend: advRow ? numOrBlank(advRow[t.key + '_spend']) : null,
+          sales: advRow ? numOrBlank(advRow[t.key + '_sales']) : null,
+          acos: advRow ? numOrBlank(advRow[t.key + '_acos']) : null,
+          campaigns: advRow ? numOrBlank(advRow[t.key + '_campaigns_running']) : null,
+        }));
+
+        if (window._ovAdTypeChart) { window._ovAdTypeChart.destroy(); window._ovAdTypeChart = null; }
+
+        const hasBreakdown = types.some(t => t.spend !== null);
+        if (!hasBreakdown) {
+          if (noteEl) noteEl.textContent = 'ℹ Ad type breakdown not available for this period yet.';
+          tbody.innerHTML = types.map(t => `<tr><td>${t.label}</td><td><span class="tp-dash">—</span></td><td><span class="tp-dash">—</span></td><td><span class="tp-dash">—</span></td><td><span class="tp-dash">—</span></td></tr>`).join('');
+          return;
+        }
+
+        const totalSpend = types.reduce((s, t) => s + (t.spend || 0), 0);
+        tbody.innerHTML = types.map(t => `
+          <tr>
+            <td>${t.label}</td>
+            <td>${t.campaigns == null ? '<span class="tp-dash">—</span>' : t.campaigns.toLocaleString()}</td>
+            <td>${t.acos > 0 ? t.acos.toFixed(1) + '%' : '<span class="tp-dash">—</span>'}</td>
+            <td>${t.spend == null ? '<span class="tp-dash">—</span>' : '$' + t.spend.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+            <td>${t.sales == null ? '<span class="tp-dash">—</span>' : '$' + t.sales.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
+          </tr>`).join('');
+
+        if (totalSpend === 0) {
+          if (noteEl) noteEl.textContent = 'ℹ No ad spend recorded for this period yet.';
+          return;
+        }
+
+        const activeTypes = types.filter(t => (t.spend || 0) > 0);
+        if (noteEl) {
+          noteEl.textContent = activeTypes.length === 1
+            ? `ℹ 100% ${activeTypes[0].label} this period — no active ${types.filter(t => t !== activeTypes[0]).map(t => t.label).join(' or ')} spend.`
+            : '';
+        }
+
+        window._ovAdTypeChart = new Chart(canvasEl, {
+          type: 'doughnut',
+          data: {
+            labels: types.map(t => t.label),
+            datasets: [{ data: types.map(t => t.spend || 0), backgroundColor: types.map(t => t.color), borderWidth: 0 }]
+          },
+          options: {
+            responsive: true, maintainAspectRatio: false,
+            plugins: {
+              legend: { position: 'bottom', labels: { usePointStyle: true, boxWidth: 10, font: { size: 11 } } },
+              tooltip: { callbacks: { label: ctx => ` ${ctx.label}: $${ctx.parsed.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` } },
+            }
+          },
+        });
+      })();
+
 
       const amzRows = isCsv(amzCsv) ? parseCsv(amzCsv).filter(isEvolisRow) : [];
       const webRows = isCsv(webCsv) ? parseCsv(webCsv) : [];
