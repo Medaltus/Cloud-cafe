@@ -14528,7 +14528,6 @@ window.renderSearchQueryPerformance = renderSearchQueryPerformance;
 // here — categorizing review text into positive/negative/gap themes is
 // a real analysis step, not a mechanical data pull, so faking it across
 // 5 categories would be worse than just leaving it out for now.
-const SHEET_AMAZON_REVIEWS_ID = '1COergq71E4nqjdupLQx6kRDg-MrjY5TEuppCj7TfgQo';
 
 const REVIEW_CATEGORY_PRODUCTS = {
   activators: [
@@ -14606,7 +14605,7 @@ let _amazonReviewsPromise = null;
 function fetchAmazonReviews() {
   if (_amazonReviewsPromise) return _amazonReviewsPromise;
   _amazonReviewsPromise = (async () => {
-    const csv = await fetch(ovCsvUrl(SHEET_AMAZON_REVIEWS_ID, window.SHEET_CFG.SHEET_AMAZON_REVIEWS.gid) + `&_cb=${Date.now()}`).then(r => r.ok ? r.text() : '').catch(() => '');
+    const csv = await fetch(ovCsvUrl(window.SHEET_CFG.SHEET_AMAZON_REVIEWS.fileId, window.SHEET_CFG.SHEET_AMAZON_REVIEWS.gid) + `&_cb=${Date.now()}`).then(r => r.ok ? r.text() : '').catch(() => '');
     const rows = parseCsvToRows(csv);
     console.log('[Reviews][qa] total review rows loaded:', rows.length, '— header keys:', rows.length ? Object.keys(rows[0]).join(' | ') : '(none)');
     return rows;
@@ -15128,7 +15127,6 @@ let window_bmLastKwRows = null; // cached for the "hide negative" checkbox re-re
 
 window.initBrandMomentum = async function () {
   if (window._bmInit) return;
-  window._bmInit = true;
 
   try {
     const [bizCsv, kwCsv, kwSummaryCsv, master, reviews] = await Promise.all([
@@ -15288,8 +15286,12 @@ window.initBrandMomentum = async function () {
       }).join('') : '<tr><td colspan="3" style="color:var(--muted);">No review data available</td></tr>';
     }
 
+    window._bmInit = true; // only latch "done" once everything above actually succeeded
   } catch (err) {
     console.warn('[BrandMomentum] failed:', err.message);
+    // _bmInit intentionally left false — a failed load (bad sheet ID,
+    // transient fetch error, etc.) should NOT permanently brick this tab
+    // for the rest of the session; switching back to it will retry.
   }
 };
 
