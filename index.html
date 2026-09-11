@@ -226,12 +226,12 @@ nav > .nav-btn:not(.active):hover{color:#fff;}
 
 /* ── Home page (adapted from Cosmette's dashboard) ── */
 .home-hero{background:linear-gradient(135deg,var(--navy) 0%,#0d3494 100%);border-radius:var(--radius);padding:32px 36px;margin-bottom:20px;position:relative;}
-.home-hero-logo{height:42px;width:auto;margin-left:-32px;display:block;}
+.home-hero-logo{height:42px;width:auto;display:block;}
 .home-badges{position:absolute;top:28px;right:32px;display:flex;flex-direction:column;align-items:flex-end;gap:6px;}
 .home-badge{display:inline-flex;align-items:center;gap:6px;background:rgba(36,233,163,0.16);border:1px solid rgba(36,233,163,0.35);color:var(--green);font-size:10.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;padding:5px 12px;border-radius:20px;}
 .home-badge svg{width:11px;height:11px;fill:none;stroke:currentColor;stroke-width:2;}
 .home-badge-channel{font-size:10px;color:rgba(255,255,255,.45);text-transform:uppercase;letter-spacing:.06em;}
-.home-hero-title{font-size:24px;font-weight:400;font-style:italic;font-family:var(--font-subheader);color:#fff;letter-spacing:-.2px;margin-top:18px;}
+.home-hero-title{font-size:24px;font-weight:700;font-style:italic;font-family:var(--font-subheader);color:#fff;letter-spacing:-.2px;margin-top:18px;}
 .home-hero-sub{font-size:12.5px;color:rgba(255,255,255,.55);line-height:1.6;margin-top:8px;max-width:560px;}
 .home-hero-date{font-size:11px;color:rgba(255,255,255,.35);margin-top:14px;}
 
@@ -1256,7 +1256,7 @@ details.inci-toggle[open] summary::before{content:'▾ ';}
           <svg viewBox="0 0 16 16"><path d="M8 1l6 2.5v4c0 4-2.6 6.8-6 7.5-3.4-.7-6-3.5-6-7.5v-4L8 1z"/></svg>
           Brand Partner
         </span>
-        <span class="home-badge-channel">Amazon &middot; Website &middot; Walmart</span>
+        <span class="home-badge-channel">Amazon</span>
       </div>
       <div class="home-hero-title">Welcome to Your Medaltus Dashboard</div>
       <div class="home-hero-sub">Your real-time view into sales, inventory, and brand performance &mdash; powered by Medaltus.</div>
@@ -1265,8 +1265,8 @@ details.inci-toggle[open] summary::before{content:'▾ ';}
 
     <!-- Team + Resources -->
     <div class="home-grid">
-      <div class="card">
-        <div class="home-card-title">Your Medaltus Team</div>
+      <div class="card" style="margin-top:0;">
+        <div class="home-card-title" style="font-size:19px;font-weight:700;">Your Medaltus Team</div>
         <div class="home-card-sub">Reach out anytime &mdash; we're here to help.</div>
 
         <div class="home-team-item">
@@ -1303,7 +1303,7 @@ details.inci-toggle[open] summary::before{content:'▾ ';}
         </div>
       </div>
 
-      <div class="card">
+      <div class="card" style="margin-top:0;">
         <div class="home-card-title">Resources</div>
         <div class="home-card-sub">Shared files, routing guides, and brand docs.</div>
         <a class="home-resource-item" href="https://www.dropbox.com/scl/fo/779lwjw5d50lais1e6f2u/AOJK7AOPyNY0WC0-Z4q7-X8?rlkey=dudkg8i08xnsx3qcp8hqbvwhg&st=05ax0b6t&dl=0" target="_blank" rel="noopener">
