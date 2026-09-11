@@ -73,6 +73,7 @@
   --font-header:'GT Walsheim Pro Medium','DM Sans',system-ui,sans-serif;
   --font-bold:'GT Walsheim Pro Bold','DM Sans',system-ui,sans-serif;
   --font-subheader:'Plantin MT Pro Italic',Georgia,'Times New Roman',serif;
+  --font-numbers:Georgia,'Times New Roman',serif;
   --font-body-light:'GT Walsheim Pro Light','DM Sans',system-ui,sans-serif;
   --radius:10px; --radius-sm:6px;
 }
@@ -173,7 +174,7 @@ nav > .nav-btn:not(.active):hover{color:#fff;}
    ever show one badge and are already sized correctly for that. */
 .kpi-card.kpi-card-tall{min-height:148px;height:auto;}
 .kpi-label{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:11px;}
-.kpi-value{font-size:30px;font-weight:600;letter-spacing:-1px;line-height:1;color:var(--navy);font-family:var(--font-subheader);}
+.kpi-value{font-size:30px;font-weight:600;letter-spacing:-1px;line-height:1;color:var(--navy);font-family:var(--font-numbers);}
 .kpi-value.sm{font-size:30px;}
 .kpi-mom{font-size:14px;margin-top:5px;}
 .kpi-mom.up{color:#1db88a;}
@@ -237,7 +238,7 @@ nav > .nav-btn:not(.active):hover{color:#fff;}
 .home-kpi-row{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px;}
 .home-kpi-card{background:var(--white);border:1px solid var(--border);border-top:3px solid var(--green);border-radius:var(--radius);padding:18px 20px;}
 .home-kpi-label{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px;}
-.home-kpi-value{font-size:28px;font-weight:700;color:var(--navy);letter-spacing:-1px;line-height:1;font-family:var(--font-subheader);}
+.home-kpi-value{font-size:28px;font-weight:700;color:var(--navy);letter-spacing:-1px;line-height:1;font-family:var(--font-numbers);}
 .home-kpi-sub{font-size:11px;color:var(--muted);margin-top:5px;}
 
 .home-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
@@ -358,7 +359,7 @@ table.data-table tbody td{padding:9px 12px;font-size:12px;color:var(--navy);font
 .brand-hero-left .brand-tagline{font-size:12px;color:rgba(255,255,255,0.5);margin-top:4px;}
 .brand-hero-right{display:flex;gap:20px;}
 .hero-stat{text-align:center;}
-.hero-stat-val{font-size:28px;font-weight:700;color:var(--green);line-height:1;font-family:var(--font-subheader);}
+.hero-stat-val{font-size:28px;font-weight:700;color:var(--green);line-height:1;font-family:var(--font-numbers);}
 .hero-stat-lbl{font-size:10px;color:rgba(255,255,255,0.45);text-transform:uppercase;letter-spacing:.07em;margin-top:3px;}
 
 /* ── Responsive ── */
@@ -396,7 +397,7 @@ table.data-table tbody td{padding:9px 12px;font-size:12px;color:var(--navy);font
 .metric-strip{display:grid;grid-template-columns:repeat(6,1fr);gap:1px;background:var(--border);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;margin-bottom:20px;}
 .metric-strip-card{background:var(--white);padding:14px 16px;}
 .ms-label{font-size:9.5px;font-weight:600;text-transform:uppercase;letter-spacing:.07em;color:var(--muted);margin-bottom:6px;}
-.ms-value{font-size:22px;font-weight:700;color:var(--navy);line-height:1;font-family:var(--font-subheader);}
+.ms-value{font-size:22px;font-weight:700;color:var(--navy);line-height:1;font-family:var(--font-numbers);}
 .ms-sub{font-size:10px;color:var(--muted);margin-top:4px;}
 
 /* Chart section */
@@ -576,7 +577,7 @@ details.inci-toggle[open] summary::before{content:'▾ ';}
 
 .tier-hd2{display:flex;align-items:center;gap:10px;margin:22px 0 10px;}
 .tier-hd2:first-of-type{margin-top:0;}
-.tier-hd2 .tier-num{font-family:var(--font-subheader);font-size:19px;font-weight:700;color:var(--border);line-height:1;}
+.tier-hd2 .tier-num{font-family:var(--font-numbers);font-size:19px;font-weight:700;color:var(--border);line-height:1;}
 .tier-hd2.tier-1 .tier-num{color:var(--navy);}
 .tier-hd2.tier-2 .tier-num{color:var(--warn);}
 .tier-hd2.tier-3 .tier-num{color:var(--muted);}
@@ -1002,7 +1003,7 @@ details.inci-toggle[open] summary::before{content:'▾ ';}
 .pdfx-kpi{border:1px solid var(--border);border-radius:0;padding:20px 16px;background:#fbfbfd;margin-left:-1px;display:flex;flex-direction:column;align-items:flex-start;justify-content:flex-start;}
 .pdfx-kpi:first-child{margin-left:0;}
 .pdfx-kpi-lbl{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.02em;margin-bottom:9px;white-space:nowrap;}
-.pdfx-kpi-val{font-size:29px;font-weight:700;font-family:var(--font-subheader);color:var(--navy);letter-spacing:-.5px;line-height:1;}
+.pdfx-kpi-val{font-size:29px;font-weight:700;font-family:var(--font-numbers);color:var(--navy);letter-spacing:-.5px;line-height:1;}
 .pdfx-kpi-mom{font-size:13px;margin-top:6px;font-weight:400;font-family:var(--font-body-light);min-height:16px;}
 .pdfx-kpi-mom.up{color:var(--green);}
 .pdfx-kpi-mom.dn{color:var(--danger);}
@@ -1262,20 +1263,6 @@ details.inci-toggle[open] summary::before{content:'▾ ';}
       <div class="home-hero-date" id="home-date"></div>
     </div>
 
-    <!-- KPI row -->
-    <div class="home-kpi-row">
-      <div class="home-kpi-card">
-        <div class="home-kpi-label">Total SKUs</div>
-        <div class="home-kpi-value" id="home-kpi-skus">&mdash;</div>
-        <div class="home-kpi-sub">In your catalog</div>
-      </div>
-      <div class="home-kpi-card">
-        <div class="home-kpi-label">Units On Hand</div>
-        <div class="home-kpi-value" id="home-kpi-units">&mdash;</div>
-        <div class="home-kpi-sub" id="home-kpi-units-sub">Consignment units</div>
-      </div>
-    </div>
-
     <!-- Team + Resources -->
     <div class="home-grid">
       <div class="card">
@@ -1299,11 +1286,11 @@ details.inci-toggle[open] summary::before{content:'▾ ';}
           </div>
         </div>
         <div class="home-team-item">
-          <div class="home-team-avatar">JR</div>
+          <div class="home-team-avatar">LR</div>
           <div>
-            <div class="home-team-name">Jaclyn Risser</div>
+            <div class="home-team-name">Lindsay Rohde</div>
             <div class="home-team-role">Brand Manager</div>
-            <a class="home-team-email" href="mailto:jrisser@medaltus.com">jrisser@medaltus.com</a>
+            <a class="home-team-email" href="mailto:lrohde@medaltus.com">lrohde@medaltus.com</a>
           </div>
         </div>
         <div class="home-team-item">
@@ -1330,13 +1317,6 @@ details.inci-toggle[open] summary::before{content:'▾ ';}
           <span class="home-resource-icon">🗓️</span>
           <div>
             <div class="home-resource-title">Holiday Schedule</div>
-            <div class="home-resource-sub">PDF</div>
-          </div>
-        </a>
-        <a class="home-resource-item" href="https://drive.google.com/file/d/1psVZPNdY3IrNGuTPjJm7znfmEYG7cex_/view?usp=drive_link" target="_blank" rel="noopener">
-          <span class="home-resource-icon">🚚</span>
-          <div>
-            <div class="home-resource-title">Inbound Shipping &amp; Routing Guide</div>
             <div class="home-resource-sub">PDF</div>
           </div>
         </a>
@@ -1429,15 +1409,9 @@ details.inci-toggle[open] summary::before{content:'▾ ';}
       </div>
     </div>
 
-    <div class="two-col" style="margin-bottom:22px;">
-      <div class="card" style="margin-top:0;">
-        <div class="card-title" id="ov-donut-title">Revenue by Channel — Month to Date</div>
-        <div style="position:relative;height:200px;"><canvas id="chart-ov-donut"></canvas></div>
-      </div>
-      <div class="card" style="margin-top:0;">
-        <div class="card-title">Monthly Revenue Trend</div>
-        <div style="position:relative;height:200px;"><canvas id="chart-ov-trend"></canvas></div>
-      </div>
+    <div class="card" style="margin-bottom:22px;margin-top:0;">
+      <div class="card-title" id="ov-donut-title">Revenue by Channel — Month to Date</div>
+      <div style="position:relative;height:200px;"><canvas id="chart-ov-donut"></canvas></div>
     </div>
 
     <div class="card" style="margin-bottom:20px;">
@@ -5280,7 +5254,7 @@ async function initSns() {
   }
   function isEvolisRow(row) {
     const b = (row.brand || '').toLowerCase().trim();
-    return !row.brand || b === 'cloud-cafe' || b.endsWith('volis');
+    return !row.brand || b === 'cloud-cafe';
   }
 
   // Same spreadsheet as initStewardshipLive's window.SHEET_CFG.SHEET_STEWARDSHIP_SUMMARY.fileId, different tab.
@@ -5522,9 +5496,7 @@ async function initSns() {
   function isEvolisRow(row) {
     const brand = (row.brand || '').toLowerCase().trim();
     const skus  = (row.sku || row.skus || '').toUpperCase();
-    // Match 'cloud-cafe' and encoding-corrupted variants of 'Cloud Cafe' (e.g. √âvolis)
-    // that appear in older rows written before the encoding was fixed.
-    const isEvolisBrand = brand === BRAND || brand.endsWith('volis');
+    const isEvolisBrand = brand === BRAND;
     return isEvolisBrand || skus.split(',').some(s => s.trim().startsWith('CLC'));
   }
 
@@ -7674,9 +7646,7 @@ async function initSns() {
   function isEvolisRow(row) {
     const brand = (row.brand || '').toLowerCase().trim();
     const skus  = (row.sku || row.skus || '').toUpperCase();
-    // Match 'cloud-cafe' and encoding-corrupted variants of 'Cloud Cafe' (e.g. √âvolis)
-    // that appear in older rows written before the encoding was fixed.
-    const isEvolisBrand = brand === BRAND || brand.endsWith('volis');
+    const isEvolisBrand = brand === BRAND;
     return isEvolisBrand || skus.split(',').some(s => s.trim().startsWith('CLC'));
   }
 
@@ -10087,7 +10057,7 @@ async function initSnsExternal() {
   }
   function isEvolisRow(row) {
     const b = (row.brand || '').toLowerCase().trim();
-    return !row.brand || b === 'cloud-cafe' || b.endsWith('volis');
+    return !row.brand || b === 'cloud-cafe';
   }
 
   // Same spreadsheet as initStewardshipLive's window.SHEET_CFG.SHEET_STEWARDSHIP_SUMMARY.fileId, different tab.
@@ -13065,7 +13035,7 @@ async function ovLoadActiveSkus(year, month) {
 
     function isEvolisRowLocal(r) {
       const brand = (r.brand || '').trim().toLowerCase();
-      return brand === 'cloud-cafe' || brand.endsWith('volis');
+      return brand === 'cloud-cafe';
     }
     const amzReturnRows = parseCsvToRows(amzReturnsCsv).filter(isEvolisRowLocal);
     const wmtReturnRows = parseCsvToRows(wmtReturnsCsv).filter(isEvolisRowLocal);
@@ -15001,7 +14971,7 @@ async function ppcLoadBlendedPerformance(periodKey) {
 
     function pbIsEvolisRow(r) {
       const brand = (r.brand || '').trim().toLowerCase();
-      return brand === 'cloud-cafe' || brand.endsWith('volis');
+      return brand === 'cloud-cafe';
     }
     const amzReturnRows = parseCsvToRows(amzReturnsCsv).filter(pbIsEvolisRow);
     const wmtReturnRows = parseCsvToRows(wmtReturnsCsv).filter(pbIsEvolisRow);
@@ -16154,10 +16124,15 @@ async function loadInventoryPage() {
     const wfsMap = {};
 
     const statusMap = {};
+    // SKU Type (column J: CATALOG / BUNDLE) — added per Jaclyn: this page
+    // should only ever show real catalog products, never bundle SKUs.
+    const skuTypeMap = {};
     parseCsvToRows(statusCsv).forEach(r => {
       const sku = (r.sku || '').trim().toUpperCase().replace(/-SF$/i, '');
       const status = (r.status || '').trim().toUpperCase();
       if (sku && status) statusMap[sku] = status;
+      const skuType = (r['sku type'] || r.sku_type || '').trim().toUpperCase();
+      if (sku && skuType) skuTypeMap[sku] = skuType;
     });
 
     // Daily snapshot cron — most recent date only
@@ -16219,8 +16194,9 @@ async function loadInventoryPage() {
         qtyAtAmazon, qtyAtMedaltus, available, allocated, wfs, onHand, consignment,
         days, status,
         discontinued: statusMap[skuUpper] === 'DELETED',
+        isBundle: skuTypeMap[skuUpper] === 'BUNDLE',
       };
-    }).filter(r => !(r.discontinued && r.onHand === 0));
+    }).filter(r => !(r.discontinued && r.onHand === 0) && !r.isBundle);
 
     // Second half of the same diagnostic — shows what's left AFTER the
     // discontinued+zero-stock filter, plus the raw computed fields for
@@ -19979,7 +19955,7 @@ async function loadAuditResultsFromSheet() {
   function isEvolisRow(row) {
     const brand = (row.brand || '').toLowerCase().trim();
     const skus = (row.sku || row.skus || '').toUpperCase();
-    return brand === 'cloud-cafe' || brand.endsWith('volis') || skus.split(',').some(s => s.trim().startsWith('CLC'));
+    return brand === 'cloud-cafe' || skus.split(',').some(s => s.trim().startsWith('CLC'));
   }
   function isValidAmazonRow(row) {
     const status = (row.status || '').toLowerCase().trim();
@@ -21087,92 +21063,6 @@ async function loadAuditResultsFromSheet() {
       setKpi('ov-kpi-ad-sales', '$' + blendedSales.toLocaleString(undefined, { maximumFractionDigits: 0 }), pctChange(blendedSales, blendedSalesPrev), ovMomSuffix);
       setKpi('ov-kpi-organic-sales', '$' + organicSales.toLocaleString(undefined, { maximumFractionDigits: 0 }), pctChange(organicSales, organicSalesPrev), ovMomSuffix);
 
-      // -- Trend: trailing 6 COMPLETED months, blended revenue across channels --
-      // ROOT CAUSE of the blank chart: these revenue-history sheets use
-      // UPPERCASE positional headers (MONTH/YEAR/REVENUE), the same
-      // convention already confirmed working in buildRevenueChart() /
-      // buildWebChart() elsewhere in this file. My generic lowercase-keyed
-      // parseCsv() was looking up row.year/row.month/row.revenue against a
-      // sheet whose real keys are YEAR/MONTH/REVENUE -- every lookup
-      // silently returned undefined -> 0, so "no non-zero months" fired
-      // for the wrong reason. Parsing by column index now, matching the
-      // already-proven pattern exactly.
-      function parseRevenueHistory(csvText) {
-        if (!isCsv(csvText)) return [];
-        const lines = csvText.trim().split('\n');
-        if (lines.length < 2) return [];
-        const headers = parseCsvLine(lines[0]).map(h => h.replace(/^"|"$/g, '').trim().toUpperCase());
-        const monthIdx = headers.indexOf('MONTH');
-        const yearIdx = headers.indexOf('YEAR');
-        const revenueIdx = headers.indexOf('REVENUE');
-        if (monthIdx < 0 || yearIdx < 0 || revenueIdx < 0) {
-          console.warn('[Cloud Cafe][overview] revenue sheet missing MONTH/YEAR/REVENUE columns -- found:', headers);
-          return [];
-        }
-        const rows = [];
-        for (let i = 1; i < lines.length; i++) {
-          const cols = parseCsvLine(lines[i]);
-          const yr = parseInt((cols[yearIdx] || '').replace(/^"|"$/g, ''), 10);
-          const mo = parseInt((cols[monthIdx] || '').replace(/^"|"$/g, ''), 10);
-          const rev = parseAmt((cols[revenueIdx] || '').replace(/^"|"$/g, ''));
-          if (yr && mo >= 1 && mo <= 12) {
-            if (yr < 2015 || yr > 2035) {
-              console.warn('[revenue-history] implausible year', yr, 'for month', mo, '— skipping row (likely corrupted YEAR cell at the source). Revenue was:', rev);
-            } else {
-              rows.push({ year: yr, month: mo, revenue: rev });
-            }
-          }
-        }
-        return rows;
-      }
-
-      const [amzRevCsv, webRevCsv, wmtRevCsv] = await Promise.all([
-        fetch(sheetCsvUrl(window.SHEET_CFG.SHEET_REVENUE.fileId, window.SHEET_CFG.SHEET_REVENUE.gid) + `&_cb=${Date.now()}`).then(r => r.ok ? r.text() : '').catch(() => ''),
-        fetch(sheetCsvUrl(window.SHEET_CFG.SHOPIFY_ORDERS_SHEET.fileId, window.SHEET_CFG.SHEET_SHOPIFY_REVENUE.gid) + `&_cb=${Date.now()}`).then(r => r.ok ? r.text() : '').catch(() => ''),
-        fetch(sheetCsvUrl(window.SHEET_CFG.WALMART_REVENUE_SHEET.fileId, window.SHEET_CFG.WALMART_REVENUE_SHEET.gid) + `&_cb=${Date.now()}`).then(r => r.ok ? r.text() : '').catch(() => ''),
-      ]);
-      const amzRevRows = parseRevenueHistory(amzRevCsv);
-      const webRevRows = parseRevenueHistory(webRevCsv);
-      const wmtRevRows = parseRevenueHistory(wmtRevCsv);
-      console.log('[Cloud Cafe][overview] revenue-history row counts -- amazon:', amzRevRows.length, 'web:', webRevRows.length, 'walmart:', wmtRevRows.length);
-
-      function monthlyRevenue(rows, y, m) {
-        const row = rows.find(r => r.year === y && r.month === m);
-        return row ? row.revenue : 0;
-      }
-      const trendLabels = [], amzTrend = [], webTrend = [], wmtTrend = [];
-      let ty = now.getFullYear(), tm = now.getMonth();
-      for (let i = 0; i < 6; i++) {
-        tm -= 1; if (tm === 0) { tm = 12; ty--; }
-        trendLabels.unshift(`${monthNames[tm - 1]} '${String(ty).slice(2)}`);
-        amzTrend.unshift(monthlyRevenue(amzRevRows, ty, tm));
-        webTrend.unshift(monthlyRevenue(webRevRows, ty, tm));
-        wmtTrend.unshift(monthlyRevenue(wmtRevRows, ty, tm));
-      }
-      if ([...amzTrend, ...webTrend, ...wmtTrend].some(v => v > 0)) {
-        // FIXED 2026-09-01 — same canvas-reuse bug as the donut chart
-        // above, same root cause (this function can now run repeatedly
-        // on toggle clicks).
-        if (window._ovTrendChart) { window._ovTrendChart.destroy(); window._ovTrendChart = null; }
-        window._ovTrendChart = new Chart(document.getElementById('chart-ov-trend'), {
-          type: 'line',
-          data: {
-            labels: trendLabels,
-            datasets: [
-              { label: 'Amazon', data: amzTrend, borderColor: '#001f60', backgroundColor: 'transparent', borderWidth: 2.5, pointRadius: 3, tension: 0.3 },
-              { label: 'Website', data: webTrend, borderColor: '#24e9a3', backgroundColor: 'transparent', borderWidth: 2.5, pointRadius: 3, tension: 0.3 },
-              { label: 'Walmart', data: wmtTrend, borderColor: '#6b7ba2', backgroundColor: 'transparent', borderWidth: 2.5, pointRadius: 3, tension: 0.3 },
-            ]
-          },
-          options: {
-            responsive: true, maintainAspectRatio: false,
-            plugins: { legend: { position: 'top', align: 'start', labels: { usePointStyle: true, pointStyle: 'line', boxWidth: 24, padding: 12, font: { size: 13 }, generateLabels: bigLegendLabels } } },
-            scales: { y: { ticks: { callback: v => '$' + (v / 1000).toFixed(0) + 'K' } } }
-          }
-        });
-      } else {
-        console.warn('[Cloud Cafe][overview] no non-zero months found for trend chart — check revenue-history sheet gids (expects UPPERCASE columns: MONTH, YEAR, REVENUE).');
-      }
     } catch (err) {
       console.error('[Cloud Cafe][overview] fetch/parse failed:', err);
     }
@@ -21198,101 +21088,6 @@ function setHomeDate() {
 }
 document.addEventListener('DOMContentLoaded', setHomeDate);
 
-// Units On Hand KPI — sums the same consignment "available" column used
-// on the Inventory page's Consignment column (SHEET_CONSIGNMENT_INVENTORY,
-// evolis tab), and shows the most recent last_updated timestamp from that
-// same data as the sub-label, so the number's own freshness is visible
-// rather than implied.
-async function loadHomeConsignmentKpi() {
-  const valEl = document.getElementById('home-kpi-units');
-  const subEl = document.getElementById('home-kpi-units-sub');
-  if (!valEl) return;
-  try {
-    const csv = await fetch(ovCsvUrl(window.SHEET_CFG.SHEET_CONSIGNMENT_INVENTORY.fileId, '505131584')).then(r => r.ok ? r.text() : '').catch(() => '');
-    const rows = parseCsvToRows(csv);
-    if (!rows.length) { valEl.textContent = '—'; if (subEl) subEl.textContent = 'No consignment data yet'; return; }
-    const total = rows.reduce((sum, r) => sum + (parseFloat(r.available) || 0), 0);
-    const latest = rows.reduce((max, r) => ((r.last_updated || '') > max ? r.last_updated : max), '');
-    valEl.textContent = total.toLocaleString();
-    if (subEl && latest) {
-      const d = new Date(latest);
-      subEl.textContent = 'Consignment · updated ' + (isNaN(d) ? latest : d.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' }));
-    } else if (subEl) {
-      subEl.textContent = 'Consignment units';
-    }
-  } catch (err) {
-    console.warn('[Home] consignment KPI load failed:', err);
-    valEl.textContent = '—';
-  }
-}
-document.addEventListener('DOMContentLoaded', loadHomeConsignmentKpi);
-
-// Total SKUs KPI — REWRITTEN 2026-08-03 per Jaclyn: the previous version
-// (below, superseded) counted rows on the master Product Short Name
-// sheet directly, which includes bundle SKUs the brand does not consider
-// real SKUs. Rewritten again 2026-08-10 per Jaclyn: this function's own
-// prior comment predicted the exact bug she then found — "this assumes
-// bundle SKUs simply don't appear in the Products Cache sheet at all —
-// if they turn out to be in there too, this won't fully fix the issue."
-// They do (confirmed: sync-products.js has no bundle-type exclusion,
-// and the Listing Audit / PPC / Insights Bundles tabs all pull bundle
-// rows from this exact sheet), so Total SKUs was counting ~12 bundles
-// alongside the ~18 real catalog products. Now cross-references SKU
-// Type from Product Short Name (column J) too, same two-sheet pattern
-// as before, just with one more condition: a SKU only counts if it's
-// (1) present in today's Products Cache snapshot, (2) LIVE per Product
-// Short Name's Status column, AND (3) SKU Type = CATALOG, not BUNDLE.
-async function loadHomeTotalSkus() {
-  const valEl = document.getElementById('home-kpi-skus');
-  if (!valEl) return;
-  try {
-    const [productsCsv, masterCsv] = await Promise.all([
-      fetch(ovCsvUrl(window.SHEET_CFG.SHEET_PRODUCT_INVENTORY.fileId, window.SHEET_CFG.SHEET_PRODUCT_INVENTORY.gid) + `&_cb=${Date.now()}`).then(r => r.ok ? r.text() : '').catch(() => ''),
-      fetch(ovCsvUrl('1NNRTRQxQl2r4XivAvH700CC39p49GD2xfZlyRNqahGA', '164358627') + `&_cb=${Date.now()}`).then(r => r.ok ? r.text() : '').catch(() => ''),
-    ]);
-
-    const productRows = parseCsvToRows(productsCsv);
-    if (!productRows.length) { valEl.textContent = '—'; return; }
-
-    // Products Cache is a daily cron snapshot (multiple dates present),
-    // not one row per SKU — only the most recent date represents today's
-    // real product list. Same convention as the internal Inventory page.
-    const latestDate = productRows.reduce((max, r) => ((r.date || '') > max ? r.date : max), '');
-    const latestRows = productRows.filter(r => r.date === latestDate);
-
-    // Base SKU (strip "-SF" seller-fulfilled suffix) so the FBA and SF
-    // variants of the same product count once, not twice.
-    const productSkus = new Set(
-      latestRows.map(r => (r.sku || '').trim().toUpperCase().replace(/-SF$/i, '')).filter(Boolean)
-    );
-
-    const statusMap = {};
-    const skuTypeMap = {};
-    parseCsvToRows(masterCsv).forEach(r => {
-      const sku = (r.sku || '').trim().toUpperCase().replace(/-SF$/i, '');
-      if (!sku) return;
-      const status = (r.status || '').trim().toUpperCase();
-      if (status) statusMap[sku] = status;
-      const skuType = (r['sku type'] || r.sku_type || '').trim().toUpperCase();
-      if (skuType) skuTypeMap[sku] = skuType;
-    });
-
-    let activeCount = 0;
-    let excludedBundleCount = 0;
-    productSkus.forEach(sku => {
-      if (statusMap[sku] !== 'LIVE') return;
-      if (skuTypeMap[sku] === 'BUNDLE') { excludedBundleCount++; return; }
-      activeCount++;
-    });
-    console.log('[Home][TotalSKUs][qa]', activeCount, 'catalog SKUs counted —', excludedBundleCount, 'bundle SKU(s) correctly excluded.');
-
-    valEl.textContent = activeCount.toLocaleString();
-  } catch (err) {
-    console.warn('[Home] total SKUs KPI load failed:', err);
-    valEl.textContent = '—';
-  }
-}
-document.addEventListener('DOMContentLoaded', loadHomeTotalSkus);
 
 // ═══════════════════════════════════════════════════════════════════
 // CLERK AUTH — internal-section gating only, NOT a page-wide gate.
