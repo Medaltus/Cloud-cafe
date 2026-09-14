@@ -1405,10 +1405,19 @@ details.inci-toggle[open] summary::before{content:'▾ ';}
     </div>
 
     <div class="card" style="margin-bottom:20px;">
-      <div class="card-title">Ad Spend by Type (Amazon)</div>
+      <div class="card-title">Ad Spend &amp; Sales by Type (Amazon)</div>
       <div style="display:flex;gap:20px;flex-wrap:wrap;align-items:flex-start;">
-        <div style="width:280px;flex-shrink:0;position:relative;height:200px;">
-          <canvas id="ov-adtype-donut"></canvas>
+        <div style="width:280px;flex-shrink:0;">
+          <div style="text-align:center;font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px;">Spend</div>
+          <div style="position:relative;height:200px;">
+            <canvas id="ov-adtype-spend-donut"></canvas>
+          </div>
+        </div>
+        <div style="width:280px;flex-shrink:0;">
+          <div style="text-align:center;font-size:11px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em;margin-bottom:4px;">Sales</div>
+          <div style="position:relative;height:200px;">
+            <canvas id="ov-adtype-sales-donut"></canvas>
+          </div>
         </div>
         <div style="flex:1;min-width:280px;">
           <table class="data-table" style="width:100%;">
@@ -1428,7 +1437,6 @@ details.inci-toggle[open] summary::before{content:'▾ ';}
             <th style="text-align:left;padding:8px 10px;">#</th>
             <th style="text-align:left;padding:8px 10px;">Product</th>
             <th style="text-align:left;padding:8px 10px;">Amazon</th>
-            <th style="text-align:left;padding:8px 10px;">Website</th>
             <th style="text-align:left;padding:8px 10px;">Walmart</th>
             <th style="text-align:left;padding:8px 10px;">Total Units</th>
             <th style="text-align:left;padding:8px 10px;">Ads (Amazon)</th>
@@ -1436,7 +1444,7 @@ details.inci-toggle[open] summary::before{content:'▾ ';}
             <th style="text-align:left;padding:8px 10px;">Conv% (Amazon)</th>
           </tr>
         </thead>
-        <tbody id="ov-products-tbody"><tr><td colspan="9" style="text-align:center;padding:24px;color:var(--muted);">Loading…</td></tr></tbody>
+        <tbody id="ov-products-tbody"><tr><td colspan="8" style="text-align:center;padding:24px;color:var(--muted);">Loading…</td></tr></tbody>
       </table>
     </div>
 
@@ -1567,7 +1575,6 @@ details.inci-toggle[open] summary::before{content:'▾ ';}
       <div class="channel-tabs">
         <button class="ch-tab active" onclick="showChannel('sales','s-overview',this)">Overview</button>
         <button class="ch-tab" onclick="showChannel('sales','s-amazon',this)">Amazon</button>
-        <button class="ch-tab" onclick="showChannel('sales','s-website',this)">Website</button>
         <button class="ch-tab" onclick="showChannel('sales','s-walmart',this)">Walmart</button>
         <button class="ch-tab" onclick="showChannel('sales','s-brand-momentum',this)">Brand Momentum</button>
       </div>
@@ -1684,53 +1691,7 @@ details.inci-toggle[open] summary::before{content:'▾ ';}
       </div>
     </div>
 
-    <div class="channel-page" id="s-website">
-      <div class="channel-hdr">
-        <span style="font-size:16px;font-weight:600;color:var(--navy);">WEB — evolisproducts.com</span>
-        <span id="web-hdr-date" style="font-size:11px;color:var(--muted);">📅 Loading…</span>
-      </div>
-      <div class="kpi-row">
-        <div class="kpi-card kpi-card-tall" id="web-kpi-total-units"><div class="kpi-label">Total Units</div><div class="kpi-value">—</div><div class="kpi-mom flat">Loading…</div><div class="kpi-yoy flat"></div></div>
-        <div class="kpi-card kpi-card-tall" id="web-kpi-total-orders"><div class="kpi-label">Total Orders</div><div class="kpi-value">—</div><div class="kpi-mom flat">Loading…</div><div class="kpi-yoy flat"></div></div>
-        <div class="kpi-card kpi-card-tall" id="web-kpi-avg-order"><div class="kpi-label">Average Order</div><div class="kpi-value sm">—</div><div class="kpi-mom flat">Loading…</div></div>
-        <div class="kpi-card kpi-card-tall" id="web-kpi-units-ads"><div class="kpi-label">Units (Ads)</div><div class="kpi-value">—</div><div class="kpi-mom flat">Loading…</div></div>
-        <div class="kpi-card kpi-card-tall" id="web-kpi-units-organic"><div class="kpi-label">Units (Organic)</div><div class="kpi-value">—</div><div class="kpi-mom flat">Loading…</div></div>
-      </div>
-      <div class="card">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
-          <div class="card-title" style="margin-bottom:0;">Sales Revenue by Month</div>
-          <div id="legend-web" style="display:flex;align-items:center;"></div>
-        </div>
-        <div style="position:relative;height:320px;"><canvas id="chart-web"></canvas></div>
-      </div>
-      <div class="card" id="web-top-products-card">
-        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:14px;">
-          <span class="card-title" style="margin-bottom:0;">Sales by Product <span style="font-size:11px;color:var(--muted);font-weight:400;">(by Units)</span></span>
-          <span id="web-products-source" style="font-size:10px;color:var(--muted);"></span>
-        </div>
-        <div id="web-top-sellers-unavailable" style="display:none;padding:20px;text-align:center;color:var(--muted);font-size:12.5px;font-style:italic;">SKU-specific data not available for Last Year.</div>
-        <table class="data-table" id="web-top-sellers">
-          <thead><tr><th style="width:32px;">#</th><th>Product</th><th>Units</th><th>Units (Ads)</th><th>Units (Organic)</th></tr></thead>
-          <tbody id="web-tp-tbody"><tr><td colspan="5" style="text-align:center;padding:20px;color:var(--muted);font-style:italic;">Loading…</td></tr></tbody>
-        </table>
-      </div>
-      <div class="insight-bar">
-        <strong>Key Insight:</strong>
-        <span class="insight-text" id="web-insight-text">Loading…</span>
-        <div class="insight-actions">
-          <button class="btn-edit" id="web-insight-edit-btn">✏️ Edit</button>
-        </div>
-      </div>
-      <div class="insight-editor" id="web-insight-editor">
-        <textarea id="web-insight-textarea"></textarea>
-        <div class="editor-footer">
-          <span class="editor-note">Saves directly to the report sheet as a draft.</span>
-          <button class="btn-cancel" id="web-insight-cancel">Cancel</button>
-          <button class="btn-save-stage" id="web-insight-save">Save</button>
-        </div>
-      </div>
-    </div>
-
+    
     <div class="channel-page" id="s-walmart">
       <div class="channel-hdr">
         <span style="font-size:16px;font-weight:600;color:var(--navy);">Walmart</span>
@@ -1864,7 +1825,6 @@ details.inci-toggle[open] summary::before{content:'▾ ';}
       <div class="channel-tabs">
         <button class="ch-tab active" onclick="showChannel('sales-external','x-overview',this)">Overview</button>
         <button class="ch-tab" onclick="showChannel('sales-external','x-amazon',this)">Amazon</button>
-        <button class="ch-tab" onclick="showChannel('sales-external','x-website',this)">Website</button>
         <button class="ch-tab" onclick="showChannel('sales-external','x-walmart',this)">Walmart</button>
       </div>
     </div>
@@ -1925,41 +1885,7 @@ details.inci-toggle[open] summary::before{content:'▾ ';}
       </div>
     </div>
 
-    <div class="channel-page" id="x-website">
-      <div class="channel-hdr">
-        <span style="font-size:16px;font-weight:600;color:var(--navy);">WEB — evolisproducts.com</span>
-        <span id="x-web-hdr-date" style="font-size:11px;color:var(--muted);">📅 Loading…</span>
-      </div>
-      <div class="kpi-row">
-        <div class="kpi-card" id="x-web-kpi-total-units"><div class="kpi-label">Total Units</div><div class="kpi-value">—</div><div class="kpi-mom flat">Loading…</div></div>
-        <div class="kpi-card" id="x-web-kpi-total-orders"><div class="kpi-label">Total Orders</div><div class="kpi-value">—</div><div class="kpi-mom flat">Loading…</div></div>
-        <div class="kpi-card" id="x-web-kpi-avg-order"><div class="kpi-label">Average Order</div><div class="kpi-value sm">—</div><div class="kpi-mom flat">Loading…</div></div>
-        <div class="kpi-card" id="x-web-kpi-units-ads"><div class="kpi-label">Units (Ads)</div><div class="kpi-value">—</div><div class="kpi-mom flat">Loading…</div></div>
-        <div class="kpi-card" id="x-web-kpi-units-organic"><div class="kpi-label">Units (Organic)</div><div class="kpi-value">—</div><div class="kpi-mom flat">Loading…</div></div>
-      </div>
-      <div class="card">
-        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
-          <div class="card-title" style="margin-bottom:0;">Sales Revenue by Month</div>
-          <div id="legend-x-web" style="display:flex;align-items:center;"></div>
-        </div>
-        <div style="position:relative;height:320px;"><canvas id="x-chart-web"></canvas></div>
-      </div>
-      <div class="card" id="x-web-top-products-card">
-        <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:14px;">
-          <span class="card-title" style="margin-bottom:0;">Sales by Product <span style="font-size:11px;color:var(--muted);font-weight:400;">(by Units)</span></span>
-          <span id="x-web-products-source" style="font-size:10px;color:var(--muted);"></span>
-        </div>
-        <table class="data-table" id="x-web-top-sellers">
-          <thead><tr><th style="width:32px;">#</th><th>Product</th><th>Units</th><th>Units (Ads)</th><th>Units (Organic)</th></tr></thead>
-          <tbody id="x-web-tp-tbody"><tr><td colspan="5" style="text-align:center;padding:20px;color:var(--muted);font-style:italic;">Loading…</td></tr></tbody>
-        </table>
-      </div>
-      <div class="insight-bar" id="x-web-insight-bar">
-        <strong>Key Insight:</strong>
-        <span class="insight-text" id="x-web-insight-text"></span>
-      </div>
-    </div>
-
+    
     <div class="channel-page" id="x-walmart">
       <div class="channel-hdr">
         <span style="font-size:16px;font-weight:600;color:var(--navy);">Walmart</span>
@@ -4848,7 +4774,6 @@ function showPage(id, btn) {
   if (ac) {
     const cid = ac.id;
     if (cid==='s-amazon')        initAmazonLive();
-    if (cid==='s-website')       initWebLive();
     if (cid==='s-walmart')       initWalmartLive();
     // External Sales replica — one call regardless of which of its four
     // sub-tabs is active; initSalesExternalPage() itself resolves the
@@ -4873,7 +4798,6 @@ function showChannel(page, channelId, btn) {
     // own in-flight promise), so calling it again on repeat tab visits is
     // just a cheap early-return, not a duplicate fetch.
     if (channelId === 's-amazon')        initAmazonLive();
-    if (channelId === 's-website')       initWebLive();
     if (channelId === 's-walmart')       initWalmartLive();
     if (channelId === 's-brand-momentum') window.initBrandMomentum();
     if (channelId.indexOf('x-') === 0)   window.initSalesExternalPage();
@@ -4896,13 +4820,11 @@ function showChannel(page, channelId, btn) {
     if (page === 'sales') {
       const periodRow = document.getElementById('sales-period-row');
       if (periodRow) {
-        const isSalesChannelWithPeriod = ['s-amazon', 's-website', 's-walmart'].includes(channelId);
+        const isSalesChannelWithPeriod = ['s-amazon', 's-walmart'].includes(channelId);
         periodRow.style.display = isSalesChannelWithPeriod ? 'flex' : 'none';
         const amazonPills = document.getElementById('amazon-period-pills');
-        const webPills = document.getElementById('web-period-pills');
         const walmartPills = document.getElementById('walmart-period-pills');
         if (amazonPills) amazonPills.style.display = channelId === 's-amazon' ? 'flex' : 'none';
-        if (webPills) webPills.style.display = channelId === 's-website' ? 'flex' : 'none';
         if (walmartPills) walmartPills.style.display = channelId === 's-walmart' ? 'flex' : 'none';
       }
     }
@@ -15249,12 +15171,25 @@ window.initBrandMomentum = async function () {
     let prevYear = year, prevMonth = month - 1;
     if (prevMonth === 0) { prevMonth = 12; prevYear--; }
 
-    // évolis-specific product ASINs — every ASIN in Product Master whose
-    // brand matches évolis and channel includes Amazon (same pattern
-    // already established for Bundles/US-filter elsewhere on this page).
+    // Cloud Cafe's own product ASINs — every ASIN in Product Master whose
+    // brand matches Cloud Cafe and channel includes Amazon. FIXED — the
+    // Master SKU List's real "Brand" column value for this brand is
+    // "Cloud Cafe" (title case, space), confirmed by reading the actual
+    // sheet directly, not "cloud-cafe" (lowercase, hyphenated) like the
+    // Orders sheet's own brand column uses. Comparing against the wrong
+    // format meant this Set was silently empty, which is why every KPI/
+    // table on this tab that depends on it (Sessions, Reviews Collected,
+    // Keywords with Organic Rank, Review Velocity, Subcategory BSR) was
+    // broken even though the underlying Business Report/Reviews/Keyword
+    // Tracker data was completely real. Normalizing both sides (strip
+    // spaces AND hyphens before comparing) plus a SKU-prefix fallback
+    // makes this resilient to either convention, matching how the rest
+    // of this dashboard already guards against this exact inconsistency
+    // (see isEvolisRow elsewhere in this file).
+    const normBrand = s => (s || '').trim().toLowerCase().replace(/[\s-]/g, '');
     const evolisAsins = new Set(
       Object.values(master.byAsin)
-        .filter(e => (e.brand || '').trim().toLowerCase() === 'cloud-cafe' && (e.channel || '').toLowerCase().includes('amazon'))
+        .filter(e => (normBrand(e.brand) === 'cloudcafe' || (e.sku || '').toUpperCase().startsWith('CLC')) && (e.channel || '').toLowerCase().includes('amazon'))
         .map(e => e.asin)
     );
 
@@ -15413,9 +15348,13 @@ window.bmRenderBsrTable = function () {
   const { kwSummaryRows, master } = window_bmLastKwRows;
   const hideNegative = document.getElementById('bm-hide-negative-bsr')?.checked;
 
+  // Same brand-matching fix as initBrandMomentum above — Master SKU
+  // List's real value is "Cloud Cafe" (title case, space), not
+  // "cloud-cafe". Normalized + SKU-prefix fallback for resilience.
+  const normBrand = s => (s || '').trim().toLowerCase().replace(/[\s-]/g, '');
   const evolisAsins = new Set(
     Object.values(master.byAsin)
-      .filter(e => (e.brand || '').trim().toLowerCase() === 'cloud-cafe' && (e.channel || '').toLowerCase().includes('amazon'))
+      .filter(e => (normBrand(e.brand) === 'cloudcafe' || (e.sku || '').toUpperCase().startsWith('CLC')) && (e.channel || '').toLowerCase().includes('amazon'))
       .map(e => e.asin)
   );
 
@@ -20162,8 +20101,9 @@ async function loadAuditResultsFromSheet() {
         const advRow = advRows.find(r => parseInt(r.year, 10) === cfg.year && parseInt(r.month, 10) === cfg.month) || null;
         const noteEl = document.getElementById('ov-adtype-note');
         const tbody = document.getElementById('ov-adtype-tbody');
-        const canvasEl = document.getElementById('ov-adtype-donut');
-        if (!tbody || !canvasEl) return;
+        const spendCanvasEl = document.getElementById('ov-adtype-spend-donut');
+        const salesCanvasEl = document.getElementById('ov-adtype-sales-donut');
+        if (!tbody || !spendCanvasEl || !salesCanvasEl) return;
 
         // A field can be genuinely blank (this period predates SP/SB/SD
         // tracking for this brand — confirmed real for Cloud Cafe's own
@@ -20183,7 +20123,8 @@ async function loadAuditResultsFromSheet() {
           campaigns: advRow ? numOrBlank(advRow[t.key + '_campaigns_running']) : null,
         }));
 
-        if (window._ovAdTypeChart) { window._ovAdTypeChart.destroy(); window._ovAdTypeChart = null; }
+        if (window._ovAdTypeSpendChart) { window._ovAdTypeSpendChart.destroy(); window._ovAdTypeSpendChart = null; }
+        if (window._ovAdTypeSalesChart) { window._ovAdTypeSalesChart.destroy(); window._ovAdTypeSalesChart = null; }
 
         const hasBreakdown = types.some(t => t.spend !== null);
         if (!hasBreakdown) {
@@ -20193,6 +20134,7 @@ async function loadAuditResultsFromSheet() {
         }
 
         const totalSpend = types.reduce((s, t) => s + (t.spend || 0), 0);
+        const totalSales = types.reduce((s, t) => s + (t.sales || 0), 0);
         tbody.innerHTML = types.map(t => `
           <tr>
             <td>${t.label}</td>
@@ -20202,32 +20144,48 @@ async function loadAuditResultsFromSheet() {
             <td>${t.sales == null ? '<span class="tp-dash">—</span>' : '$' + t.sales.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</td>
           </tr>`).join('');
 
-        if (totalSpend === 0) {
-          if (noteEl) noteEl.textContent = 'ℹ No ad spend recorded for this period yet.';
+        if (totalSpend === 0 && totalSales === 0) {
+          if (noteEl) noteEl.textContent = 'ℹ No ad spend or ad sales recorded for this period yet.';
           return;
         }
 
-        const activeTypes = types.filter(t => (t.spend || 0) > 0);
+        // Spend and Sales can in principle be dominated by different ad
+        // types (e.g. a type with no current spend but trailing
+        // attribution sales inside Amazon's window) — checked
+        // independently rather than assumed to always match, even though
+        // Cloud Cafe's real data so far has them agreeing.
+        const activeSpendTypes = types.filter(t => (t.spend || 0) > 0);
+        const activeSalesTypes = types.filter(t => (t.sales || 0) > 0);
         if (noteEl) {
-          noteEl.textContent = activeTypes.length === 1
-            ? `ℹ 100% ${activeTypes[0].label} this period — no active ${types.filter(t => t !== activeTypes[0]).map(t => t.label).join(' or ')} spend.`
-            : '';
+          const oneType = t => `no active ${types.filter(x => x !== t).map(x => x.label).join(' or ')}`;
+          if (activeSpendTypes.length === 1 && activeSalesTypes.length === 1 && activeSpendTypes[0] === activeSalesTypes[0]) {
+            noteEl.textContent = `ℹ 100% ${activeSpendTypes[0].label} this period (Spend & Sales) — ${oneType(activeSpendTypes[0])} spend or sales.`;
+          } else {
+            const parts = [];
+            if (activeSpendTypes.length === 1) parts.push(`Spend: 100% ${activeSpendTypes[0].label}`);
+            if (activeSalesTypes.length === 1) parts.push(`Sales: 100% ${activeSalesTypes[0].label}`);
+            noteEl.textContent = parts.length ? `ℹ ${parts.join(' · ')}` : '';
+          }
         }
 
-        window._ovAdTypeChart = new Chart(canvasEl, {
-          type: 'doughnut',
-          data: {
-            labels: types.map(t => t.label),
-            datasets: [{ data: types.map(t => t.spend || 0), backgroundColor: types.map(t => t.color), borderWidth: 0 }]
-          },
-          options: {
-            responsive: true, maintainAspectRatio: false,
-            plugins: {
-              legend: { position: 'bottom', labels: { usePointStyle: true, boxWidth: 10, font: { size: 11 } } },
-              tooltip: { callbacks: { label: ctx => ` ${ctx.label}: $${ctx.parsed.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` } },
-            }
-          },
-        });
+        function buildDoughnut(canvasEl, dataKey, dollarPrefix) {
+          return new Chart(canvasEl, {
+            type: 'doughnut',
+            data: {
+              labels: types.map(t => t.label),
+              datasets: [{ data: types.map(t => t[dataKey] || 0), backgroundColor: types.map(t => t.color), borderWidth: 0 }]
+            },
+            options: {
+              responsive: true, maintainAspectRatio: false,
+              plugins: {
+                legend: { position: 'bottom', labels: { usePointStyle: true, boxWidth: 10, font: { size: 11 } } },
+                tooltip: { callbacks: { label: ctx => ` ${ctx.label}: ${dollarPrefix}${ctx.parsed.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}` } },
+              }
+            },
+          });
+        }
+        window._ovAdTypeSpendChart = buildDoughnut(spendCanvasEl, 'spend', '$');
+        window._ovAdTypeSalesChart = buildDoughnut(salesCanvasEl, 'sales', '$');
       })();
 
 
@@ -20695,29 +20653,32 @@ async function loadAuditResultsFromSheet() {
       }
 
       const productRows = Array.from(allAsins).map(asin => {
-        const a = amzUnitsByAsin[asin] || 0, w = webUnitsByAsin[asin] || 0, m = wmtUnitsByAsin[asin] || 0;
-        const aPrev = amzPrevUnitsByAsin[asin] || 0, wPrev = webPrevUnitsByAsin[asin] || 0, mPrev = wmtPrevUnitsByAsin[asin] || 0;
-        const total = a + w + m, totalPrev = aPrev + wPrev + mPrev;
-        // Ad units = Amazon Ads (capped at Amazon's own net units) + Google
-        // Ads via the "shopping" tab (capped at Website's own net units)
-        // + Walmart Ads (capped at Walmart's own net units, added
+        // Cloud Cafe has no Website/DTC channel — Top Selling Products is
+        // Amazon + Walmart only (per Jaclyn). Website's own unit maps
+        // (webUnitsByAsin etc.) are left untouched here since other parts
+        // of this page still use them; this table just stops folding them
+        // in.
+        const a = amzUnitsByAsin[asin] || 0, m = wmtUnitsByAsin[asin] || 0;
+        const aPrev = amzPrevUnitsByAsin[asin] || 0, mPrev = wmtPrevUnitsByAsin[asin] || 0;
+        const total = a + m, totalPrev = aPrev + mPrev;
+        // Ad units = Amazon Ads (capped at Amazon's own net units) +
+        // Walmart Ads (capped at Walmart's own net units, added
         // 2026-08-06 per Jaclyn).
-        const adUnits = Math.min(adUnitsByAsin[asin] || 0, a) + Math.min(webShopUnitsByAsin[asin] || 0, w) + Math.min(wmtAdUnitsByAsin[asin] || 0, m);
+        const adUnits = Math.min(adUnitsByAsin[asin] || 0, a) + Math.min(wmtAdUnitsByAsin[asin] || 0, m);
         const orgUnits = total - adUnits;
-        return { asin, name: asinNameMap[asin] || asin, amazon: a, amazonPrev: aPrev, website: w, websitePrev: wPrev, walmart: m, walmartPrev: mPrev, total, totalPrev, adUnits, orgUnits };
+        return { asin, name: asinNameMap[asin] || asin, amazon: a, amazonPrev: aPrev, walmart: m, walmartPrev: mPrev, total, totalPrev, adUnits, orgUnits };
       }).sort((x, y) => y.total - x.total).slice(0, 15);
 
       const tbody = document.getElementById('ov-products-tbody');
       if (tbody) {
         if (!productRows.length) {
-          tbody.innerHTML = '<tr><td colspan="9" style="text-align:center;padding:24px;color:var(--muted);">No sales yet this month.</td></tr>';
+          tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:24px;color:var(--muted);">No sales yet this month.</td></tr>';
         } else {
           tbody.innerHTML = productRows.map((r, i) => `
             <tr>
               <td style="padding:7px 10px;">${i + 1}.</td>
               <td style="padding:7px 10px;">${r.name}</td>
               <td style="padding:7px 10px;"><div class="tp-cell">${unitCell(r.amazon, r.amazonPrev)}</div></td>
-              <td style="padding:7px 10px;"><div class="tp-cell">${unitCell(r.website, r.websitePrev)}</div></td>
               <td style="padding:7px 10px;"><div class="tp-cell">${unitCell(r.walmart, r.walmartPrev)}</div></td>
               <td style="padding:7px 10px;"><div class="tp-cell">${unitCell(r.total, r.totalPrev)}</div></td>
               <td style="padding:7px 10px;">${r.adUnits > 0 ? `<span class="tp-units">${r.adUnits.toLocaleString()}</span>` : '<span class="tp-dash">—</span>'}</td>
