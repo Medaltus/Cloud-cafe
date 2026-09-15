@@ -2505,8 +2505,8 @@ details.inci-toggle[open] summary::before{content:'▾ ';}
       <div class="evs-hero">
         <div>
           <div class="evs-eyebrow">Event Strategy</div>
-          <div class="evs-headline">Amazon Prime Day</div>
-          <div class="evs-dates">June 23 – 26, 2026</div>
+          <div class="evs-headline" id="evs-headline">Amazon Prime Day</div>
+          <div class="evs-dates" id="evs-dates">June 23 – 26, 2026</div>
         </div>
         <div class="evs-badge">
           <div class="evs-badge-pct">20%<span>OFF</span></div>
@@ -4784,6 +4784,7 @@ function showPage(id, btn) {
     if (cid==='m-stewardship')   window.initStewardshipLive();
     if (cid==='m-fulfillment-cs') window.initMarketingFulfillmentCS();
     if (cid==='m-opportunities' && !window._snsChart) initSns();
+    if (cid==='ev-strategy' && typeof window.initEventStrategyHeader === 'function') window.initEventStrategyHeader();
   }
 }
 
@@ -4809,6 +4810,7 @@ function showChannel(page, channelId, btn) {
     if (channelId === 'ev-spring')       window.initBigSpringSaleReport();
     if (channelId === 'ev-pbdd')         window.initPBDDReport();
     if (channelId === 'ev-bfcm')         window.initBFCMReport();
+    if (channelId === 'ev-strategy' && typeof window.initEventStrategyHeader === 'function') window.initEventStrategyHeader();
     if (channelId === 'inv-oos-log')     window.initOosLog();
     if (channelId === 'm-fulfillment-cs') window.initMarketingFulfillmentCS();
 
@@ -17172,6 +17174,53 @@ function parseCsvToRows(text) {
   }).filter(row => Object.values(row).some(v => v));
 }
 
+// ── Event Strategy page header (Events > Strategy tab) — added per
+// Jaclyn. Was fully hardcoded ("Amazon Prime Day" / "June 23 – 26,
+// 2026") with zero JS wiring at all, so it silently went stale the
+// moment a newer event got added to the sheet. Now pulls the LAST row
+// of the Events tab (whichever event was most recently added — no
+// "which one is next" logic to keep in sync with a calendar) and
+// derives both the title and the dates from it. Placed in this same
+// <script> block deliberately, right after parseCsvToRows, so that
+// function is actually in scope here rather than assumed to be — this
+// file's <script> tags don't share scope with each other.
+window.initEventStrategyHeader = async function () {
+  const headlineEl = document.getElementById('evs-headline');
+  const datesEl = document.getElementById('evs-dates');
+  if (!headlineEl || !datesEl) return;
+  try {
+    const csv = await fetch(`https://docs.google.com/spreadsheets/d/${window.SHEET_CFG.SHEET_EVENTS.fileId}/export?format=csv&gid=${window.SHEET_CFG.SHEET_EVENTS.gid}&_cb=${Date.now()}`).then(r => r.ok ? r.text() : '').catch(() => '');
+    const rows = parseCsvToRows(csv);
+    if (!rows.length) return;
+    const last = rows[rows.length - 1];
+
+    const rawName = (last['event name'] || '').trim();
+    if (rawName) {
+      headlineEl.textContent = /^amazon\b/i.test(rawName) ? rawName : `Amazon ${rawName}`;
+    }
+
+    // A start/end cell can be a real date, blank, or literally "TBD" (any
+    // case) — per Jaclyn, typing "Dates TBD" into either column before
+    // real dates are confirmed should show "Dates TBD" here rather than
+    // trying (and failing) to parse it as a date.
+    const isTbd = v => !v || !v.trim() || v.trim().toUpperCase() === 'TBD';
+    const startRaw = last.start_date || '';
+    const endRaw = last.end_date || '';
+    if (isTbd(startRaw) || isTbd(endRaw)) {
+      datesEl.textContent = 'Dates TBD';
+    } else {
+      const fmt = d => {
+        const dt = new Date(d.trim() + 'T00:00:00');
+        return isNaN(dt.getTime()) ? null : dt.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+      };
+      const startFmt = fmt(startRaw), endFmt = fmt(endRaw);
+      datesEl.textContent = (startFmt && endFmt) ? `${startFmt} – ${endFmt}` : 'Dates TBD';
+    }
+  } catch (err) {
+    console.warn('[Cloud Cafe][EventStrategy] failed:', err.message);
+  }
+};
+
 async function parseAllFiles() {
   for (const type of ['kw','biz','ppc','sqp']) {
     for (const file of (_upFiles[type]||[])) {
@@ -19007,7 +19056,7 @@ async function loadAuditResultsFromSheet() {
     return full + ' ' + m[2];
   }
 
-  function pdfxHeaderBand(monthYear, activeTab) {
+  function pdfxHeaderBand(monthYear, activeTab, tagOverride, valueOverride) {
     const tabs = ['Sales', 'Fulfillment & Customer Service', 'Brand Stewardship', 'Opportunities', 'Events'];
     const tabsHtml = tabs.map(function (t) {
       return '<span class="pdfx-tab' + (t === activeTab ? ' on' : '') + '">' + t + '</span>';
@@ -19015,7 +19064,7 @@ async function loadAuditResultsFromSheet() {
     return '<div class="pdfx-topband">' +
       '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">' +
         '<span class="pdfx-logo-navy" style="margin-left:-30.5px;display:inline-block;">' + pdfxLogoHtml('height:40px;width:auto;filter:brightness(0) invert(1);') + '</span>' +
-        '<div class="pdfx-tagright"><div class="pdfx-hdr-tag">Brand Performance Report</div><div class="pdfx-hdr-month">' + pdfxEscape(monthYear) + '</div></div>' +
+        '<div class="pdfx-tagright"><div class="pdfx-hdr-tag">' + pdfxEscape(tagOverride || 'Brand Performance Report') + '</div><div class="pdfx-hdr-month">' + pdfxEscape(valueOverride || monthYear) + '</div></div>' +
       '</div>' +
       '<div class="pdfx-tabs">' + tabsHtml + '</div>' +
       '</div>' +
@@ -19346,22 +19395,35 @@ async function loadAuditResultsFromSheet() {
       '</div>' + itemsHtml + '</div>';
   }
   function buildStrategyPage(monthYear) {
+    // Header band, just for this page: swaps "Brand Performance Report" /
+    // monthYear for the actual event name + its dates — per Jaclyn, this
+    // page doesn't have room to also show the KPI/exec-summary blocks
+    // other event pages use to surface that info, so it needs to live in
+    // the header band itself instead. Reads straight from the live
+    // #evs-headline/#evs-dates elements (same ones window.initEventStrategy
+    // Header() populates on the dashboard) rather than re-fetching the
+    // Events sheet here — matching how every other PDF section already
+    // reuses whatever's already rendered on the live page rather than
+    // pulling its own separate copy. Falls back to the normal header if
+    // those elements are ever empty, so this never renders a blank one.
+    const eventName = pdfxText('#evs-headline');
+    const eventDates = pdfxText('#evs-dates');
     const leadUp = pdfxStrategyPhase('lead-up', 'Phase 01', 'Lead Up', 'Prepare',
-      pdfxStrategyItem('Listings &amp; SEO', 'Refresh listing content, images, and A+ Content to ensure <strong>maximum search visibility and conversion readiness</strong> before traffic surges.') +
+      pdfxStrategyItem('Listings & SEO', 'Refresh listing content, images, and A+ Content to ensure <strong>maximum search visibility and conversion readiness</strong> before traffic surges.') +
       pdfxStrategyItem('Advertising', 'Gradually <strong>increase budgets 1.5–3x and bids 10%+</strong> in the 7–14 days prior to warm the algorithm and activate event-specific campaigns.') +
-      pdfxStrategyItem('Promotions &amp; Pricing', 'Finalize Prime Exclusive Discounts and <strong>confirm all deals are submitted, eligible, and approved</strong> with sufficient lead time.') +
-      pdfxStrategyItem('Inventory &amp; Operations', 'Confirm FBA stock coverage, inbound timelines, and <strong>buffer inventory levels to prevent sell-outs</strong> during peak demand.') +
-      pdfxStrategyItem('Creative &amp; Storefront', 'Upload refreshed imagery and <strong>add promotional banners and curated storefront landing pages</strong> optimized for high-traffic event conditions.') +
+      pdfxStrategyItem('Promotions & Pricing', 'Finalize Prime Exclusive Discounts and <strong>confirm all deals are submitted, eligible, and approved</strong> with sufficient lead time.') +
+      pdfxStrategyItem('Inventory & Operations', 'Confirm FBA stock coverage, inbound timelines, and <strong>buffer inventory levels to prevent sell-outs</strong> during peak demand.') +
+      pdfxStrategyItem('Creative & Storefront', 'Upload refreshed imagery and <strong>add promotional banners and curated storefront landing pages</strong> optimized for high-traffic event conditions.') +
       pdfxStrategyItem('Content Health Check', 'Resolve any listing suppressions, Q&amp;A gaps, and negative review flags <strong>before traffic surges</strong> — a suppressed listing during an event is a direct missed opportunity.')
     );
     const during = pdfxStrategyPhase('during', 'Phase 02', 'During', 'Execute',
       pdfxStrategyItem('Real-Time Ad Optimization', '<strong>Increase budgets 2–4x and bids 20%+</strong> as CPCs rise. Reallocate spend to top performers in real time across all ad placements.') +
-      pdfxStrategyItem('Deal &amp; Buy Box Monitoring', 'Ensure all discounts are active and the <strong>Buy Box is stable</strong>. Resolve any pricing issues immediately — lost Buy Box is direct lost revenue.') +
-      pdfxStrategyItem('Listing &amp; Inventory Health', 'Monitor for suppressed listings and <strong>low-inventory alerts in real time</strong> to prevent conversion interruptions across the event window.') +
+      pdfxStrategyItem('Deal & Buy Box Monitoring', 'Ensure all discounts are active and the <strong>Buy Box is stable</strong>. Resolve any pricing issues immediately — lost Buy Box is direct lost revenue.') +
+      pdfxStrategyItem('Listing & Inventory Health', 'Monitor for suppressed listings and <strong>low-inventory alerts in real time</strong> to prevent conversion interruptions across the event window.') +
       pdfxStrategyItem('Performance Tracking', 'Watch sessions, conversion rate, ACOS, and sell-through velocity continuously. <strong>Make decisions from live data</strong>, not post-event analysis.')
     );
     const leadOut = pdfxStrategyPhase('lead-out', 'Phase 03', 'Lead Out', 'Capitalize',
-      pdfxStrategyItem('Retargeting &amp; Display', 'Run Sponsored Display ads to <strong>re-engage shoppers who viewed but didn\u2019t convert</strong> during the event window.') +
+      pdfxStrategyItem('Retargeting & Display', 'Run Sponsored Display ads to <strong>re-engage shoppers who viewed but didn\u2019t convert</strong> during the event window.') +
       pdfxStrategyItem('Listing Refinement', 'Update keywords and creatives using <strong>what actually converted</strong> during the event — real data is the best optimization input.') +
       pdfxStrategyItem('Brand Halo Expansion', 'Capitalize on new-to-brand traffic with <strong>cross-sell and complementary product campaigns</strong> to increase basket size.') +
       pdfxStrategyItem('Inventory Replenishment', 'Adjust restock strategies based on <strong>post-event velocity and new customer acquisition rates</strong>.') +
@@ -19384,7 +19446,7 @@ async function loadAuditResultsFromSheet() {
     // this looks clean rather than cramped — can't visually verify
     // page-break behavior from here.
     const page1 = '<div class="pdfx-page"><div class="pdfx-inner">' +
-      pdfxHeaderBand(monthYear, 'Events') +
+      pdfxHeaderBand(monthYear, 'Events', eventName, eventDates) +
       '<div class="pdfx-chlabel">Event Strategy</div>' +
       leadUp + during + leadOut + outlook +
       pdfxFooter(monthYear) +
