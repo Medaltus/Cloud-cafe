@@ -6813,10 +6813,10 @@ async function initSns() {
         if (m > month) { impCurr.push(null); }
         else {
           const row = findRow(year, m);
-          impCurr.push(row ? (parseInt(row.impressions, 10) || 0) : null);
+          impCurr.push(row ? parseAmt(row.impressions) : null);
         }
         const prevRow = findRow(year - 1, m);
-        impPrev.push(prevRow ? (parseInt(prevRow.impressions, 10) || 0) : null);
+        impPrev.push(prevRow ? parseAmt(prevRow.impressions) : null);
       });
 
       renderStewardshipCharts(
@@ -6830,8 +6830,8 @@ async function initSns() {
 
       const clicksCurr      = rowCurr ? (parseInt(rowCurr.clicks, 10) || 0) : null;
       const clicksPrev      = rowPrev ? (parseInt(rowPrev.clicks, 10) || 0) : null;
-      const impressionsCurr = rowCurr ? (parseInt(rowCurr.impressions, 10) || 0) : null;
-      const impressionsPrev = rowPrev ? (parseInt(rowPrev.impressions, 10) || 0) : null;
+      const impressionsCurr = rowCurr ? parseAmt(rowCurr.impressions) : null;
+      const impressionsPrev = rowPrev ? parseAmt(rowPrev.impressions) : null;
       const adUnitsCurr     = rowCurr ? (parseInt(rowCurr.ad_units, 10) || 0) : 0;
       const adUnitsPrev     = rowPrev ? (parseInt(rowPrev.ad_units, 10) || 0) : 0;
       const unitsCurr       = rowCurr ? (parseInt(rowCurr.units, 10) || 0) : 0;
@@ -9521,10 +9521,10 @@ async function initSns() {
         if (m > month) { impCurr.push(null); }
         else {
           const row = findRow(year, m);
-          impCurr.push(row ? (parseInt(row.impressions, 10) || 0) : null);
+          impCurr.push(row ? parseAmt(row.impressions) : null);
         }
         const prevRow = findRow(year - 1, m);
-        impPrev.push(prevRow ? (parseInt(prevRow.impressions, 10) || 0) : null);
+        impPrev.push(prevRow ? parseAmt(prevRow.impressions) : null);
       });
 
       renderStewardshipChartsExternal(
@@ -9558,8 +9558,8 @@ async function initSns() {
 
       const clicksCurr      = rowCurr ? (parseInt(rowCurr.clicks, 10) || 0) : null;
       const clicksPrev      = rowPrev ? (parseInt(rowPrev.clicks, 10) || 0) : null;
-      const impressionsCurr = rowCurr ? (parseInt(rowCurr.impressions, 10) || 0) : null;
-      const impressionsPrev = rowPrev ? (parseInt(rowPrev.impressions, 10) || 0) : null;
+      const impressionsCurr = rowCurr ? parseAmt(rowCurr.impressions) : null;
+      const impressionsPrev = rowPrev ? parseAmt(rowPrev.impressions) : null;
       const adUnitsCurr     = rowCurr ? (parseInt(rowCurr.ad_units, 10) || 0) : 0;
       const adUnitsPrev     = rowPrev ? (parseInt(rowPrev.ad_units, 10) || 0) : 0;
       const unitsCurr       = rowCurr ? (parseInt(rowCurr.units, 10) || 0) : 0;
