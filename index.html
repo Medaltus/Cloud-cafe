@@ -969,6 +969,7 @@ details.inci-toggle[open] summary::before{content:'▾ ';}
 .pdfx-hdr-right{text-align:right;}
 .pdfx-hdr-tag{font-size:9.5px;font-weight:700;letter-spacing:.14em;text-transform:uppercase;color:rgba(255,255,255,.55);font-family:var(--font-subheader);}
 .pdfx-hdr-month{font-family:var(--font-subheader);font-size:17px;color:#fff;margin-top:3px;}
+.pdfx-hdr-subdate{font-size:10.5px;color:rgba(255,255,255,.6);margin-top:2px;}
 .pdfx-cover-eyebrow{font-size:10px;font-weight:400;font-family:var(--font-body-light);letter-spacing:.16em;text-transform:uppercase;color:var(--green);margin-bottom:12px;}
 .pdfx-cover-title{font-family:var(--font-subheader);font-weight:700;font-size:38px;line-height:1.14;margin-bottom:18px;}
 .pdfx-cover-rule{width:44px;height:2px;background:var(--green);margin-bottom:20px;}
@@ -1213,7 +1214,6 @@ details.inci-toggle[open] summary::before{content:'▾ ';}
              anyone who doesn't touch these gets today's existing behavior
              (all three Sales channels always included). -->
         <label style="display:flex;align-items:center;gap:4px;cursor:pointer;flex-shrink:0;"><input type="checkbox" id="pdf-include-amazon" checked style="margin:0;"> Amazon</label>
-        <label style="display:flex;align-items:center;gap:4px;cursor:pointer;flex-shrink:0;"><input type="checkbox" id="pdf-include-website" checked style="margin:0;"> Website</label>
         <label style="display:flex;align-items:center;gap:4px;cursor:pointer;flex-shrink:0;"><input type="checkbox" id="pdf-include-walmart" checked style="margin:0;"> Walmart</label>
         <!-- Marketing pages — same default-checked reasoning as Sales above. -->
         <label style="display:flex;align-items:center;gap:4px;cursor:pointer;flex-shrink:0;"><input type="checkbox" id="pdf-include-fulfillment" checked style="margin:0;"> Fulfillment &amp; CS</label>
@@ -17197,6 +17197,10 @@ window.initEventStrategyHeader = async function () {
     const rawName = (last['event name'] || '').trim();
     if (rawName) {
       headlineEl.textContent = /^amazon\b/i.test(rawName) ? rawName : `Amazon ${rawName}`;
+      // Raw (un-prefixed) name stashed here too — the PDF export's
+      // Strategy-page header wants just "Prime Big Deal Days", not the
+      // "Amazon "-prefixed version used in the on-page headline.
+      headlineEl.dataset.rawName = rawName;
     }
 
     // A start/end cell can be a real date, blank, or literally "TBD" (any
@@ -17208,13 +17212,30 @@ window.initEventStrategyHeader = async function () {
     const endRaw = last.end_date || '';
     if (isTbd(startRaw) || isTbd(endRaw)) {
       datesEl.textContent = 'Dates TBD';
+      datesEl.dataset.compact = 'Dates TBD';
     } else {
-      const fmt = d => {
+      const parse = d => {
         const dt = new Date(d.trim() + 'T00:00:00');
-        return isNaN(dt.getTime()) ? null : dt.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        return isNaN(dt.getTime()) ? null : dt;
       };
-      const startFmt = fmt(startRaw), endFmt = fmt(endRaw);
-      datesEl.textContent = (startFmt && endFmt) ? `${startFmt} – ${endFmt}` : 'Dates TBD';
+      const startDt = parse(startRaw), endDt = parse(endRaw);
+      if (startDt && endDt) {
+        const fmt = dt => dt.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+        datesEl.textContent = `${fmt(startDt)} – ${fmt(endDt)}`;
+
+        // Compact form for the PDF export's small header sub-line — e.g.
+        // "Oct 6-7, 2026" when both dates fall in the same month/year
+        // (the common case), falling back to spelling out both months
+        // when an event spans a month or year boundary (e.g. BFCM).
+        const sameMonth = startDt.getMonth() === endDt.getMonth() && startDt.getFullYear() === endDt.getFullYear();
+        const monthShort = dt => dt.toLocaleDateString('en-US', { month: 'short' });
+        datesEl.dataset.compact = sameMonth
+          ? `${monthShort(startDt)} ${startDt.getDate()}-${endDt.getDate()}, ${endDt.getFullYear()}`
+          : `${monthShort(startDt)} ${startDt.getDate()} - ${monthShort(endDt)} ${endDt.getDate()}, ${endDt.getFullYear()}`;
+      } else {
+        datesEl.textContent = 'Dates TBD';
+        datesEl.dataset.compact = 'Dates TBD';
+      }
     }
   } catch (err) {
     console.warn('[Cloud Cafe][EventStrategy] failed:', err.message);
@@ -19056,15 +19077,20 @@ async function loadAuditResultsFromSheet() {
     return full + ' ' + m[2];
   }
 
-  function pdfxHeaderBand(monthYear, activeTab, tagOverride, valueOverride) {
-    const tabs = ['Sales', 'Fulfillment & Customer Service', 'Brand Stewardship', 'Opportunities', 'Events'];
+  function pdfxHeaderBand(monthYear, activeTab, tagOverride, valueOverride, subValueOverride) {
+    // "Fulfillment & Customer Service" deliberately left out of this list
+    // per Jaclyn (2026-09-15) — the page/content itself still builds fine
+    // via its own "Include in PDF" checkbox, this just keeps it off the
+    // tab strip shown at the top of every exported page for now. To bring
+    // it back, add 'Fulfillment & Customer Service' back into this array.
+    const tabs = ['Sales', 'Brand Stewardship', 'Opportunities', 'Events'];
     const tabsHtml = tabs.map(function (t) {
       return '<span class="pdfx-tab' + (t === activeTab ? ' on' : '') + '">' + t + '</span>';
     }).join('');
     return '<div class="pdfx-topband">' +
       '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;">' +
         '<span class="pdfx-logo-navy" style="margin-left:-30.5px;display:inline-block;">' + pdfxLogoHtml('height:40px;width:auto;filter:brightness(0) invert(1);') + '</span>' +
-        '<div class="pdfx-tagright"><div class="pdfx-hdr-tag">' + pdfxEscape(tagOverride || 'Brand Performance Report') + '</div><div class="pdfx-hdr-month">' + pdfxEscape(valueOverride || monthYear) + '</div></div>' +
+        '<div class="pdfx-tagright"><div class="pdfx-hdr-tag">' + pdfxEscape(tagOverride || 'Brand Performance Report') + '</div><div class="pdfx-hdr-month">' + pdfxEscape(valueOverride || monthYear) + '</div>' + (subValueOverride ? '<div class="pdfx-hdr-subdate">' + pdfxEscape(subValueOverride) + '</div>' : '') + '</div>' +
       '</div>' +
       '<div class="pdfx-tabs">' + tabsHtml + '</div>' +
       '</div>' +
@@ -19121,27 +19147,6 @@ async function loadAuditResultsFromSheet() {
           '<div class="pdfx-chrow"><span class="pdfx-chname">Amazon</span><span class="pdfx-chdate">' + pdfxEscape(dateRange) + '</span></div>' +
           '<div class="pdfx-kpis">' + kpis.map(pdfxKpiCardHtml).join('') + '</div>' +
           '<div class="pdfx-card"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;"><div class="pdfx-card-title" style="margin-bottom:0;">Sales Revenue by Month</div><div>' + pdfxLegendHtml('legend-amazon') + '</div></div>' + pdfxChartBlock('_amazonChart') + '</div>' +
-          '<div class="pdfx-card"><div class="pdfx-card-title">Top Selling Products <span style="font-weight:400;color:var(--muted);">(by Units)</span></div>' +
-            pdfxTableHtml(['#', 'Product', 'Units', 'Units (Ads)', 'Units (Organic)'], rows) +
-          '</div>' +
-          (insight ? '<div class="pdfx-insight"><strong>Key Insight:</strong> ' + pdfxEscape(insight) + '</div>' : '') +
-        '</div>' +
-      '</div>';
-  }
-
-  function buildWebsitePage(monthYear) {
-    const dateRange = pdfxText('#web-hdr-date').replace('📅', '').trim();
-    const kpis = ['web-kpi-total-units', 'web-kpi-total-orders', 'web-kpi-avg-order', 'web-kpi-units-ads', 'web-kpi-units-organic'].map(pdfxKpi);
-    const rows = pdfxTableRows('web-tp-tbody');
-    const insight = pdfxText('#web-insight-text');
-    return '' +
-      '<div class="pdfx-page">' +
-        '<div class="pdfx-inner">' +
-          pdfxHeaderBand(monthYear, 'Sales') +
-          '<div class="pdfx-chlabel">Channel Performance</div>' +
-          '<div class="pdfx-chrow"><span class="pdfx-chname">Web — evolisproducts.com</span><span class="pdfx-chdate">' + pdfxEscape(dateRange) + '</span></div>' +
-          '<div class="pdfx-kpis">' + kpis.map(pdfxKpiCardHtml).join('') + '</div>' +
-          '<div class="pdfx-card"><div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;"><div class="pdfx-card-title" style="margin-bottom:0;">Sales by Month</div><div>' + pdfxLegendHtml('legend-web') + '</div></div>' + pdfxChartBlock('_webChart') + '</div>' +
           '<div class="pdfx-card"><div class="pdfx-card-title">Top Selling Products <span style="font-weight:400;color:var(--muted);">(by Units)</span></div>' +
             pdfxTableHtml(['#', 'Product', 'Units', 'Units (Ads)', 'Units (Organic)'], rows) +
           '</div>' +
@@ -19395,19 +19400,26 @@ async function loadAuditResultsFromSheet() {
       '</div>' + itemsHtml + '</div>';
   }
   function buildStrategyPage(monthYear) {
-    // Header band, just for this page: swaps "Brand Performance Report" /
-    // monthYear for the actual event name + its dates — per Jaclyn, this
-    // page doesn't have room to also show the KPI/exec-summary blocks
-    // other event pages use to surface that info, so it needs to live in
-    // the header band itself instead. Reads straight from the live
-    // #evs-headline/#evs-dates elements (same ones window.initEventStrategy
-    // Header() populates on the dashboard) rather than re-fetching the
-    // Events sheet here — matching how every other PDF section already
-    // reuses whatever's already rendered on the live page rather than
-    // pulling its own separate copy. Falls back to the normal header if
-    // those elements are ever empty, so this never renders a blank one.
-    const eventName = pdfxText('#evs-headline');
-    const eventDates = pdfxText('#evs-dates');
+    // Header band, just for this page: keeps "Brand Performance Report" as
+    // the tag line (per Jaclyn, 2026-09-15 — reverting an earlier attempt
+    // that swapped that line too), but replaces the "August 2026"-style
+    // monthYear value with the actual event name, plus a smaller date
+    // line underneath. Reads straight from the live #evs-headline/
+    // #evs-dates elements (same ones window.initEventStrategyHeader()
+    // populates on the dashboard) rather than re-fetching the Events
+    // sheet here — matching how every other PDF section already reuses
+    // whatever's already rendered on the live page. eventName strips the
+    // "Amazon " prefix that the on-page headline carries (this page wants
+    // just "Prime Big Deal Days"); eventDatesCompact is the short
+    // same-line form ("Oct 6-7, 2026") stashed as a data attribute
+    // specifically for this narrow header space, distinct from the
+    // fuller "Oct 6, 2026 – Oct 7, 2026" used in the dashboard's own
+    // #evs-dates text. Falls back gracefully if those elements are ever
+    // empty, so this never renders a blank header.
+    const evsHeadlineEl = document.querySelector('#evs-headline');
+    const evsDatesEl = document.querySelector('#evs-dates');
+    const eventName = evsHeadlineEl ? (evsHeadlineEl.dataset.rawName || evsHeadlineEl.textContent.trim().replace(/^Amazon\s+/i, '')) : '';
+    const eventDatesCompact = evsDatesEl ? (evsDatesEl.dataset.compact || evsDatesEl.textContent.trim()) : '';
     const leadUp = pdfxStrategyPhase('lead-up', 'Phase 01', 'Lead Up', 'Prepare',
       pdfxStrategyItem('Listings & SEO', 'Refresh listing content, images, and A+ Content to ensure <strong>maximum search visibility and conversion readiness</strong> before traffic surges.') +
       pdfxStrategyItem('Advertising', 'Gradually <strong>increase budgets 1.5–3x and bids 10%+</strong> in the 7–14 days prior to warm the algorithm and activate event-specific campaigns.') +
@@ -19446,7 +19458,7 @@ async function loadAuditResultsFromSheet() {
     // this looks clean rather than cramped — can't visually verify
     // page-break behavior from here.
     const page1 = '<div class="pdfx-page"><div class="pdfx-inner">' +
-      pdfxHeaderBand(monthYear, 'Events', eventName, eventDates) +
+      pdfxHeaderBand(monthYear, 'Events', null, eventName, eventDatesCompact) +
       '<div class="pdfx-chlabel">Event Strategy</div>' +
       leadUp + during + leadOut + outlook +
       pdfxFooter(monthYear) +
@@ -19539,7 +19551,6 @@ async function loadAuditResultsFromSheet() {
       // behavior; Events keys still default unchecked, unchanged.
       const includeSections = {
         amazon:        !!document.getElementById('pdf-include-amazon')        && document.getElementById('pdf-include-amazon').checked,
-        website:       !!document.getElementById('pdf-include-website')       && document.getElementById('pdf-include-website').checked,
         walmart:       !!document.getElementById('pdf-include-walmart')       && document.getElementById('pdf-include-walmart').checked,
         fulfillment:   !!document.getElementById('pdf-include-fulfillment')   && document.getElementById('pdf-include-fulfillment').checked,
         stewardship:   !!document.getElementById('pdf-include-stewardship')   && document.getElementById('pdf-include-stewardship').checked,
@@ -19556,7 +19567,6 @@ async function loadAuditResultsFromSheet() {
         // these ran unconditionally on every export regardless of what was
         // actually going into the PDF.
         (includeSections.amazon        && typeof window.initAmazonLive === 'function')            ? window.initAmazonLive()            : null,
-        (includeSections.website       && typeof window.initWebLive === 'function')                ? window.initWebLive()                : null,
         (includeSections.walmart       && typeof window.initWalmartLive === 'function')            ? window.initWalmartLive()            : null,
         (includeSections.stewardship   && typeof window.initStewardshipLive === 'function')        ? window.initStewardshipLive()        : null,
         (includeSections.fulfillment   && typeof window.initMarketingFulfillmentCS === 'function')  ? window.initMarketingFulfillmentCS() : null,
@@ -19638,7 +19648,6 @@ async function loadAuditResultsFromSheet() {
       // checkbox pattern as the 5 event pages below.
       const salesMarketingPages = [
         includeSections.amazon        ? buildAmazonPage(monthYear)        : '',
-        includeSections.website       ? buildWebsitePage(monthYear)       : '',
         includeSections.walmart       ? buildWalmartPage(monthYear)       : '',
         includeSections.fulfillment   ? buildFulfillmentCsPage(monthYear) : '',
         includeSections.stewardship   ? buildStewardshipPage(monthYear)   : '',
