@@ -20047,7 +20047,7 @@ async function loadAuditResultsFromSheet() {
         pdf.addImage(imgData, 'JPEG', 0, 0, pageWidthIn, Math.min(renderedHeightIn, pageHeightIn));
       }
 
-      const filename = 'Evolis_Partnership_Report_' + (monthYear ? monthYear.replace(' ', '_') : 'Report') + '.pdf';
+      const filename = 'Cloud_Cafe_Partnership_Report_' + (monthYear ? monthYear.replace(' ', '_') : 'Report') + '.pdf';
       pdf.save(filename);
       console.log('[pdf-export] pdf.save() called — download should start now');
 
