@@ -21065,6 +21065,60 @@ async function loadAuditResultsFromSheet() {
           return rows.find(r => (r[0] || '').trim() === target) || null;
         }
 
+        // Cancellation-Rate-Adjusted Projections — ported from MiGuard's
+        // build (spec doc, 2026-09-16). Discounts the run-rate projection
+        // by the brand's own real historical order-cancellation rate,
+        // rather than a naive run-rate that silently assumes zero future
+        // cancellations. OPTION B, per Jaclyn's explicit decision: Cloud
+        // Cafe's Goal Tracker is one combined Amazon+Walmart figure (not
+        // separate per-channel rings like MiGuard, which is Amazon-only
+        // and never had to decide this) — so the rate itself is pooled
+        // across BOTH channels' order sheets, not Amazon-only. Verified
+        // against real data before shipping: Walmart's Orders sheet has
+        // the identical order_id/date/status/promotion_ids shape Amazon's
+        // does, so the same grouping logic applies to both untouched.
+        //
+        // Only affects the in-progress month's projection (color + the
+        // "Projecting $X" text) — never the ring's fill % or the actual
+        // dollar figure shown, both of which stay real revenue to date.
+        function computeCancelRate(amzOrderRows, wmtOrderRows, excludeYear, excludeMonth) {
+          function buildOrderMap(rows) {
+            const orders = {};
+            rows.forEach(r => {
+              const dateStr = (r.date || '').trim();
+              let y, m;
+              if (/^\d{4}-\d{2}/.test(dateStr)) {
+                y = parseInt(dateStr.slice(0, 4), 10); m = parseInt(dateStr.slice(5, 7), 10);
+              } else {
+                const parts = dateStr.split('/');
+                if (parts.length === 3) { y = parseInt(parts[2], 10); m = parseInt(parts[0], 10); }
+              }
+              if (!y || !m) return;
+              if (y === excludeYear && m === excludeMonth) return; // exclude the in-progress month — hasn't had time to cancel yet
+              const oid = r.order_id;
+              if (!oid) return;
+              // Group by order_id, not line item — cancellation is an
+              // order-level fact. Touch the entry unconditionally so
+              // every order (not just cancelled/Vine ones) is counted.
+              if (!orders[oid]) orders[oid] = { cancelled: false, excluded: false };
+              if ((r.promotion_ids || '').toLowerCase().includes('vine')) orders[oid].excluded = true;
+              if ((r.status || '').trim().toLowerCase() === 'cancelled') orders[oid].cancelled = true;
+            });
+            return orders;
+          }
+          let total = 0, cancelled = 0;
+          [buildOrderMap(amzOrderRows), buildOrderMap(wmtOrderRows)].forEach(orders => {
+            Object.values(orders).forEach(o => {
+              if (o.excluded) return;
+              total++;
+              if (o.cancelled) cancelled++;
+            });
+          });
+          return total > 0 ? cancelled / total : null; // null, never a fabricated 0%, when there's no history yet
+        }
+        const cancelRate = computeCancelRate(amzRows, wmtRows, cfg.year, cfg.month);
+        console.log('[GoalsTracker][qa] blended Amazon+Walmart cancel rate:', cancelRate != null ? (cancelRate * 100).toFixed(1) + '%' : 'no history');
+
         const goalsAmzCsv = await fetch('https://docs.google.com/spreadsheets/d/1trsHDgVSLprsOOjOuFWGZRDqVOV-eII3/export?format=csv&gid=1949875192' + `&_cb=${Date.now()}`).then(r => r.ok ? r.text() : '').catch(() => '');
         const goalsAmzRows = parseCsv2D(goalsAmzCsv);
 
@@ -21148,15 +21202,21 @@ async function loadAuditResultsFromSheet() {
             // to meet goal and red if projecting to miss goal" exactly
             // — no amber middle state.
             const actualPct = goal > 0 ? Math.round((actual / goal) * 100) : 0;
-            let projected = actual, statusText, statusColor;
+            let projected = actual, statusText, statusColor, cancelRateLabel = '';
             if (cfg.isPartial) {
               // MTD — project the full month from what we're averaging
-              // per day so far, to decide the color only.
+              // per day so far, then discount by the blended Amazon+
+              // Walmart historical cancellation rate (see computeCancelRate
+              // above) rather than assuming zero future cancellations.
               const daysInMonth = new Date(cfg.year, cfg.month, 0).getDate();
-              projected = cfg.day > 0 ? (actual / cfg.day) * daysInMonth : actual;
+              const rawProjected = cfg.day > 0 ? (actual / cfg.day) * daysInMonth : actual;
+              projected = cancelRate != null ? rawProjected * (1 - cancelRate) : rawProjected;
               const projectedPct = goal > 0 ? Math.round((projected / goal) * 100) : 0;
               statusText = `Projecting ${fmtD(projected)}`;
               statusColor = projectedPct >= 100 ? 'var(--green)' : 'var(--danger)';
+              cancelRateLabel = cancelRate != null
+                ? `<div style="font-size:11px;color:var(--muted);margin-top:2px;">adj. for ${Math.round(cancelRate * 100)}% avg. cancel rate</div>`
+                : `<div style="font-size:11px;color:var(--muted);margin-top:2px;">no cancel-rate history yet</div>`;
             } else {
               // Last Full Month — the month is over, actual IS final, no separate projection.
               statusText = actualPct >= 100 ? 'Hit goal' : 'Missed goal';
@@ -21169,6 +21229,7 @@ async function loadAuditResultsFromSheet() {
                 <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:26px;font-weight:700;color:${statusColor};">${actualPct}%</div>
               </div>
               <div style="font-size:14px;color:var(--navy);font-weight:700;margin-top:8px;">${statusText}</div>
+              ${cancelRateLabel}
               <div style="font-size:14px;color:var(--navy);font-weight:700;">Goal ${fmtD(goal)}</div>
             </div>`;
           }
