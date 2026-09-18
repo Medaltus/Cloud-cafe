@@ -1725,7 +1725,7 @@ details.inci-toggle[open] summary::before{content:'▾ ';}
           <div class="card-title" style="margin-bottom:0;">Sales Revenue by Month</div>
           <div id="legend-amazon" style="display:flex;align-items:center;"></div>
         </div>
-        <div style="position:relative;height:260px;"><canvas id="chart-amazon"></canvas></div>
+        <div style="position:relative;height:210px;"><canvas id="chart-amazon"></canvas></div>
       </div>
       <div class="card" id="top-products-card">
         <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:14px;">
@@ -1921,7 +1921,7 @@ details.inci-toggle[open] summary::before{content:'▾ ';}
           <div class="card-title" style="margin-bottom:0;">Sales Revenue by Month</div>
           <div id="legend-x-amazon" style="display:flex;align-items:center;"></div>
         </div>
-        <div style="position:relative;height:260px;"><canvas id="x-chart-amazon"></canvas></div>
+        <div style="position:relative;height:210px;"><canvas id="x-chart-amazon"></canvas></div>
       </div>
       <div class="card" id="x-top-products-card">
         <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:14px;">
@@ -2170,7 +2170,7 @@ details.inci-toggle[open] summary::before{content:'▾ ';}
           <div class="card-title" style="margin-bottom:0;">Active Subscriptions by Month</div>
           <div id="legend-sns" style="display:flex;align-items:center;"></div>
         </div>
-        <div style="position:relative;height:260px;"><canvas id="chart-sns"></canvas></div>
+        <div style="position:relative;height:220px;"><canvas id="chart-sns"></canvas></div>
       </div>
 
       <div class="card" style="margin-bottom:16px;">
@@ -2381,7 +2381,7 @@ details.inci-toggle[open] summary::before{content:'▾ ';}
           <div class="card-title" style="margin-bottom:0;">Active Subscriptions by Month</div>
           <div id="legend-mx-sns" style="display:flex;align-items:center;"></div>
         </div>
-        <div style="position:relative;height:260px;"><canvas id="mx-chart-sns"></canvas></div>
+        <div style="position:relative;height:220px;"><canvas id="mx-chart-sns"></canvas></div>
       </div>
 
       <div class="card" style="margin-bottom:16px;">
@@ -6064,10 +6064,15 @@ async function initSns() {
       console.warn('[TopProducts] Name lookup failed:', e.message);
     }
 
-    // Sort by units desc, remove zeros
+    // Sort by units desc, remove zeros. Capped to top 7 — per Jaclyn
+    // 2026-09-18, trimming this table's row count is one of the levers
+    // used to bring the Amazon Sales page's total rendered height back
+    // under the PDF export's one-page budget (see the PDF export
+    // debugging playbook, Case 6).
     const sorted = Object.entries(asinUnits)
       .filter(([, u]) => u > 0)
-      .sort((a, b) => b[1] - a[1]);
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 7);
 
     tbody.innerHTML = '';
     sorted.forEach(([asin, units], idx) => {
@@ -8086,10 +8091,15 @@ async function initSns() {
       console.warn('[TopProducts] Name lookup failed:', e.message);
     }
 
-    // Sort by units desc, remove zeros
+    // Sort by units desc, remove zeros. Capped to top 7 — per Jaclyn
+    // 2026-09-18, trimming this table's row count is one of the levers
+    // used to bring the Amazon Sales page's total rendered height back
+    // under the PDF export's one-page budget (see the PDF export
+    // debugging playbook, Case 6).
     const sorted = Object.entries(asinUnits)
       .filter(([, u]) => u > 0)
-      .sort((a, b) => b[1] - a[1]);
+      .sort((a, b) => b[1] - a[1])
+      .slice(0, 7);
 
     tbody.innerHTML = '';
     sorted.forEach(([asin, units], idx) => {
@@ -19526,9 +19536,15 @@ async function loadAuditResultsFromSheet() {
     // Same pill-badge + headline pattern as Executive Summary on the cover
     // page (.pdfx-pill / .pdfx-cover-cols), so the two sections match
     // exactly as designed on the live dashboard. Per Jaclyn 2026-07-14.
-    return '<div class="pdfx-card" style="margin-top:14px;">' +
+    // Border removed and gap tightened for THIS instance only (inline
+    // overrides) — per Jaclyn 2026-09-18. Left .pdfx-card's and
+    // .pdfx-cover-cols's own shared base CSS untouched since both
+    // classes are reused elsewhere (every other pdfx-card on this page,
+    // and the cover page's own Executive Summary columns) — global
+    // changes there would've fixed this one card and broken those.
+    return '<div class="pdfx-card" style="margin-top:14px;border:none;padding-left:0;padding-right:0;">' +
       '<span class="pdfx-pill" style="margin-bottom:16px;">Future Opportunities</span>' +
-      '<div class="pdfx-cover-cols">' + cards + '</div>' +
+      '<div class="pdfx-cover-cols" style="gap:18px;">' + cards + '</div>' +
       '</div>';
   }
 
@@ -19641,14 +19657,24 @@ async function loadAuditResultsFromSheet() {
 
   function buildOpportunitiesPage(monthYear) {
     const kpis = ['kpi-active-subs', 'kpi-retention'].map(pdfxKpi);
+    // Reuses the same fixed-height flex-column + justify-content:
+    // space-between trick already built for Brand Momentum's second page
+    // (.pdfx-momentum-page2) — per Jaclyn 2026-09-18, this page's own
+    // content was naturally shorter than a full page, leaving the footer
+    // stranded partway down with a big gap below it instead of sitting
+    // at the bottom. The class isn't actually Brand-Momentum-specific in
+    // its styling, just named after where it was first used — reused
+    // here as-is rather than duplicating the same CSS under a new name.
     return '' +
       '<div class="pdfx-page">' +
-        '<div class="pdfx-inner">' +
-          pdfxHeaderBand(monthYear, 'Opportunities') +
-          '<div class="pdfx-chlabel">Subscribe &amp; Save</div>' +
-          '<div class="pdfx-kpis n2" style="margin-top:6px;">' + kpis.map(pdfxKpiCardHtml).join('') + '</div>' +
-          '<div class="pdfx-card"><div class="pdfx-card-title">Active Subscriptions by Month</div>' + pdfxChartBlock('_snsChart') + '</div>' +
-          pdfxFutureOpportunitiesBlock() +
+        '<div class="pdfx-inner pdfx-momentum-page2">' +
+          '<div>' +
+            pdfxHeaderBand(monthYear, 'Opportunities') +
+            '<div class="pdfx-chlabel">Subscribe &amp; Save</div>' +
+            '<div class="pdfx-kpis n2" style="margin-top:6px;">' + kpis.map(pdfxKpiCardHtml).join('') + '</div>' +
+            '<div class="pdfx-card"><div class="pdfx-card-title">Active Subscriptions by Month</div>' + pdfxChartBlock('_snsChart') + '</div>' +
+            pdfxFutureOpportunitiesBlock() +
+          '</div>' +
           pdfxFooter(monthYear) +
         '</div>' +
       '</div>';
