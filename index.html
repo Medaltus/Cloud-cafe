@@ -19767,11 +19767,15 @@ async function loadAuditResultsFromSheet() {
     // possible. Worth a real check on the actual render before trusting
     // this looks clean rather than cramped — can't visually verify
     // page-break behavior from here.
-    const page1 = '<div class="pdfx-page"><div class="pdfx-inner">' +
+    // Footer removed and bottom padding zeroed out for THIS page only —
+    // per Jaclyn 2026-09-18, letting the green Strategic Outlook block
+    // sit low on the page instead of being boxed in by the footer above
+    // it plus .pdfx-inner's own shared 40px bottom padding (left that
+    // base class untouched since every other page still uses it).
+    const page1 = '<div class="pdfx-page"><div class="pdfx-inner" style="padding-bottom:0;">' +
       pdfxHeaderBand(monthYear, 'Events', null, eventName, eventDatesCompact) +
       '<div class="pdfx-chlabel">Event Strategy</div>' +
       leadUp + during + leadOut + outlook +
-      pdfxFooter(monthYear) +
       '</div></div>';
     return page1;
   }
@@ -21553,5 +21557,4 @@ window.addEventListener('load', async () => {
 </script>
 </body>
 </html>
- 
  
