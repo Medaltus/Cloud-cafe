@@ -971,12 +971,25 @@ details.inci-toggle[open] summary::before{content:'▾ ';}
 .pdfx-hdr-month{font-family:var(--font-subheader);font-size:17px;color:#fff;margin-top:3px;}
 .pdfx-hdr-subdate{font-size:10.5px;color:rgba(255,255,255,.6);margin-top:2px;}
 .pdfx-cover-eyebrow{font-size:10px;font-weight:400;font-family:var(--font-body-light);letter-spacing:.16em;text-transform:uppercase;color:var(--green);margin-bottom:12px;}
-.pdfx-cover-title{font-family:var(--font-subheader);font-weight:700;font-size:38px;line-height:1.14;margin-bottom:18px;}
+.pdfx-cover-title{font-family:var(--font-subheader);font-weight:600;font-size:38px;line-height:1.14;margin-bottom:18px;}
 .pdfx-cover-rule{width:44px;height:2px;background:var(--green);margin-bottom:20px;}
 .pdfx-cover-desc{font-size:12.5px;color:rgba(255,255,255,.68);line-height:1.65;max-width:520px;}
 /* flex:1 fills all remaining vertical space below the navy block (up to the full 11in page); justify-content:center vertically centers the pill/headline/columns within that remaining space, per the request to justify this content to the middle of the space below the navy area. */
 .pdfx-cover-white{padding:40px 60px;flex:1;display:flex;flex-direction:column;justify-content:center;}
-.pdfx-pill{display:inline-block;align-self:flex-start;background:rgba(36,233,163,.14);border:1px solid rgba(36,233,163,.35);border-radius:20px;padding:5px 16px;font-size:11.5px;font-weight:700;letter-spacing:.13em;text-transform:uppercase;color:var(--green);margin-bottom:24px;}
+/* .pdfx-pill and .pdfx-cover-title were both font-weight:700 and looked
+   visibly pixelated/rough at the letter edges in the exported PDF, while
+   .pdfx-cover-headline right next to them (font-weight:600, different
+   font-family and size) stayed clean — confirmed directly from Jaclyn's
+   screenshots, 2026-09-18. font-weight:700 is the one property both
+   "bad" elements shared that the "clean" one didn't; likely html2canvas
+   synthesizing a fake-bold render for true/heavy weights on this font
+   stack rather than using a real bold glyph, a documented category of
+   html2canvas limitation. Dropped both to 600, matching the confirmed-
+   clean weight. Trade-off worth knowing: the cover title in particular
+   reads slightly less bold now than before — if that's not an
+   acceptable trade for losing the pixelation, worth trying a different
+   font stack for these two specifically instead. */
+.pdfx-pill{display:inline-block;align-self:flex-start;background:rgba(36,233,163,.14);border:1px solid rgba(36,233,163,.35);border-radius:20px;padding:5px 16px;font-size:11.5px;font-weight:600;letter-spacing:.13em;text-transform:uppercase;color:var(--green);margin-bottom:24px;}
 .pdfx-cover-headline{font-family:var(--font-subheader);font-size:20px;font-weight:600;color:var(--navy);line-height:1.35;margin-bottom:28px;}
 .pdfx-cover-cols{display:grid;grid-template-columns:1fr 1fr;gap:40px;margin-top:8px;}
 .pdfx-cover-col{font-size:12px;color:#48557a;line-height:1.75;}
@@ -1712,7 +1725,7 @@ details.inci-toggle[open] summary::before{content:'▾ ';}
           <div class="card-title" style="margin-bottom:0;">Sales Revenue by Month</div>
           <div id="legend-amazon" style="display:flex;align-items:center;"></div>
         </div>
-        <div style="position:relative;height:320px;"><canvas id="chart-amazon"></canvas></div>
+        <div style="position:relative;height:260px;"><canvas id="chart-amazon"></canvas></div>
       </div>
       <div class="card" id="top-products-card">
         <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:14px;">
@@ -1908,7 +1921,7 @@ details.inci-toggle[open] summary::before{content:'▾ ';}
           <div class="card-title" style="margin-bottom:0;">Sales Revenue by Month</div>
           <div id="legend-x-amazon" style="display:flex;align-items:center;"></div>
         </div>
-        <div style="position:relative;height:320px;"><canvas id="x-chart-amazon"></canvas></div>
+        <div style="position:relative;height:260px;"><canvas id="x-chart-amazon"></canvas></div>
       </div>
       <div class="card" id="x-top-products-card">
         <div style="display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:14px;">
@@ -2118,7 +2131,7 @@ details.inci-toggle[open] summary::before{content:'▾ ';}
               <span style="display:flex;align-items:center;gap:6px;"><span style="width:11px;height:11px;background:var(--sand);border-radius:2px;display:inline-block;"></span>2025</span>
             </div>
           </div>
-          <div class="chart-wrap-sm" style="flex:1;min-height:0;position:relative;"><canvas id="chart-impressions"></canvas></div>
+          <div class="chart-wrap-sm" style="height:200px;flex-shrink:0;position:relative;"><canvas id="chart-impressions"></canvas></div>
           <div class="insight-bar" style="margin-top:12px;flex-shrink:0;">
             <strong>Note:</strong>
             <span class="insight-text" id="adimp-insight-text">Loading…</span>
@@ -2157,7 +2170,7 @@ details.inci-toggle[open] summary::before{content:'▾ ';}
           <div class="card-title" style="margin-bottom:0;">Active Subscriptions by Month</div>
           <div id="legend-sns" style="display:flex;align-items:center;"></div>
         </div>
-        <div style="position:relative;height:320px;"><canvas id="chart-sns"></canvas></div>
+        <div style="position:relative;height:260px;"><canvas id="chart-sns"></canvas></div>
       </div>
 
       <div class="card" style="margin-bottom:16px;">
@@ -2340,7 +2353,7 @@ details.inci-toggle[open] summary::before{content:'▾ ';}
               <span style="display:flex;align-items:center;gap:6px;"><span style="width:11px;height:11px;background:var(--sand);border-radius:2px;display:inline-block;"></span>2025</span>
             </div>
           </div>
-          <div class="chart-wrap-sm" style="flex:1;min-height:0;position:relative;"><canvas id="mx-chart-impressions"></canvas></div>
+          <div class="chart-wrap-sm" style="height:200px;flex-shrink:0;position:relative;"><canvas id="mx-chart-impressions"></canvas></div>
           <div class="insight-bar" id="mx-adimp-insight-bar" style="margin-top:12px;flex-shrink:0;">
             <strong>Note:</strong>
             <span class="insight-text" id="mx-adimp-insight-text"></span>
@@ -2368,7 +2381,7 @@ details.inci-toggle[open] summary::before{content:'▾ ';}
           <div class="card-title" style="margin-bottom:0;">Active Subscriptions by Month</div>
           <div id="legend-mx-sns" style="display:flex;align-items:center;"></div>
         </div>
-        <div style="position:relative;height:320px;"><canvas id="mx-chart-sns"></canvas></div>
+        <div style="position:relative;height:260px;"><canvas id="mx-chart-sns"></canvas></div>
       </div>
 
       <div class="card" style="margin-bottom:16px;">
