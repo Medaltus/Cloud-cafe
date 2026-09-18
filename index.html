@@ -1154,6 +1154,26 @@ details.inci-toggle[open] summary::before{content:'▾ ';}
 </style>
 <link rel="icon" type="image/png" href="cloud-cafe_favicon.png">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script>
+  // Chart.js was never told what pixel density to render its own canvas
+  // bitmap at, so it defaulted to whatever window.devicePixelRatio the
+  // browser reported at chart-creation time — often 1x on a normal
+  // (non-Retina) display. The PDF export's html2canvas capture runs at
+  // scale:2 uniformly (see the export function), which re-renders true
+  // vector/DOM content (SVG, text, table borders) natively at 2x — crisp
+  // — but for a <canvas> element it just draws the EXISTING bitmap onto
+  // its own output canvas at the destination size, so a 1x-resolution
+  // Chart.js canvas gets stretched 2x on capture: pure upscale blur.
+  // That's the actual mechanism behind "text is fine, graphs are
+  // pixelated, and it varies by page" — pages with more/bigger Chart.js
+  // canvases show it more. Setting this globally, once, here — before
+  // any chart on the page gets created — makes every Chart.js canvas
+  // render at the same 2x density html2canvas will capture it at, so
+  // there's no mismatch to upscale in the first place. Matches
+  // html2canvas's scale:2 exactly; doesn't touch any of the 20 separate
+  // `new Chart(...)` call sites individually.
+  Chart.defaults.devicePixelRatio = 2;
+</script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
@@ -20042,9 +20062,30 @@ async function loadAuditResultsFromSheet() {
         console.log('[pdf-export] page', i + 1, 'canvas size:', canvas.width, 'x', canvas.height);
         const imgData = canvas.toDataURL('image/jpeg', 0.97);
         if (i > 0) pdf.addPage();
-        // Scale the captured canvas to fill the page width, preserving aspect ratio
+        // Scale the captured canvas to fill the page width, preserving
+        // aspect ratio. FIXED — per the PDF export debugging playbook's
+        // Case 6: when a page's true content height exceeds what fits at
+        // full 8.5in width within one 11in page, clamping ONLY the height
+        // passed to addImage() while leaving width fixed at 8.5in forces
+        // jsPDF to squish the image into the wrong aspect ratio — visibly
+        // distorting everything on that page, text included, not just
+        // whichever chart/map happens to be on it. Scale BOTH dimensions
+        // down together instead, so an overflowing page shrinks to fit
+        // (small margins, never touching all four edges) rather than
+        // being squished to fit. The real fix for any specific page that
+        // hits this often is trimming its content per Case 6's own
+        // guidance — this is the capture-pipeline safety net underneath
+        // that, so a too-tall page degrades gracefully instead of visibly
+        // distorting.
         const renderedHeightIn = pageWidthIn * (canvas.height / canvas.width);
-        pdf.addImage(imgData, 'JPEG', 0, 0, pageWidthIn, Math.min(renderedHeightIn, pageHeightIn));
+        let drawWidthIn = pageWidthIn, drawHeightIn = renderedHeightIn;
+        if (renderedHeightIn > pageHeightIn) {
+          const shrink = pageHeightIn / renderedHeightIn;
+          drawWidthIn = pageWidthIn * shrink;
+          drawHeightIn = pageHeightIn;
+          console.warn('[pdf-export] page', i + 1, 'content taller than one page at full width —', renderedHeightIn.toFixed(2) + 'in needed, shrunk to fit', drawWidthIn.toFixed(2) + 'x' + drawHeightIn.toFixed(2) + 'in. Consider trimming this page\'s content (see PDF export playbook, Case 6).');
+        }
+        pdf.addImage(imgData, 'JPEG', 0, 0, drawWidthIn, drawHeightIn);
       }
 
       const filename = 'Cloud_Cafe_Partnership_Report_' + (monthYear ? monthYear.replace(' ', '_') : 'Report') + '.pdf';
