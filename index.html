@@ -1070,8 +1070,13 @@ details.inci-toggle[open] summary::before{content:'▾ ';}
    2-page split for Performance by Product — per Jaclyn's playbook,
    pages running past the safe render-height threshold distort during
    PDF capture. Live dashboard spacing stays untouched. */
-.pdfx-momentum-tight .momentum-cards-grid{gap:14px;}
-.pdfx-momentum-tight .momentum-pcard-body{padding:16px 20px;}
+.pdfx-momentum-tight .momentum-cards-grid{gap:10px;}
+.pdfx-momentum-tight .momentum-pcard-hd{padding:9px 20px;}
+.pdfx-momentum-tight .momentum-pcard-name{font-size:14.5px;}
+.pdfx-momentum-tight .momentum-pcard-body{padding:11px 20px;}
+.pdfx-momentum-tight .momentum-pcard-row{gap:5px;}
+.pdfx-momentum-tight .momentum-pcard-value{font-size:22px;}
+.pdfx-momentum-tight .momentum-pcard-subcategory{display:none;}
 .pdfx-momentum-page2{display:flex;flex-direction:column;justify-content:space-between;height:840px;}
 .pdfx-chlabel{font-size:9.5px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin-bottom:6px;font-family:var(--font-subheader);}
 .pdfx-chrow{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:16px;}
@@ -1110,6 +1115,10 @@ details.inci-toggle[open] summary::before{content:'▾ ';}
 .pdfx-ltd-val{font-size:19px;font-weight:700;color:var(--navy);font-family:var(--font-subheader);}
 .pdfx-ltd-lbl{font-size:9.5px;color:var(--muted);}
 .pdfx-footer{display:flex;justify-content:space-between;align-items:center;margin-top:36px;padding-top:16px;border-top:1px solid var(--border);}
+.pdfx-footer.pdfx-footer-compact{margin-top:14px;padding-top:0;border-top:none;}
+.pdfx-pill-sand{background:#f4dfd0;border-color:rgba(0,31,96,.12);color:var(--navy);}
+.pdfx-acc-imgs{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;}
+.pdfx-acc-img{width:120px;height:120px;object-fit:cover;border-radius:6px;border:1px solid var(--border);display:block;}
 .pdfx-footer-brand{font-size:13px;font-weight:700;color:var(--navy);}
 .pdfx-footer-tag{font-size:9.5px;color:var(--muted);}
 .pdfx-footer-right{text-align:right;font-size:10px;color:var(--muted);}
@@ -1314,8 +1323,9 @@ details.inci-toggle[open] summary::before{content:'▾ ';}
              anyone who doesn't touch these gets today's existing behavior
              (all three Sales channels always included). -->
         <label style="display:flex;align-items:center;gap:4px;cursor:pointer;flex-shrink:0;"><input type="checkbox" id="pdf-include-amazon" checked style="margin:0;"> Amazon</label>
-        <label style="display:flex;align-items:center;gap:4px;cursor:pointer;flex-shrink:0;"><input type="checkbox" id="pdf-include-momentum" checked style="margin:0;"> Brand Momentum</label>
         <label style="display:flex;align-items:center;gap:4px;cursor:pointer;flex-shrink:0;"><input type="checkbox" id="pdf-include-walmart" checked style="margin:0;"> Walmart</label>
+        <label style="display:flex;align-items:center;gap:4px;cursor:pointer;flex-shrink:0;"><input type="checkbox" id="pdf-include-insights" checked style="margin:0;"> Insights</label>
+        <label style="display:flex;align-items:center;gap:4px;cursor:pointer;flex-shrink:0;"><input type="checkbox" id="pdf-include-momentum" checked style="margin:0;"> Brand Momentum</label>
         <!-- Marketing pages — same default-checked reasoning as Sales above. -->
         <label style="display:flex;align-items:center;gap:4px;cursor:pointer;flex-shrink:0;"><input type="checkbox" id="pdf-include-fulfillment" checked style="margin:0;"> Fulfillment &amp; CS</label>
         <label style="display:flex;align-items:center;gap:4px;cursor:pointer;flex-shrink:0;"><input type="checkbox" id="pdf-include-stewardship" checked style="margin:0;"> Stewardship</label>
@@ -19233,6 +19243,7 @@ async function loadAuditResultsFromSheet() {
     _investChart: 'chart-invest',
     _impressChart: 'chart-impressions',
     _snsChart: 'chart-sns',
+    _categorySalesChart: 'chart-category-sales',
     // Added 2026-07-21 — was never registered here at all, so it fell
     // through to the naive pdfxRawChartImg fallback (no force-visible
     // ancestors, no correct-size capture), which is exactly why it showed
@@ -19309,6 +19320,16 @@ async function loadAuditResultsFromSheet() {
   // constant to make every chart's axis labels bigger in the exported PDF;
   // it's now fully decoupled from the live dashboard's own 10px tick size.
   const PDFX_CARD_WIDTH_PX = 686; // matches pdfxChartBlock's own target display width
+  // Fixed PDF height per chart (px at the 686px card width). Width always prints at
+  // 686px; ONLY height comes from this map — it used to follow the dashboard's own
+  // container (x0.9), so tall dashboard charts made tall pages. Charts not listed
+  // (event Top Sellers) keep the old dashboard-relative height. Tune from the export log.
+  const PDFX_CHART_TARGET_HEIGHT_PX = {
+    _amazonChart: 190, _walmartChart: 190,
+    _categorySalesChart: 220, _snsChart: 190,
+    _investChart: 170, _impressChart: 150,
+    mfcShippedChartInstance: 150,
+  };
   const PDFX_CHART_AXIS_TARGET_PX = 12; // effective size at PDFX_CARD_WIDTH_PX display width — was landing at ~10 before this fix; 16 confirmed working but too big, dropping to 12 as a starting point
   function pdfxWithScaledAxisFonts(options, captureWidthPx) {
     const fontScale = captureWidthPx / PDFX_CARD_WIDTH_PX;
@@ -19466,7 +19487,13 @@ async function loadAuditResultsFromSheet() {
       const PDFX_CAPTURE_TENSION = 0.3; // 2026-07-16: bumped from 0.22 — Jaclyn wanted more curve. Re-tested at 0.3 (the dashboard's own native value) with the corrected line-weight scaling and 0.9x height factor already in place, and it now reads clean rather than bulgy — the earlier over-exaggeration was compounded by the un-scaled thin lines, not tension alone.
       const PDFX_LINE_WIDTH_TARGET_PX = 3;   // dashboard's own is 2.5 — slightly heavier per Jaclyn's "increase the weight" ask
       const PDFX_POINT_RADIUS_TARGET_PX = 2.2; // dashboard's own is 2
-      const captureHeightPx = Math.round(originalWidthPx * ((dashboardHeightPx * PDFX_HEIGHT_FACTOR) / PDFX_CARD_WIDTH_PX));
+      const captureHeightPx = Math.round(PDFX_CHART_TARGET_HEIGHT_PX[varName]
+        ? originalWidthPx * (PDFX_CHART_TARGET_HEIGHT_PX[varName] / PDFX_CARD_WIDTH_PX)
+        : originalWidthPx * ((dashboardHeightPx * PDFX_HEIGHT_FACTOR) / PDFX_CARD_WIDTH_PX));
+      // Chart.js v4 silently DEFERS resize() while an animation is running, so the
+      // capture read the old size (log symptom: requested 2238x940 but IMMEDIATELY
+      // after resize(): 2238x320). stop() first.
+      if (typeof liveChart.stop === 'function') liveChart.stop();
       liveChart.resize(originalWidthPx, captureHeightPx);
       console.log('[pdf-export][qa]', varName, '— canvas dims IMMEDIATELY after resize():', liveCanvas.width + 'x' + liveCanvas.height, '(requested', originalWidthPx + 'x' + captureHeightPx + ')');
 
@@ -19520,6 +19547,22 @@ async function loadAuditResultsFromSheet() {
         : 'no datasets';
       console.log('[pdf-export][qa]', varName, '— original size:', originalWidthPx + 'x' + originalHeightPx, '— dashboardHeightPx:', Math.round(dashboardHeightPx), '(x' + PDFX_HEIGHT_FACTOR + ' factor) — re-rendered at:', originalWidthPx + 'x' + captureHeightPx, '(will display as 686x' + Math.round(dashboardHeightPx * PDFX_HEIGHT_FACTOR) + ' in the PDF) — tension:', PDFX_CAPTURE_TENSION, '— borderWidth target/scaled:', PDFX_LINE_WIDTH_TARGET_PX + '/' + scaledBorderWidth.toFixed(1), '— pointRadius target/scaled:', PDFX_POINT_RADIUS_TARGET_PX + '/' + scaledPointRadius.toFixed(1), '— data:', rawDataInfo);
 
+      // Legend scaling goes through the RAW config (chart.config.options), never the
+      // chart.options resolver proxy: copying from the proxy and assigning it back
+      // throws "Recursion detected: _scriptable->_scriptable" and kills the export.
+      const rawLegend = liveChart.config && liveChart.config.options && liveChart.config.options.plugins && liveChart.config.options.plugins.legend;
+      const rawLabels = (rawLegend && rawLegend.display !== false && rawLegend.labels) || null;
+      const LEGEND_KEYS = ['font', 'boxWidth', 'boxHeight', 'padding'];
+      const savedLegend = rawLabels ? LEGEND_KEYS.map(function (k) { return { k: k, had: Object.prototype.hasOwnProperty.call(rawLabels, k), v: rawLabels[k] }; }) : null;
+      if (rawLabels) {
+        const lfs = targetW / PDFX_CARD_WIDTH_PX;
+        const sv = {}; savedLegend.forEach(function (e) { sv[e.k] = e.v; });
+        rawLabels.font = Object.assign({}, (sv.font && typeof sv.font === 'object') ? sv.font : {}, { size: Math.round(PDFX_CHART_AXIS_TARGET_PX * lfs) });
+        rawLabels.boxWidth = Math.round((sv.boxWidth || 12) * lfs);
+        rawLabels.boxHeight = Math.round((sv.boxHeight || 12) * lfs);
+        rawLabels.padding = Math.round((sv.padding != null ? sv.padding : 10) * lfs);
+      }
+
       let img = '';
       let capturedWidth = liveCanvas.width;
       let capturedHeight = liveCanvas.height;
@@ -19569,7 +19612,11 @@ async function loadAuditResultsFromSheet() {
             if (typeof orig.pointRadius === 'number') ds.pointRadius = orig.pointRadius;
           });
         }
-        liveChart.update('none');
+        if (rawLabels && savedLegend) {
+          savedLegend.forEach(function (e) { if (e.had) rawLabels[e.k] = e.v; else delete rawLabels[e.k]; });
+        }
+        // One chart failing to restore should cost that chart, not the whole PDF.
+        try { liveChart.update('none'); } catch (e) { console.warn('[pdf-export] restore update() failed for', varName, '-', e.message); }
       }
 
       const result = { img: img, width: capturedWidth, height: capturedHeight, displayHeightPx: dashboardHeightPx * PDFX_HEIGHT_FACTOR };
@@ -19706,8 +19753,8 @@ async function loadAuditResultsFromSheet() {
       '<div class="pdfx-header-divider"></div>';
   }
 
-  function pdfxFooter(monthYear) {
-    return '<div class="pdfx-footer">' +
+  function pdfxFooter(monthYear, compact) {
+    return '<div class="pdfx-footer' + (compact ? ' pdfx-footer-compact' : '') + '">' +
       '<div><div class="pdfx-footer-brand">medaltus.</div><div class="pdfx-footer-tag">A trusted partner for your brand.</div></div>' +
       '<div class="pdfx-footer-right">Generated: ' + pdfxEscape(monthYear) + '<br><span class="pdfx-footer-conf">CONFIDENTIAL</span></div>' +
       '</div>';
@@ -19774,6 +19821,10 @@ async function loadAuditResultsFromSheet() {
   // lesson, even a roughly-even split was too tight once cards got this
   // much padding), remaining cards continue on page 2. KPIs + section
   // title live on the first products page only, not repeated.
+  // Brand Momentum: Top 3 KPIs + product cards copied from the live DOM — 4 cards on
+  // the first page, 5 per page after (Cloud Cafe has ~19 products, so this runs several
+  // pages), then the keyword table + What We're Tracking Next. .pdfx-momentum-tight
+  // gives the cards denser padding for the PDF only.
   function buildMomentumProductsPages(monthYear) {
     const kpis = ['bm-kpi-reviews', 'bm-kpi-ranked-keywords', 'bm-kpi-sessions'].map(pdfxKpi);
     const cards = Array.prototype.slice.call(document.querySelectorAll('#bm-momentum-cards-grid .momentum-pcard'));
@@ -19786,27 +19837,22 @@ async function loadAuditResultsFromSheet() {
         '<div style="color:var(--muted);font-style:italic;font-size:12px;">No product data found.</div>' +
         '</div></div>';
     }
-    const firstPageCount = 4;
-    const firstHalf = cards.slice(0, firstPageCount), secondHalf = cards.slice(firstPageCount);
-
-    const page1 = '<div class="pdfx-page"><div class="pdfx-inner pdfx-momentum-tight">' +
+    const FIRST_PAGE = 4, PER_PAGE = 5;
+    const grid = function (list) { return '<div class="momentum-cards-grid">' + list.map(function (c) { return c.outerHTML; }).join('') + '</div>'; };
+    let html = '<div class="pdfx-page"><div class="pdfx-inner pdfx-momentum-tight">' +
       pdfxHeaderBand(monthYear, 'Brand Momentum') +
       '<div class="pdfx-chlabel">Brand Momentum</div>' +
       '<div class="pdfx-chrow"><span class="pdfx-chname">Amazon</span></div>' +
       '<div class="pdfx-kpis n3">' + kpis.map(pdfxKpiCardHtml).join('') + '</div>' +
       '<div class="pdfx-card-title" style="margin-bottom:10px;">Performance by Product</div>' +
-      '<div class="momentum-cards-grid">' + firstHalf.map(function (c) { return c.outerHTML; }).join('') + '</div>' +
-      '</div></div>';
-
-    if (!secondHalf.length) return page1;
-
-    const page2 = '<div class="pdfx-page"><div class="pdfx-inner pdfx-momentum-tight">' +
-      pdfxHeaderBand(monthYear, 'Brand Momentum') +
-      '<div class="pdfx-chlabel">Performance by Product <span style="font-weight:400;color:var(--muted);">(continued)</span></div>' +
-      '<div class="momentum-cards-grid">' + secondHalf.map(function (c) { return c.outerHTML; }).join('') + '</div>' +
-      '</div></div>';
-
-    return page1 + page2;
+      grid(cards.slice(0, FIRST_PAGE)) + '</div></div>';
+    for (let i = FIRST_PAGE; i < cards.length; i += PER_PAGE) {
+      html += '<div class="pdfx-page"><div class="pdfx-inner pdfx-momentum-tight">' +
+        pdfxHeaderBand(monthYear, 'Brand Momentum') +
+        '<div class="pdfx-chlabel">Performance by Product <span style="font-weight:400;color:var(--muted);">(continued)</span></div>' +
+        grid(cards.slice(i, i + PER_PAGE)) + '</div></div>';
+    }
+    return html;
   }
 
   function buildMomentumPage2(monthYear) {
@@ -19823,9 +19869,9 @@ async function loadAuditResultsFromSheet() {
           '<div class="momentum-tracking-card" style="margin-bottom:0;margin-top:22px;">' +
             '<div class="momentum-tracking-title">What We\'re Tracking Next</div>' +
             '<div class="momentum-tracking-grid">' +
-              '<div class="momentum-tracking-item"><div class="momentum-tracking-item-title">Search-to-Sale Conversion</div><div class="momentum-tracking-item-text">Connecting which specific search terms are actually driving purchases, not just clicks or impressions.</div></div>' +
-              '<div class="momentum-tracking-item"><div class="momentum-tracking-item-title">Review Sentiment Themes</div><div class="momentum-tracking-item-text">Categorizing what customers are actually praising or flagging in review text, beyond the star rating alone.</div></div>' +
-              '<div class="momentum-tracking-item"><div class="momentum-tracking-item-title">Competitive Share of Voice</div><div class="momentum-tracking-item-text">How Cloud Cafe\'s organic and sponsored presence compares against category leaders for the same target keywords.</div></div>' +
+              '<div class="momentum-tracking-item"><div class="momentum-tracking-item-title">Keyword Rank Movement</div><div class="momentum-tracking-item-text">Organic rank movement for our top-priority keyword set, month over month.</div></div>' +
+              '<div class="momentum-tracking-item"><div class="momentum-tracking-item-title">Subcategory BSR Trends</div><div class="momentum-tracking-item-text">Subcategory BSR as a leading indicator of category-level momentum, independent of overall BSR.</div></div>' +
+              '<div class="momentum-tracking-item"><div class="momentum-tracking-item-title">Review Velocity</div><div class="momentum-tracking-item-text">Review velocity and rating trends as new products build up their own review base.</div></div>' +
             '</div>' +
           '</div>' +
           pdfxFooter(monthYear) +
@@ -20039,27 +20085,70 @@ async function loadAuditResultsFromSheet() {
       '</div>';
   }
 
-  function buildOpportunitiesPage(monthYear) {
+  // Insights (Sales > Insights): Unit Sales by Product Category chart, Subscriptions card
+  // (2 KPIs + YOY line chart, moved here from Opportunities), Key Insight text.
+  function buildSalesInsightsPage(monthYear) {
     const kpis = ['kpi-active-subs', 'kpi-retention'].map(pdfxKpi);
-    // Reuses the same fixed-height flex-column + justify-content:
-    // space-between trick already built for Brand Momentum's second page
-    // (.pdfx-momentum-page2) — per Jaclyn 2026-09-18, this page's own
-    // content was naturally shorter than a full page, leaving the footer
-    // stranded partway down with a big gap below it instead of sitting
-    // at the bottom. The class isn't actually Brand-Momentum-specific in
-    // its styling, just named after where it was first used — reused
-    // here as-is rather than duplicating the same CSS under a new name.
+    let insight = pdfxText('#ins-cat-insight-text').replace(/^Key Insights:\s*/i, '').trim();
+    if (/^Loading/i.test(insight)) insight = '';
+    const legend = pdfxHTML('#legend-sns');
     return '' +
       '<div class="pdfx-page">' +
-        '<div class="pdfx-inner pdfx-momentum-page2">' +
-          '<div>' +
-            pdfxHeaderBand(monthYear, 'Opportunities') +
-            '<div class="pdfx-chlabel">Subscribe &amp; Save</div>' +
+        '<div class="pdfx-inner" style="padding-bottom:0;">' +
+          pdfxHeaderBand(monthYear, 'Sales') +
+          '<div class="pdfx-chlabel">Insights</div>' +
+          '<div class="pdfx-card"><div class="pdfx-card-title">Unit Sales by Product Category</div>' + pdfxChartBlock('_categorySalesChart') + '</div>' +
+          '<div class="pdfx-card"><div class="pdfx-card-title">Subscriptions</div>' +
             '<div class="pdfx-kpis n2" style="margin-top:6px;">' + kpis.map(pdfxKpiCardHtml).join('') + '</div>' +
-            '<div class="pdfx-card"><div class="pdfx-card-title">Active Subscriptions by Month</div>' + pdfxChartBlock('_snsChart') + '</div>' +
-            pdfxFutureOpportunitiesBlock() +
+            '<div style="display:flex;align-items:center;justify-content:space-between;margin:12px 0 6px;">' +
+              '<div style="font-size:10.5px;color:var(--muted);font-weight:600;">Active Subscriptions by Month <span style="font-weight:400;">(Year over Year)</span></div>' +
+              '<div style="display:flex;align-items:center;">' + legend + '</div>' +
+            '</div>' +
+            pdfxChartBlock('_snsChart') +
           '</div>' +
-          pdfxFooter(monthYear) +
+          (insight ? '<div class="pdfx-insight"><strong>Key Insight:</strong> ' + pdfxEscape(insight) + '</div>' : '') +
+          pdfxFooter(monthYear, true) +
+        '</div>' +
+      '</div>';
+  }
+
+  // What's Been Accomplished: sand pill, cards 1-4 from #acc-grid (NOT #m-opportunities
+  // .opp-card — Accomplished and Future Opportunities both use .opp-card on the same
+  // live page, so the grids are queried separately or the sections merge in the PDF).
+  // Images carry .pdfx-acc-img so pdfxGrowAccomplishedImages can size them.
+  function pdfxAccomplishedBlock() {
+    const cards = Array.prototype.map.call(document.querySelectorAll('#acc-grid .opp-card'), function (card) {
+      const title = pdfxText('.opp-title', card);
+      if (!title) return '';
+      const subtitle = pdfxText('.opp-subtitle', card);
+      const body = pdfxText('.opp-body', card);
+      const imgs = Array.prototype.map.call(card.querySelectorAll('.acc-card-images img'), function (im) { return im.getAttribute('src') || ''; }).filter(Boolean);
+      return '<div>' +
+        '<div style="font-size:13px;font-weight:700;color:var(--navy);margin-bottom:4px;">' + pdfxEscape(title) + '</div>' +
+        (subtitle ? '<div style="font-size:12px;font-weight:600;color:var(--navy);margin-bottom:8px;">' + pdfxEscape(subtitle) + '</div>' : '') +
+        '<div style="font-size:11.5px;color:#48557a;line-height:1.6;">' + pdfxEscape(body) + '</div>' +
+        (imgs.length ? '<div class="pdfx-acc-imgs">' + imgs.map(function (u) { return '<img class="pdfx-acc-img" src="' + pdfxEscape(u) + '" alt="">'; }).join('') + '</div>' : '') +
+        '</div>';
+    }).join('');
+    if (!cards) return '';
+    return '<div class="pdfx-card" style="margin-top:6px;border:none;padding:0;">' +
+      '<span class="pdfx-pill pdfx-pill-sand" style="margin-bottom:14px;">What\'s Been Accomplished</span>' +
+      '<div class="pdfx-cover-cols" style="gap:18px;">' + cards + '</div>' +
+      '</div>';
+  }
+
+  // Opportunities: What's Been Accomplished, then Future Opportunities. Nothing else.
+  // Tighter padding + compact footer (no divider) keep it on one page.
+  function buildOpportunitiesPage(monthYear) {
+    const acc = pdfxAccomplishedBlock();
+    const fut = pdfxFutureOpportunitiesBlock();
+    return '' +
+      '<div class="pdfx-page">' +
+        '<div class="pdfx-inner" style="padding:22px 46px 26px;">' +
+          pdfxHeaderBand(monthYear, 'Opportunities') +
+          acc + fut +
+          ((!acc && !fut) ? '<div style="color:var(--muted);font-style:italic;font-size:12px;margin-top:18px;">Nothing has been added for this month yet.</div>' : '') +
+          pdfxFooter(monthYear, true) +
         '</div>' +
       '</div>';
   }
@@ -20210,6 +20299,307 @@ async function loadAuditResultsFromSheet() {
 
   // ---- main entry point ----------------------------------------------------
 
+  // ══════════════════════════════════════════════════════════════════════
+  // SERVER-SIDE REAL-TEXT PDF PIPELINE — ported 2026-10-05 per Jaclyn from
+  // the VBC reference + the "PDF Export Pipeline — Porting Guide" notes.
+  // The report is built as HTML pages in #pdfx-root, then printed to a real
+  // text PDF by headless Chrome (api/render-pdf.js). If the server call
+  // fails for ANY reason, pdfxScreenshotPagesToPdf (html2canvas + jsPDF) is
+  // the fallback, so an export never hard-fails. The console says which path
+  // ran: "mode: text (server, real text)" or "mode: image (fallback)".
+  // ══════════════════════════════════════════════════════════════════════
+  const PDFX_RENDER_ENDPOINT = '/api/render-pdf';
+  const PDFX_RENDER_TIMEOUT_MS = 55000;
+  const PDFX_RENDER_MAX_BODY_BYTES = 4200000; // Vercel's hard request limit is 4.5MB
+  const PDFX_TARGET_PAGE_HEIGHT_PX = 11 * 96;
+  const PDFX_SYMBOL_FONT_CSS = 'https://fonts.googleapis.com/css2?family=Noto+Sans+Symbols+2&family=Noto+Sans+Math&display=block';
+  const PDFX_SYMBOL_FONT_STACK = "'Noto Sans Symbols 2','Noto Sans Math',sans-serif";
+  // Arrows, box/geometric shapes, stars (★ ☆ ▲ ▼ ↕ →): DM Sans has no glyphs for
+  // these and the server's Chrome has no system fonts, so they'd print as boxes.
+  const PDFX_SYMBOL_RE = /[\u2190-\u21FF\u2500-\u27BF\u2B00-\u2BFF]/;
+  const PDFX_SYMBOL_SPLIT_RE = /([\u2190-\u21FF\u2500-\u27BF\u2B00-\u2BFF]+)/;
+  const PDFX_FALLBACK_TOAST = 'Heads up: the real-text PDF service didn\'t respond, so this PDF was made from screenshots (text isn\'t selectable). Try exporting again in a minute.';
+
+  function pdfxToast(msg) {
+    // Own element (not the dashboard's #toast) so this works on any layout.
+    let t = document.getElementById('pdfx-toast');
+    if (!t) {
+      t = document.createElement('div');
+      t.id = 'pdfx-toast';
+      t.style.cssText = 'position:fixed;bottom:28px;left:50%;transform:translateX(-50%);background:#001F60;color:#fff;padding:12px 18px;border-radius:8px;font-size:12.5px;line-height:1.5;z-index:99999;max-width:560px;box-shadow:0 6px 24px rgba(0,31,96,.3);display:none;';
+      document.body.appendChild(t);
+    }
+    t.textContent = msg;
+    t.style.display = 'block';
+    clearTimeout(t._hideTimer);
+    t._hideTimer = setTimeout(function () { t.style.display = 'none'; }, 9000);
+  }
+
+  function pdfxWrapSymbolGlyphs(rootNode) {
+    const walker = document.createTreeWalker(rootNode, NodeFilter.SHOW_TEXT);
+    const targets = [];
+    while (walker.nextNode()) { if (PDFX_SYMBOL_RE.test(walker.currentNode.nodeValue)) targets.push(walker.currentNode); }
+    targets.forEach(function (textNode) {
+      const frag = document.createDocumentFragment();
+      textNode.nodeValue.split(PDFX_SYMBOL_SPLIT_RE).forEach(function (part) {
+        if (!part) return;
+        if (PDFX_SYMBOL_RE.test(part)) {
+          const span = document.createElement('span');
+          span.style.fontFamily = PDFX_SYMBOL_FONT_STACK;
+          span.textContent = part;
+          frag.appendChild(span);
+        } else {
+          frag.appendChild(document.createTextNode(part));
+        }
+      });
+      textNode.parentNode.replaceChild(frag, textNode);
+    });
+  }
+
+  // SVG logos/watermarks print wrong in the server's headless Chrome (masks /
+  // color-matrix filters), so every SVG <img> is rasterized HERE, client-side,
+  // before the document is sent. 800px longest side is plenty — the logo
+  // prints ~80px tall and repeats in every page header, so a bigger raster
+  // just burns the 4.5MB upload budget.
+  async function pdfxSvgToPng(src) {
+    const im = new Image();
+    im.src = src;
+    await im.decode();
+    const w0 = im.naturalWidth || 1200, h0 = im.naturalHeight || 300;
+    const k = 800 / Math.max(w0, h0);
+    const c = document.createElement('canvas');
+    c.width = Math.round(w0 * k); c.height = Math.round(h0 * k);
+    c.getContext('2d').drawImage(im, 0, 0, c.width, c.height);
+    return c.toDataURL('image/png');
+  }
+  async function pdfxRasterizeSvgImages(clone) {
+    const cache = new Map();
+    // Cloud Cafe's logo/watermark are .svg FILES (not data: URIs), so match both.
+    const imgs = Array.from(clone.querySelectorAll('img')).filter(function (img) {
+      const s = img.getAttribute('src') || '';
+      return s.startsWith('data:image/svg+xml') || /\.svg(\?|#|$)/i.test(s);
+    });
+    for (const img of imgs) {
+      const src = img.getAttribute('src');
+      if (!cache.has(src)) cache.set(src, pdfxSvgToPng(src).catch(function (err) { console.warn('[pdf-export] SVG rasterize failed:', err && err.message); return null; }));
+      const png = await cache.get(src);
+      if (png) img.setAttribute('src', png);
+    }
+  }
+
+  // The server has no Georgia, so every serif heading would fall back to a
+  // plain sans. Gelasio is a free Google font built to match Georgia's
+  // metrics; its CSS is fetched and RENAMED to 'Georgia' so every existing
+  // Georgia rule resolves to it on the server. Server document only.
+  const PDFX_GEORGIA_SUBSTITUTE_CSS = 'https://fonts.googleapis.com/css2?family=Gelasio:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600;1,700&display=block';
+  let pdfxGeorgiaAliasCss = null;
+  async function pdfxGetGeorgiaAliasCss() {
+    if (pdfxGeorgiaAliasCss !== null) return pdfxGeorgiaAliasCss;
+    try {
+      const res = await fetch(PDFX_GEORGIA_SUBSTITUTE_CSS);
+      const css = res.ok ? await res.text() : '';
+      pdfxGeorgiaAliasCss = css.replace(/font-family:\s*['"]?Gelasio['"]?/g, "font-family: 'Georgia'");
+    } catch (err) {
+      console.warn('[pdf-export] Georgia substitute font CSS failed to load:', err && err.message);
+      pdfxGeorgiaAliasCss = '';
+    }
+    return pdfxGeorgiaAliasCss;
+  }
+
+  // Serializes #pdfx-root into a standalone HTML document for headless Chrome:
+  // clones the root, zooms any page taller than 11in down to fit (both
+  // dimensions together), wraps symbol glyphs, rasterizes SVG logos, aliases
+  // Georgia, and inlines every <style> block plus print CSS.
+  async function pdfxBuildRenderDocument(root, pageEls) {
+    const zooms = pageEls.map(function (el) {
+      const h = el.scrollHeight;
+      return h > PDFX_TARGET_PAGE_HEIGHT_PX + 1 ? { zoom: PDFX_TARGET_PAGE_HEIGHT_PX / h, heightPx: h } : null;
+    });
+    zooms.forEach(function (z, i) { if (z) console.warn('[pdf-export] page', i + 1, 'is', z.heightPx + 'px tall (max ' + PDFX_TARGET_PAGE_HEIGHT_PX + ') — zoomed to', z.zoom.toFixed(3), '— trim that page so it fits without shrinking.'); });
+    const clone = root.cloneNode(true);
+    clone.removeAttribute('style');
+    Array.from(clone.querySelectorAll('.pdfx-page')).forEach(function (pg, i) {
+      const z = zooms[i];
+      if (!z) return;
+      pg.style.zoom = String(z.zoom);
+      pg.style.height = z.heightPx + 'px';
+      pg.style.margin = '0 auto';
+    });
+    pdfxWrapSymbolGlyphs(clone);
+    await pdfxRasterizeSvgImages(clone);
+    const georgiaAlias = await pdfxGetGeorgiaAliasCss();
+    const css = Array.from(document.querySelectorAll('style')).map(function (st) { return st.textContent; }).join('\n');
+    const links = Array.from(document.querySelectorAll('link[rel="stylesheet"]'))
+      .map(function (l) { return '<link rel="stylesheet" href="' + pdfxEscape(l.href) + '">'; }).join('');
+    const printCss = '@page{size:8.5in 11in;margin:0}\n' +
+      'html,body{height:auto!important;margin:0!important;padding:0!important;background:#fff!important;-webkit-print-color-adjust:exact;print-color-adjust:exact}\n' +
+      '#pdfx-root{position:static!important;left:auto!important;top:auto!important;display:block!important;opacity:1!important;z-index:auto!important;width:8.5in}\n' +
+      '.pdfx-page{width:8.5in;height:11in;min-height:0;overflow:hidden;break-after:page;page-break-after:always}\n' +
+      '.pdfx-page:last-child{break-after:auto;page-break-after:auto}';
+    return '<!doctype html><html><head><meta charset="utf-8"><base href="' + pdfxEscape(location.href) + '">' + links +
+      '<link rel="stylesheet" href="' + PDFX_SYMBOL_FONT_CSS + '"><style>' + georgiaAlias + '</style><style>' + css + '</style><style>' + printCss + '</style></head>' +
+      '<body><div id="pdfx-root">' + clone.innerHTML + '</div></body></html>';
+  }
+
+  // POSTs the document as RAW octet-stream (gzipped when supported) — NOT JSON.
+  // (évolis lost weeks sending {html: ...} to a server that expects raw bytes.)
+  async function pdfxRenderViaServer(root, pageEls) {
+    const html = await pdfxBuildRenderDocument(root, pageEls);
+    let body = new Blob([html], { type: 'text/html' });
+    const headers = { 'Content-Type': 'application/octet-stream' };
+    if (typeof CompressionStream === 'function') {
+      body = await new Response(body.stream().pipeThrough(new CompressionStream('gzip'))).blob();
+      headers['X-Pdfx-Encoding'] = 'gzip';
+    }
+    if (body.size > PDFX_RENDER_MAX_BODY_BYTES) {
+      // Name the biggest embedded images so the culprit is obvious.
+      const sizes = [];
+      (html.match(/<img\b[^>]*>/g) || []).forEach(function (tag) {
+        const m = tag.match(/src="(data:[^"]+)"/);
+        if (!m) return;
+        const cls = (tag.match(/class="([^"]*)"/) || [])[1] || '(no class)';
+        sizes.push({ cls: cls, kb: Math.round(m[1].length / 1024) });
+      });
+      sizes.sort(function (a, b) { return b.kb - a.kb; });
+      console.warn('[pdf-export] payload over limit — raw HTML ' + (html.length / 1048576).toFixed(1) + 'MB, largest embedded images: ' +
+        sizes.slice(0, 8).map(function (s) { return s.cls + ' ' + s.kb + 'KB'; }).join(', '));
+      throw new Error('render payload ' + (body.size / 1048576).toFixed(1) + 'MB is over the upload limit');
+    }
+    const ctrl = new AbortController();
+    const timer = setTimeout(function () { ctrl.abort(); }, PDFX_RENDER_TIMEOUT_MS);
+    try {
+      const res = await fetch(PDFX_RENDER_ENDPOINT, { method: 'POST', headers: headers, body: body, signal: ctrl.signal });
+      if (!res.ok) {
+        const msg = await res.text().catch(function () { return ''; });
+        throw new Error('render-pdf HTTP ' + res.status + ' ' + msg.slice(0, 200));
+      }
+      const blob = await res.blob();
+      if (blob.size < 1000) throw new Error('render-pdf returned an empty file');
+      return new Blob([blob], { type: 'application/pdf' });
+    } finally {
+      clearTimeout(timer);
+    }
+  }
+
+  // Fallback only: html2canvas at scale 3, JPEG 0.95. A page that runs long
+  // shrinks width AND height together (never squishes height alone).
+  async function pdfxScreenshotPagesToPdf(pageEls) {
+    const jsPDFCtor = (window.jspdf && window.jspdf.jsPDF) || window.jsPDF;
+    if (typeof jsPDFCtor !== 'function') throw new Error('jsPDF constructor not found on window.jspdf.jsPDF or window.jsPDF.');
+    if (typeof html2canvas !== 'function') throw new Error('html2canvas is not available as a global.');
+    const pdf = new jsPDFCtor({ unit: 'in', format: 'letter', orientation: 'portrait', compress: true });
+    const pageWidthIn = 8.5, pageHeightIn = 11;
+    for (let i = 0; i < pageEls.length; i++) {
+      const el = pageEls[i];
+      const pageImgs = Array.from(el.querySelectorAll('img'));
+      await Promise.all(pageImgs.map(function (img) { return typeof img.decode === 'function' ? img.decode().catch(function () {}) : Promise.resolve(); }));
+      const canvas = await html2canvas(el, {
+        scale: 3,
+        backgroundColor: '#ffffff',
+        ignoreElements: function (node) { return node.tagName === 'CANVAS' && !node.closest('#pdfx-root'); },
+      });
+      const imgData = canvas.toDataURL('image/jpeg', 0.95);
+      if (i > 0) pdf.addPage();
+      let renderedWidthIn = pageWidthIn;
+      let renderedHeightIn = pageWidthIn * (canvas.height / canvas.width);
+      if (renderedHeightIn > pageHeightIn) {
+        const shrink = pageHeightIn / renderedHeightIn;
+        renderedHeightIn = pageHeightIn;
+        renderedWidthIn = pageWidthIn * shrink;
+      }
+      pdf.addImage(imgData, 'JPEG', (pageWidthIn - renderedWidthIn) / 2, 0, renderedWidthIn, renderedHeightIn, undefined, 'FAST');
+    }
+    return pdf.output('blob');
+  }
+
+  // The ONE entry point: server first, fallback on any error. { blob, mode }.
+  async function pdfxRenderPagesToPdf(root, pageEls) {
+    await new Promise(function (r) { requestAnimationFrame(r); });
+    try {
+      const blob = await pdfxRenderViaServer(root, pageEls);
+      console.log('[pdf-export] real-text PDF rendered server-side:', (blob.size / 1048576).toFixed(2) + 'MB');
+      return { blob: blob, mode: 'text' };
+    } catch (err) {
+      console.warn('[pdf-export] server render failed — using screenshot fallback:', err.message);
+    }
+    const blob = await pdfxScreenshotPagesToPdf(pageEls);
+    console.log('[pdf-export] screenshot-fallback PDF:', (blob.size / 1048576).toFixed(2) + 'MB');
+    return { blob: blob, mode: 'image' };
+  }
+
+  function pdfxDownloadBlob(blob, filename) {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = filename;
+    document.body.appendChild(a); a.click(); a.remove();
+    setTimeout(function () { URL.revokeObjectURL(url); }, 10000);
+  }
+
+  // Uploads can be 4MB each and base64 adds a third, which blows the 4.5MB
+  // upload limit. Draw to a canvas at <=maxPx and export JPEG 0.85 on white.
+  // A data: URL is same-origin, so this canvas never gets tainted.
+  async function pdfxDownscaleDataUrl(dataUrl, maxPx) {
+    const im = new Image();
+    im.src = dataUrl;
+    await im.decode();
+    const w0 = im.naturalWidth, h0 = im.naturalHeight;
+    if (!w0 || !h0) return dataUrl;
+    const k = Math.min(1, maxPx / Math.max(w0, h0));
+    const c = document.createElement('canvas');
+    c.width = Math.max(1, Math.round(w0 * k)); c.height = Math.max(1, Math.round(h0 * k));
+    const ctx = c.getContext('2d');
+    ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, c.width, c.height);
+    ctx.drawImage(im, 0, 0, c.width, c.height);
+    return c.toDataURL('image/jpeg', 0.85);
+  }
+
+  // Remote (Drive-hosted) images come out blank unless embedded before
+  // rendering. fetch() + FileReader, NOT canvas drawImage:
+  // lh3.googleusercontent.com allows a normal cross-origin GET but not the
+  // stricter canvas pixel-read.
+  async function pdfxRasterizeRemoteImages(root) {
+    const imgs = Array.from(root.querySelectorAll('img[src^="http"]'));
+    await Promise.all(imgs.map(async function (img) {
+      const src = img.getAttribute('src');
+      try {
+        const res = await fetch(src);
+        if (!res.ok) throw new Error('HTTP ' + res.status);
+        const blob = await res.blob();
+        const dataUrl = await new Promise(function (resolve, reject) {
+          const fr = new FileReader();
+          fr.onload = function () { resolve(String(fr.result)); };
+          fr.onerror = function () { reject(new Error('read failed')); };
+          fr.readAsDataURL(blob);
+        });
+        img.setAttribute('src', await pdfxDownscaleDataUrl(dataUrl, 600));
+        if (typeof img.decode === 'function') await img.decode().catch(function () {});
+      } catch (err) {
+        console.warn('[pdf-export] could not embed remote image (left as-is):', src.slice(0, 80), err.message);
+      }
+    }));
+  }
+
+  // Accomplished images fill whatever room the Opportunities page has left:
+  // try the sizes below and keep the first where the page's .pdfx-inner still
+  // fits in 11in minus a 24px margin. Measure .pdfx-inner, NOT .pdfx-page —
+  // the page has min-height:11in so it always reads as full. #pdfx-root must
+  // be display:block (positioned off-screen) or every height measures 0.
+  function pdfxGrowAccomplishedImages(root) {
+    const imgs = Array.from(root.querySelectorAll('img.pdfx-acc-img'));
+    if (!imgs.length) return;
+    const inner = imgs[0].closest('.pdfx-inner');
+    if (!inner) return;
+    const limit = PDFX_TARGET_PAGE_HEIGHT_PX - 24;
+    const sizes = [200, 170, 140, 115, 90, 72, 56];
+    let chosen = sizes[sizes.length - 1];
+    for (let i = 0; i < sizes.length; i++) {
+      imgs.forEach(function (im) { im.style.width = sizes[i] + 'px'; im.style.height = sizes[i] + 'px'; });
+      if (inner.getBoundingClientRect().height <= limit) { chosen = sizes[i]; break; }
+    }
+    imgs.forEach(function (im) { im.style.width = chosen + 'px'; im.style.height = chosen + 'px'; });
+    console.log('[pdf-export] Accomplished images sized to', chosen + 'px; page height', Math.round(inner.getBoundingClientRect().height) + 'px of', limit);
+  }
+
   window.exportPartnerPDF = async function () {
     const btn = pdfxById('pdf-export-btn');
     if (btn) { btn.disabled = true; btn.classList.add('pdfx-loading'); }
@@ -20249,6 +20639,7 @@ async function loadAuditResultsFromSheet() {
       // behavior; Events keys still default unchecked, unchanged.
       const includeSections = {
         amazon:        !!document.getElementById('pdf-include-amazon')        && document.getElementById('pdf-include-amazon').checked,
+        insights:      !!document.getElementById('pdf-include-insights')      && document.getElementById('pdf-include-insights').checked,
         momentum:      !!document.getElementById('pdf-include-momentum')      && document.getElementById('pdf-include-momentum').checked,
         walmart:       !!document.getElementById('pdf-include-walmart')       && document.getElementById('pdf-include-walmart').checked,
         fulfillment:   !!document.getElementById('pdf-include-fulfillment')   && document.getElementById('pdf-include-fulfillment').checked,
@@ -20270,7 +20661,8 @@ async function loadAuditResultsFromSheet() {
         (includeSections.walmart       && typeof window.initWalmartLive === 'function')            ? window.initWalmartLive()            : null,
         (includeSections.stewardship   && typeof window.initStewardshipLive === 'function')        ? window.initStewardshipLive()        : null,
         (includeSections.fulfillment   && typeof window.initMarketingFulfillmentCS === 'function')  ? window.initMarketingFulfillmentCS() : null,
-        (includeSections.opportunities && !window._snsChart && typeof initSns === 'function')       ? initSns()                           : null,
+        (includeSections.insights && !window._categorySalesChart && typeof window.loadInsCategoryChart === 'function') ? window.loadInsCategoryChart() : null,
+        (includeSections.insights && !window._snsChart && typeof initSns === 'function') ? initSns() : null,
         // Prime Day's KPIs/chart are lazy-loaded on tab click — if it's
         // checked for inclusion but the tab was never opened this session,
         // this is what actually builds the chart before capture below.
@@ -20312,9 +20704,13 @@ async function loadAuditResultsFromSheet() {
       // Filtered to only the charts whose section is actually checked —
       // otherwise this would poll the full 12s waiting on a chart that was
       // never going to render because its page got excluded.
+      // A chart missing here (or from PDFX_CHART_CANVAS_IDS) comes out blank, tiny or
+      // distorted. Keep in sync when a chart moves pages (Subscriptions now lives on Insights).
       const chartsBySection = {
-        amazon: ['_amazonChart'], website: ['_webChart'], walmart: ['_walmartChart'],
-        stewardship: ['_investChart', '_impressChart'], opportunities: ['_snsChart'],
+        amazon: ['_amazonChart'], walmart: ['_walmartChart'],
+        stewardship: ['_investChart', '_impressChart'],
+        insights: ['_snsChart', '_categorySalesChart'],
+        fulfillment: ['mfcShippedChartInstance'],
       };
       const expectedCharts = Object.keys(chartsBySection)
         .filter(sec => includeSections[sec])
@@ -20348,8 +20744,9 @@ async function loadAuditResultsFromSheet() {
       // checkbox pattern as the 5 event pages below.
       const salesMarketingPages = [
         includeSections.amazon        ? buildAmazonPage(monthYear)        : '',
-        includeSections.momentum      ? buildMomentumProductsPages(monthYear) + buildMomentumPage2(monthYear) : '',
         includeSections.walmart       ? buildWalmartPage(monthYear)       : '',
+        includeSections.insights      ? buildSalesInsightsPage(monthYear) : '',
+        includeSections.momentum      ? buildMomentumProductsPages(monthYear) + buildMomentumPage2(monthYear) : '',
         includeSections.fulfillment   ? buildFulfillmentCsPage(monthYear) : '',
         includeSections.stewardship   ? buildStewardshipPage(monthYear)   : '',
         includeSections.opportunities ? buildOpportunitiesPage(monthYear) : '',
@@ -20435,89 +20832,15 @@ async function loadAuditResultsFromSheet() {
       console.log('[pdf-export] .pdfx-page count:', pageEls.length);
       if (!pageEls.length) throw new Error('No .pdfx-page elements found — nothing to export.');
 
-      const jsPDFCtor = (window.jspdf && window.jspdf.jsPDF) || window.jsPDF;
-      if (typeof jsPDFCtor !== 'function') throw new Error('jsPDF constructor not found on window.jspdf.jsPDF or window.jsPDF.');
-      if (typeof html2canvas !== 'function') throw new Error('html2canvas is not available as a global.');
-
-      const pdf = new jsPDFCtor({ unit: 'in', format: 'letter', orientation: 'portrait' });
-      const pageWidthIn = 8.5, pageHeightIn = 11;
-
-      for (let i = 0; i < pageEls.length; i++) {
-        const el = pageEls[i];
-        // Amazon (page 2, the FIRST content page) rendering correctly while
-        // every later page's chart images came out blank — despite all of
-        // them decoding successfully in the one big batch at the top of
-        // this function — is the signature of decoded image readiness not
-        // surviving several sequential heavy (scale:2, full-page) html2canvas
-        // render() calls. Re-decoding each page's own images immediately
-        // before ITS capture (not just once, upfront, for everything)
-        // guards against that regardless of the exact browser mechanism
-        // behind it. This resolves near-instantly if nothing was actually
-        // evicted, so it's cheap insurance either way.
-        const pageImgs = Array.from(el.querySelectorAll('img'));
-        await Promise.all(pageImgs.map(img => (typeof img.decode === 'function') ? img.decode().catch(() => {}) : Promise.resolve()));
-
-        // Better QA for next time this breaks: log each image's real pixel
-        // data size (naturalWidth/Height) alongside its actual laid-out
-        // size on THIS page right before capture. A blank chart with
-        // naturalWidth>0 but rect width/height 0 means a layout problem;
-        // naturalWidth 0 means the image itself never had real data.
-        pageImgs.forEach((img, idx) => {
-          const rect = img.getBoundingClientRect();
-          console.log('[pdf-export][qa] page', i + 1, 'img#' + idx, '— natural:', img.naturalWidth + 'x' + img.naturalHeight, '— laid out:', Math.round(rect.width) + 'x' + Math.round(rect.height), '— src:', img.src.slice(0, 40));
-        });
-
-        // html2canvas clones the ENTIRE document by default, not just `el`
-        // — it needs the full page for accurate global style computation.
-        // That clone pass was tripping over whatever live-dashboard chart
-        // canvas happened to be 0×0/tainted at that exact moment, and it
-        // wasn't just logging a harmless warning: comparing two consecutive
-        // export runs, the SPECIFIC charts that failed to render matched
-        // exactly which canvases were listed as tainted each time — when
-        // Investments/Impressions were hidden (0×0) they failed and Amazon
-        // rendered; next run Investments/Impressions happened to still be
-        // visible from the last-viewed tab, and THEY rendered while Amazon/
-        // Website/Walmart/Subscriptions (now hidden) failed instead. That's
-        // not noise, that's this. ignoreElements tells html2canvas to skip
-        // every live-dashboard canvas entirely — it only ever needs to see
-        // our own <img>-only #pdfx-root content anyway. Confirmed 2026-07-14.
-        const canvas = await html2canvas(el, {
-          scale: 2,
-          backgroundColor: '#ffffff',
-          ignoreElements: (node) => node.tagName === 'CANVAS' && !node.closest('#pdfx-root')
-        });
-        console.log('[pdf-export] page', i + 1, 'canvas size:', canvas.width, 'x', canvas.height);
-        const imgData = canvas.toDataURL('image/jpeg', 0.97);
-        if (i > 0) pdf.addPage();
-        // Scale the captured canvas to fill the page width, preserving
-        // aspect ratio. FIXED — per the PDF export debugging playbook's
-        // Case 6: when a page's true content height exceeds what fits at
-        // full 8.5in width within one 11in page, clamping ONLY the height
-        // passed to addImage() while leaving width fixed at 8.5in forces
-        // jsPDF to squish the image into the wrong aspect ratio — visibly
-        // distorting everything on that page, text included, not just
-        // whichever chart/map happens to be on it. Scale BOTH dimensions
-        // down together instead, so an overflowing page shrinks to fit
-        // (small margins, never touching all four edges) rather than
-        // being squished to fit. The real fix for any specific page that
-        // hits this often is trimming its content per Case 6's own
-        // guidance — this is the capture-pipeline safety net underneath
-        // that, so a too-tall page degrades gracefully instead of visibly
-        // distorting.
-        const renderedHeightIn = pageWidthIn * (canvas.height / canvas.width);
-        let drawWidthIn = pageWidthIn, drawHeightIn = renderedHeightIn;
-        if (renderedHeightIn > pageHeightIn) {
-          const shrink = pageHeightIn / renderedHeightIn;
-          drawWidthIn = pageWidthIn * shrink;
-          drawHeightIn = pageHeightIn;
-          console.warn('[pdf-export] page', i + 1, 'content taller than one page at full width —', renderedHeightIn.toFixed(2) + 'in needed, shrunk to fit', drawWidthIn.toFixed(2) + 'x' + drawHeightIn.toFixed(2) + 'in. Consider trimming this page\'s content (see PDF export playbook, Case 6).');
-        }
-        pdf.addImage(imgData, 'JPEG', 0, 0, drawWidthIn, drawHeightIn);
-      }
-
+      // Embed Drive-hosted images (Accomplished uploads), then size them to fill the
+      // Opportunities page, then render server-side (screenshot fallback inside).
+      await pdfxRasterizeRemoteImages(root);
+      pdfxGrowAccomplishedImages(root);
+      const pdfResult = await pdfxRenderPagesToPdf(root, pageEls);
+      console.log('[pdf-export] download triggered, mode:', pdfResult.mode === 'text' ? 'text (server, real text)' : 'image (fallback)');
+      if (pdfResult.mode === 'image') pdfxToast(PDFX_FALLBACK_TOAST);
       const filename = 'Cloud_Cafe_Partnership_Report_' + (monthYear ? monthYear.replace(' ', '_') : 'Report') + '.pdf';
-      pdf.save(filename);
-      console.log('[pdf-export] pdf.save() called — download should start now');
+      pdfxDownloadBlob(pdfResult.blob, filename);
 
       root.style.display = 'none';
       root.style.position = ''; root.style.top = ''; root.style.left = ''; root.style.zIndex = ''; root.style.opacity = '';
