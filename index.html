@@ -273,6 +273,28 @@ nav > .nav-btn:not(.active):hover{color:#fff;}
 .insight-bar{background:var(--sand);border:1px solid rgba(0,31,96,0.10);border-radius:var(--radius-sm);padding:12px 16px;margin-top:14px;display:flex;align-items:flex-start;gap:10px;flex-wrap:wrap;}
 .insight-bar strong{font-size:12px;color:var(--navy);white-space:nowrap;}
 .insight-text{font-size:12.5px;color:var(--navy);flex:1;line-height:1.6;}
+.insight-text.key-insight{background:var(--sand);border-left:3px solid var(--warn);border-radius:0 6px 6px 0;padding:12px 16px;}
+/* Sales > Reviews (ported from Vivian Valenty's Reviews tab, vbc index) — scoped to #s-reviews */
+#s-reviews .evo-pending{padding:32px 20px;text-align:center;color:var(--muted);font-size:12.5px;font-style:italic;background:var(--bg,#F8F6F3);border-radius:var(--radius,10px);border:1px dashed var(--border2,rgba(0,31,96,0.18))}
+#s-reviews .review-section{margin-bottom:28px;}
+#s-reviews .review-hd{background:var(--navy);border-radius:8px 8px 0 0;padding:12px 18px;display:flex;align-items:center;justify-content:space-between;color:#fff;}
+#s-reviews .review-hd-title{font-size:13px;font-weight:700;}
+#s-reviews .review-hd-right{display:flex;align-items:center;gap:14px;font-size:11px;color:rgba(255,255,255,.7);}
+#s-reviews .review-stars{color:#f5a623;letter-spacing:1px;}
+#s-reviews .review-avg{font-size:14px;font-weight:700;color:var(--green);}
+#s-reviews .review-avg-of{font-size:10px;color:rgba(255,255,255,.55);}
+#s-reviews .review-bars{background:var(--white);border:1px solid var(--border);border-top:none;padding:14px 18px;}
+#s-reviews .review-bar-row{display:flex;align-items:center;gap:10px;margin-bottom:6px;}
+#s-reviews .review-bar-row:last-child{margin-bottom:0;}
+#s-reviews .review-bar-label{width:26px;flex-shrink:0;font-size:11px;color:var(--muted);font-weight:600;}
+#s-reviews .review-bar-track{flex:1;height:8px;background:var(--surf3,rgba(0,31,96,0.08));border-radius:4px;overflow:hidden;}
+#s-reviews .review-bar-fill{height:100%;background:var(--green);border-radius:4px;}
+#s-reviews .review-bar-count{width:32px;flex-shrink:0;font-size:11px;color:var(--muted);text-align:right;font-family:var(--mono,'DM Mono',monospace);}
+#s-reviews .review-cards{display:grid;grid-template-columns:1fr 1fr;gap:14px;background:var(--white);border:1px solid var(--border);border-top:none;border-radius:0 0 8px 8px;padding:14px 18px;}
+#s-reviews .review-card{background:var(--surf2,rgba(0,31,96,0.03));border-left:3px solid var(--green);border-radius:0 6px 6px 0;padding:14px 16px;}
+#s-reviews .review-card-stars{color:#f5a623;font-size:12px;letter-spacing:1px;margin-bottom:6px;}
+#s-reviews .review-card-title{font-size:12.5px;font-weight:700;color:var(--navy);margin-bottom:8px;}
+#s-reviews .review-card-text{font-size:11.5px;color:var(--muted);line-height:1.6;}
 .insight-actions{display:flex;gap:7px;align-items:center;margin-left:auto;}
 .btn-edit{background:none;border:1px solid rgba(0,31,96,0.20);border-radius:var(--radius-sm);padding:4px 11px;font-size:11px;color:var(--muted);cursor:pointer;transition:all .13s;font-family:var(--font);}
 .btn-edit:hover{border-color:var(--navy);color:var(--navy);}
@@ -766,6 +788,17 @@ details.inci-toggle[open] summary::before{content:'▾ ';}
 .opp-title{font-size:15px;font-weight:700;color:var(--navy);margin-bottom:6px;}
 .opp-subtitle{font-size:13px;font-weight:600;color:var(--navy);margin-bottom:10px;}
 .opp-body{font-size:12.5px;color:var(--muted);line-height:1.6;}
+/* What's Been Accomplished — image strip + upload controls (from Dazzle Dry's CSS, scoped) */
+#acc-grid .acc-card-images{display:none;gap:6px;margin-top:10px;flex-wrap:wrap;}
+#acc-grid .opp-card-img{width:64px;height:64px;object-fit:cover;border-radius:6px;border:1px solid var(--border);background:var(--bg);}
+#acc-editor .acc-image-inputs{margin-top:10px;padding-top:10px;border-top:1px dashed rgba(0,31,96,0.18);}
+#acc-editor .insight-image-row{display:flex;align-items:center;gap:8px;margin-bottom:6px;}
+#acc-editor .insight-image-row input[type="text"]{flex:1;min-width:0;padding:6px 8px;border:1px solid rgba(0,31,96,0.20);border-radius:var(--radius-sm);font-family:var(--font);font-size:12px;color:var(--navy);background:var(--white);}
+#acc-editor .insight-image-upload-btn{background:none;border:1px solid rgba(0,31,96,0.20);border-radius:var(--radius-sm);padding:4px 10px;font-size:10.5px;color:var(--muted);cursor:pointer;transition:all .13s;font-family:var(--font);white-space:nowrap;flex-shrink:0;}
+#acc-editor .insight-image-upload-btn:hover{border-color:var(--navy);color:var(--navy);}
+#acc-editor .insight-image-upload-btn.uploading{color:var(--muted);cursor:wait;}
+#acc-editor .insight-image-upload-btn.uploaded{border-color:#1db88a;color:#1db88a;}
+#acc-editor .insight-image-upload-btn.upload-error{border-color:var(--danger);color:var(--danger);}
 .ppc-opp-card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);margin-bottom:14px;overflow:hidden;}
 .ppc-opp-card.urgent{border-left:4px solid var(--danger);}
 .ppc-opp-card.high{border-left:4px solid var(--warn);}
@@ -1644,6 +1677,8 @@ details.inci-toggle[open] summary::before{content:'▾ ';}
         <button class="ch-tab active" onclick="showChannel('sales','s-overview',this)">Overview</button>
         <button class="ch-tab" onclick="showChannel('sales','s-amazon',this)">Amazon</button>
         <button class="ch-tab" onclick="showChannel('sales','s-walmart',this)">Walmart</button>
+        <button class="ch-tab" onclick="showChannel('sales','s-insights',this)">Insights</button>
+        <button class="ch-tab" onclick="showChannel('sales','s-reviews',this)">Reviews</button>
         <button class="ch-tab" onclick="showChannel('sales','s-brand-momentum',this)">Brand Momentum</button>
       </div>
       <!-- Shared period-selector row — added 2026-08-12 per Jaclyn, moved
@@ -1807,56 +1842,124 @@ details.inci-toggle[open] summary::before{content:'▾ ';}
       </div>
     </div>
 
-    <!-- Brand Momentum tab — restyled 2026-09-15 per Jaclyn, ported from
-         Cosmette's real build. Replaces the earlier 4-separate-tables
-         layout (Sessions/Keyword Indexing/Subcategory BSR/Review
-         Velocity, each re-listing every product) with one card per
-         product — reads better than 4 tables at this catalog size. -->
-    <div class="channel-page" id="s-brand-momentum">
+    <!-- Insights tab — built 2026-10-05 to match Dazzle Dry's Insights tab
+         (vbc index, #dd-s-insights): Unit Sales by Product Category,
+         Subscriptions (moved here from Opportunities), Key Insight.
+         Subscriptions keeps its original ids (#kpi-active-subs,
+         #kpi-retention, #chart-sns, #legend-sns) so initSns() works
+         unchanged. -->
+    <div class="channel-page" id="s-insights">
+      <div class="card">
+        <div class="card-title">Unit Sales by Product Category</div>
+        <div style="position:relative;height:320px;"><canvas id="chart-category-sales"></canvas></div>
+      </div>
+      <div class="card">
+        <div class="card-title">Subscriptions</div>
+        <div class="kpi-row" style="grid-template-columns:repeat(2,1fr);margin-bottom:16px;">
+          <div class="kpi-card" id="kpi-active-subs"><div class="kpi-label">Total Active Subscriptions</div><div class="kpi-value">—</div><div class="kpi-mom flat">Loading…</div></div>
+          <div class="kpi-card" id="kpi-retention"><div class="kpi-label">Subscribe &amp; Save Retention 90 Days</div><div class="kpi-value">—</div><div class="kpi-mom flat">Loading…</div></div>
+        </div>
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;">
+          <div style="font-size:11px;color:var(--muted);font-weight:600;">Active Subscriptions by Month <span style="font-weight:400;">(Year over Year)</span></div>
+          <div id="legend-sns" style="display:flex;align-items:center;"></div>
+        </div>
+        <div style="position:relative;height:260px;"><canvas id="chart-sns"></canvas></div>
+      </div>
+      <div class="card">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
+          <div class="card-title" style="margin-bottom:0;">Key Insight</div>
+          <button class="btn-edit" id="ins-cat-insight-edit-btn">✏️ Edit</button>
+        </div>
+        <div class="insight-text key-insight" id="ins-cat-insight-text">Loading…</div>
+        <div class="insight-editor" id="ins-cat-insight-editor">
+          <textarea id="ins-cat-insight-textarea"></textarea>
+          <div class="editor-footer">
+            <span class="editor-note">Saves to this month's report row. Any field can be left blank — nothing here is required.</span>
+            <button class="btn-cancel" id="ins-cat-insight-cancel">Cancel</button>
+            <button class="btn-save-stage" id="ins-cat-insight-save">Save</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Reviews tab — built 2026-10-05 to match Vivian Valenty's Reviews tab
+         (vbc index, #vvs-s-reviews). Reads the shared Amazon Reviews
+         workbook via fetchAmazonReviews() (tab "cloud-cafe"). -->
+    <div class="channel-page" id="s-reviews">
       <div class="page-hd" style="margin-bottom:16px;">
-        <div><div class="page-title" style="font-size:18px;">Brand Momentum</div><div class="page-sub" id="momentum-page-sub">Last month</div></div>
+        <div><div class="page-title" style="font-size:18px;">Reviews &amp; Ratings</div><div class="page-sub">Amazon customer reviews, curated monthly per product</div></div>
+      </div>
+      <div id="reviews-container">
+        <div class="evo-pending">Loading…</div>
+      </div>
+    </div>
+
+    <!-- Brand Momentum tab — REBUILT 2026-10-05 per Jaclyn to match évolis's
+         Brand Momentum page exactly (evolis index #s-brand-momentum):
+         "Show sections" row, 3 KPIs (bm-kpi-*), per-product cards with the
+         Hide-negative-BSR toggle, Keyword Rankings table, and What We're
+         Tracking Next. Only 3 section checkboxes — each wraps a real section. -->
+    <div class="channel-page" id="s-brand-momentum">
+      <div class="card" style="margin-bottom:18px;padding:12px 20px;">
+        <div style="display:flex;align-items:center;gap:16px;flex-wrap:wrap;">
+          <span style="font-size:11px;font-weight:600;color:var(--muted);flex-shrink:0;">Show sections:</span>
+          <label style="display:flex;align-items:center;gap:4px;cursor:pointer;font-size:11px;color:var(--navy);flex-shrink:0;">
+            <input type="checkbox" id="bm-cb-products" checked style="margin:0;" onchange="(function(cb){var s=document.getElementById('bm-cb-products-section');if(s)s.style.display=cb.checked?'':'none';})(this)"> Performance by Product
+          </label>
+          <label style="display:flex;align-items:center;gap:4px;cursor:pointer;font-size:11px;color:var(--navy);flex-shrink:0;">
+            <input type="checkbox" id="bm-cb-keywords" checked style="margin:0;" onchange="(function(cb){var s=document.getElementById('bm-cb-keywords-section');if(s)s.style.display=cb.checked?'':'none';})(this)"> Keyword Rankings
+          </label>
+          <label style="display:flex;align-items:center;gap:4px;cursor:pointer;font-size:11px;color:var(--navy);flex-shrink:0;">
+            <input type="checkbox" id="bm-cb-next" checked style="margin:0;" onchange="(function(cb){var s=document.getElementById('bm-cb-next-section');if(s)s.style.display=cb.checked?'':'none';})(this)"> What We're Tracking
+          </label>
+        </div>
       </div>
 
-      <div class="kpi-row" style="margin-bottom:20px;">
-        <div class="kpi-card" id="momentum-kpi-reviews"><div class="kpi-label">Reviews Collected</div><div class="kpi-value">—</div><div class="kpi-mom flat">Loading…</div></div>
-        <div class="kpi-card" id="momentum-kpi-indexed"><div class="kpi-label">Keywords with Organic Rank</div><div class="kpi-value">—</div><div class="kpi-mom flat">Loading…</div></div>
-        <div class="kpi-card" id="momentum-kpi-sessions"><div class="kpi-label">Sessions</div><div class="kpi-value">—</div><div class="kpi-mom flat">Loading…</div></div>
+      <div class="kpi-row" style="grid-template-columns:repeat(3,1fr);margin-bottom:20px;">
+        <div class="kpi-card" id="bm-kpi-reviews"><div class="kpi-label">Reviews Collected</div><div class="kpi-value">—</div></div>
+        <div class="kpi-card" id="bm-kpi-ranked-keywords"><div class="kpi-label">Keywords with Organic Rank</div><div class="kpi-value">—</div></div>
+        <div class="kpi-card" id="bm-kpi-sessions"><div class="kpi-label">Sessions</div><div class="kpi-value">—</div><div class="kpi-mom flat"></div></div>
       </div>
 
-      <div class="card" style="margin-bottom:16px;">
+      <div id="bm-cb-products-section" class="card" style="margin-bottom:18px;">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2px;">
           <div class="card-title" style="margin-bottom:0;">Performance by Product</div>
-          <label style="display:flex;align-items:center;gap:6px;font-size:11px;color:var(--muted);cursor:pointer;"><input type="checkbox" id="momentum-hide-negative-bsr"> Hide negative BSR changes</label>
+          <label style="display:flex;align-items:center;gap:4px;font-size:11px;color:var(--muted);cursor:pointer;flex-shrink:0;">
+            <input type="checkbox" id="bm-hide-negative-bsr" style="margin:0;" onchange="window.bmRenderMomentumCards && window.bmRenderMomentumCards()">
+            Hide negative BSR changes
+          </label>
         </div>
-        <div style="font-size:11px;color:var(--muted);margin-bottom:14px;">Products still within their first 3 months of Vine enrollment are flagged — Vine can inflate session counts from reviewers rather than real shoppers during that window.</div>
-        <div class="momentum-cards-grid" id="momentum-cards-grid">
-          <div class="ppc-card" style="color:var(--muted);font-style:italic;grid-column:1/-1;">Loading…</div>
+        <div style="font-size:11px;color:var(--muted);margin-bottom:14px;">
+          Sessions measured vs. prior month; BSR change reflects total movement since first recorded.
+        </div>
+        <div class="momentum-cards-grid" id="bm-momentum-cards-grid"><div style="color:var(--muted);font-size:12px;">Loading…</div></div>
+      </div>
+
+      <div id="bm-cb-keywords-section" class="ppc-card">
+        <div class="ppc-card-title">Targeted Keyword Indexing Progress</div>
+        <div style="font-size:11px;color:var(--muted);margin-top:-8px;margin-bottom:14px;">Organic rankings signal algorithm traction — new brands typically take 3–12 months to index.</div>
+        <div style="overflow-x:auto;">
+          <table class="data-table">
+            <thead><tr><th>Keyword</th><th>Product</th><th>Organic Rank</th><th>Search Volume</th></tr></thead>
+            <tbody id="bm-keyword-tbody"><tr><td colspan="4" style="color:var(--muted);">Loading…</td></tr></tbody>
+          </table>
         </div>
       </div>
 
-      <div class="card" style="margin-bottom:16px;">
-        <div class="card-title">Targeted Keyword Indexing Progress</div>
-        <div style="font-size:11px;color:var(--muted);margin-bottom:12px;">Keywords with real rank movement shown first, then by rank — top 10.</div>
-        <table class="data-table">
-          <thead><tr><th>Keyword</th><th>Product</th><th>Organic Rank</th><th>Search Volume</th></tr></thead>
-          <tbody id="momentum-indexing-tbody"><tr><td colspan="4" style="text-align:center;padding:20px;color:var(--muted);font-style:italic;">Loading…</td></tr></tbody>
-        </table>
-      </div>
-
-      <div class="momentum-tracking-card" style="margin-top:22px;">
+      <div id="bm-cb-next-section" class="momentum-tracking-card">
         <div class="momentum-tracking-title">What We're Tracking Next</div>
         <div class="momentum-tracking-grid">
           <div class="momentum-tracking-item">
-            <div class="momentum-tracking-item-title">Search-to-Sale Conversion</div>
-            <div class="momentum-tracking-item-text">Connecting which specific search terms are actually driving purchases, not just clicks or impressions.</div>
+            <div class="momentum-tracking-item-title">Keyword Rank Movement</div>
+            <div class="momentum-tracking-item-text">Organic rank movement for our top-priority keyword set, month over month.</div>
           </div>
           <div class="momentum-tracking-item">
-            <div class="momentum-tracking-item-title">Review Sentiment Themes</div>
-            <div class="momentum-tracking-item-text">Categorizing what customers are actually praising or flagging in review text, beyond the star rating alone.</div>
+            <div class="momentum-tracking-item-title">Subcategory BSR Trends</div>
+            <div class="momentum-tracking-item-text">Subcategory BSR as a leading indicator of category-level momentum, independent of overall BSR.</div>
           </div>
           <div class="momentum-tracking-item">
-            <div class="momentum-tracking-item-title">Competitive Share of Voice</div>
-            <div class="momentum-tracking-item-text">How Cloud Cafe's organic and sponsored presence compares against category leaders for the same target keywords.</div>
+            <div class="momentum-tracking-item-title">Review Velocity</div>
+            <div class="momentum-tracking-item-text">Review velocity and rating trends as new products build up their own review base.</div>
           </div>
         </div>
       </div>
@@ -2160,17 +2263,34 @@ details.inci-toggle[open] summary::before{content:'▾ ';}
     </div>
     <div class="channel-page" id="m-opportunities">
 
-      <div class="section-label">Subscribe &amp; Save</div>
-      <div class="kpi-row" style="margin-bottom:20px;">
-        <div class="kpi-card" id="kpi-active-subs"><div class="kpi-label">Active Subscriptions</div><div class="kpi-value" style="font-size:36px;">123</div><div class="kpi-mom flat">Loading…</div></div>
-        <div class="kpi-card" id="kpi-retention"><div class="kpi-label">Subscribe &amp; Save Retention (90 Days)</div><div class="kpi-value" style="font-size:36px;">70%</div><div class="kpi-mom flat">Loading…</div></div>
-      </div>
-      <div class="card" style="margin-bottom:20px;">
+      <!-- Subscribe & Save moved to Sales > Insights 2026-10-05 -->
+      <!-- What's Been Accomplished — added 2026-10-05, ported from Dazzle Dry's
+           Opportunities page (vbc index). Four cards saved on the monthly
+           report row as accomplished{1-4}_title/subtitle/body; cards 1 and 2
+           also take images (accomplished1_image1-3, accomplished2_image1-2),
+           uploaded through /api/upload-insight-image. Matches the backend's
+           real columns, so nothing is dropped on save. -->
+      <div class="card" style="margin-bottom:16px;">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px;">
-          <div class="card-title" style="margin-bottom:0;">Active Subscriptions by Month</div>
-          <div id="legend-sns" style="display:flex;align-items:center;"></div>
+          <div style="display:inline-block;background:var(--sand);border:1px solid rgba(0,31,96,.12);border-radius:4px;padding:3px 10px;font-size:9px;font-weight:700;letter-spacing:.12em;text-transform:uppercase;color:var(--navy);">What's Been Accomplished</div>
+          <button class="btn-edit" id="acc-edit-btn">✏️ Edit</button>
         </div>
-        <div style="position:relative;height:220px;"><canvas id="chart-sns"></canvas></div>
+        <div class="opp-grid" id="acc-grid">
+          <div class="opp-card" id="acc-card-1" style="display:none;"><div class="opp-title" id="acc-title-1"></div><div class="opp-subtitle" id="acc-subtitle-1"></div><div class="opp-body" id="acc-body-1"></div><div class="acc-card-images" id="acc-images-1"></div></div>
+          <div class="opp-card" id="acc-card-2" style="display:none;"><div class="opp-title" id="acc-title-2"></div><div class="opp-subtitle" id="acc-subtitle-2"></div><div class="opp-body" id="acc-body-2"></div><div class="acc-card-images" id="acc-images-2"></div></div>
+          <div class="opp-card" id="acc-card-3" style="display:none;"><div class="opp-title" id="acc-title-3"></div><div class="opp-subtitle" id="acc-subtitle-3"></div><div class="opp-body" id="acc-body-3"></div></div>
+          <div class="opp-card" id="acc-card-4" style="display:none;"><div class="opp-title" id="acc-title-4"></div><div class="opp-subtitle" id="acc-subtitle-4"></div><div class="opp-body" id="acc-body-4"></div></div>
+        </div>
+        <div id="acc-empty-state" style="display:none;color:var(--muted);font-size:12px;padding:8px 0;">Nothing added yet — click Edit to add up to 4 accomplishments.</div>
+      </div>
+      <div class="insight-editor" id="acc-editor">
+        <div style="font-size:11px;color:var(--muted);margin-bottom:12px;">Up to 4 cards. Leave a card's Title blank to leave it out of the report entirely. Subtitle is optional. Cards 1 and 2 can also show images — paste a URL or upload (max 4MB each).</div>
+        <div id="acc-editor-slots"></div>
+        <div class="editor-footer" style="margin-top:10px;">
+          <span class="editor-note">Saves directly to the report sheet as a draft.</span>
+          <button class="btn-cancel" id="acc-cancel-btn">Cancel</button>
+          <button class="btn-save-stage" id="acc-save-btn">Save</button>
+        </div>
       </div>
 
       <div class="card" style="margin-bottom:16px;">
@@ -4837,7 +4957,8 @@ function showPage(id, btn) {
     if (cid && cid.indexOf('ix-') === 0) window.initInventoryExternalPage();
     if (cid==='m-stewardship')   window.initStewardshipLive();
     if (cid==='m-fulfillment-cs') window.initMarketingFulfillmentCS();
-    if (cid==='m-opportunities' && !window._snsChart) initSns();
+    if (cid==='s-insights') { if (!window._categorySalesChart) window.loadInsCategoryChart(); if (!window._snsChart) initSns(); }
+    if (cid==='s-reviews') window.loadSalesReviews();
     if (cid==='ev-strategy' && typeof window.initEventStrategyHeader === 'function') window.initEventStrategyHeader();
   }
 }
@@ -4859,7 +4980,8 @@ function showChannel(page, channelId, btn) {
     if (channelId.indexOf('mx-') === 0)  window.initMarketingExternalPage();
     if (channelId.indexOf('ix-') === 0)  window.initInventoryExternalPage();
     if (channelId === 'm-stewardship')   window.initStewardshipLive();
-    if (channelId === 'm-opportunities' && !window._snsChart) initSns();
+    if (channelId === 's-insights') { if (!window._categorySalesChart) window.loadInsCategoryChart(); if (!window._snsChart) initSns(); }
+    if (channelId === 's-reviews') window.loadSalesReviews();
     if (channelId === 'ev-primeday')     window.initPrimeDayReport();
     if (channelId === 'ev-spring')       window.initBigSpringSaleReport();
     if (channelId === 'ev-pbdd')         window.initPBDDReport();
@@ -5165,8 +5287,9 @@ async function initSns() {
 
   // Same spreadsheet as initStewardshipLive's window.SHEET_CFG.SHEET_STEWARDSHIP_SUMMARY.fileId, different tab.
 
-  const kpiValues = document.querySelectorAll('#m-opportunities .kpi-value');
-  const subsKpiEl = kpiValues[0] || null;
+  // Subscriptions moved from Marketing > Opportunities to Sales > Insights (2026-10-05),
+  // so look the KPI up by its own id instead of by its old parent page.
+  const subsKpiEl = document.querySelector('#kpi-active-subs .kpi-value') || null;
   const retentionKpiEl = document.querySelector('#kpi-retention .kpi-value') || null;
 
   try {
@@ -12527,6 +12650,11 @@ document.addEventListener('DOMContentLoaded', function() {
   });
   window.wireInsightBlock({
     scope: 'monthly',
+    fields: [{ key: 'category_key_insight', displayId: 'ins-cat-insight-text', textareaId: 'ins-cat-insight-textarea', prefix: '<strong>Key Insights:</strong> ', placeholder: 'No insight yet — click Edit to add one.' }],
+    editBtnId: 'ins-cat-insight-edit-btn', saveBtnId: 'ins-cat-insight-save', cancelBtnId: 'ins-cat-insight-cancel', editorId: 'ins-cat-insight-editor',
+  });
+  window.wireInsightBlock({
+    scope: 'monthly',
     fields: [{ key: 'ad_impressions_note', displayId: 'adimp-insight-text', textareaId: 'adimp-insight-textarea', placeholder: 'No note added yet — click Edit to add one.' }],
     editBtnId: 'adimp-insight-edit-btn', saveBtnId: 'adimp-insight-save', cancelBtnId: 'adimp-insight-cancel', editorId: 'adimp-insight-editor',
   });
@@ -12581,6 +12709,168 @@ document.addEventListener('DOMContentLoaded', function() {
   // Bespoke rather than wireInsightBlock, since it needs to show/hide whole
   // cards based on whether Title is filled, and collapse the Subtitle line
   // when it's blank — not just fill-or-placeholder per field.
+  // ── What's Been Accomplished: up to 4 cards (title/subtitle/body); cards 1 and 2 also take images ──
+  // Image upload — same behavior as Dazzle Dry's ddUploadInsightImage: reads the file
+  // as base64, POSTs to /api/upload-insight-image (Drive upload, returns a public URL)
+  // and drops that URL into the paired text input. Pasting a URL directly still works.
+  window.ccUploadInsightImage = async function (fileInputEl, targetInputId, statusBtnId) {
+    const file = fileInputEl.files && fileInputEl.files[0];
+    if (!file) return;
+    const targetInput = document.getElementById(targetInputId);
+    const statusBtn = document.getElementById(statusBtnId);
+    const MAX_BYTES = 4 * 1024 * 1024; // under Vercel's 4.5MB body limit once base64-inflated ~33%
+    const setStatus = (label, cls) => {
+      if (!statusBtn) return;
+      statusBtn.textContent = label;
+      statusBtn.classList.remove('uploading', 'uploaded', 'upload-error');
+      if (cls) statusBtn.classList.add(cls);
+    };
+    if (file.size > MAX_BYTES) { setStatus('⚠ Too large (max 4MB)', 'upload-error'); fileInputEl.value = ''; return; }
+    try {
+      setStatus('⏳ Uploading…', 'uploading');
+      const base64 = await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(String(reader.result).split(',')[1] || '');
+        reader.onerror = () => reject(new Error('Could not read file'));
+        reader.readAsDataURL(file);
+      });
+      const res = await fetch('/api/upload-insight-image', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ filename: file.name, mimeType: file.type, imageBase64: base64 }),
+      });
+      const data = await res.json();
+      if (!res.ok || data.error) throw new Error(data.error || ('HTTP ' + res.status));
+      if (targetInput) targetInput.value = data.url;
+      setStatus('✓ Uploaded', 'uploaded');
+    } catch (err) {
+      console.error('[ccUploadInsightImage]', err);
+      setStatus('⚠ Upload failed', 'upload-error');
+    } finally {
+      fileInputEl.value = ''; // allow re-selecting the same file
+    }
+  };
+
+  (function wireAccomplished() {
+    const BRAND = 'cloud-cafe';
+    const IMG_SLOTS = { 1: 3, 2: 2 }; // matches the sheet: accomplished1_image1-3, accomplished2_image1-2
+    const editBtn = document.getElementById('acc-edit-btn');
+    const saveBtn = document.getElementById('acc-save-btn');
+    const cancelBtn = document.getElementById('acc-cancel-btn');
+    const editorEl = document.getElementById('acc-editor');
+    const slotsEl = document.getElementById('acc-editor-slots');
+    if (!editBtn || !saveBtn || !editorEl || !slotsEl) return;
+
+    slotsEl.innerHTML = [1,2,3,4].map(n => {
+      const imgRows = Array.from({ length: IMG_SLOTS[n] || 0 }, (_, i) => `
+          <div class="insight-image-row">
+            <input type="text" id="acc${n}-image${i+1}-input" placeholder="Image ${i+1} URL">
+            <label class="insight-image-upload-btn" id="acc${n}-image${i+1}-btn" for="acc${n}-image${i+1}-file">📤 Upload</label>
+            <input type="file" id="acc${n}-image${i+1}-file" accept="image/*" style="display:none;" onchange="ccUploadInsightImage(this,'acc${n}-image${i+1}-input','acc${n}-image${i+1}-btn')">
+          </div>`).join('');
+      return `
+      <div style="border-top:1px solid var(--border);padding-top:12px;margin-top:12px;">
+        <div style="font-size:11px;font-weight:600;color:var(--navy);margin-bottom:4px;">Accomplished ${n} — Title</div>
+        <textarea id="textarea-acc${n}-title" style="min-height:44px;margin-bottom:8px;"></textarea>
+        <div style="font-size:11px;font-weight:600;color:var(--navy);margin-bottom:4px;">Subtitle <span style="font-weight:400;color:var(--muted);">(optional)</span></div>
+        <textarea id="textarea-acc${n}-subtitle" style="min-height:44px;margin-bottom:8px;"></textarea>
+        <div style="font-size:11px;font-weight:600;color:var(--navy);margin-bottom:4px;">Body</div>
+        <textarea id="textarea-acc${n}-body" style="margin-bottom:4px;"></textarea>
+        ${imgRows ? `<div class="acc-image-inputs"><div style="font-size:11px;font-weight:600;color:var(--navy);margin-bottom:6px;">Images (up to ${IMG_SLOTS[n]})</div>${imgRows}</div>` : ''}
+      </div>`;
+    }).join('');
+
+    function lastFullMonth() {
+      const now = new Date();
+      let year = now.getFullYear(), month = now.getMonth();
+      if (month === 0) { month = 12; year--; }
+      return { year, month };
+    }
+    function renderImages(n, urls) {
+      const el = document.getElementById(`acc-images-${n}`);
+      if (!el) return;
+      el.innerHTML = '';
+      const valid = (urls || []).map(u => (u || '').trim()).filter(u => /^https?:\/\//i.test(u));
+      if (!valid.length) { el.style.display = 'none'; return; }
+      el.style.display = 'flex';
+      valid.forEach(u => {
+        const img = document.createElement('img');
+        img.className = 'opp-card-img';
+        img.alt = '';
+        img.src = u;
+        img.onerror = () => { img.style.display = 'none'; };
+        el.appendChild(img);
+      });
+    }
+
+    async function load() {
+      const { year, month } = lastFullMonth();
+      const row = await window.reportInsightsFetchRow(BRAND, { year: String(year), month: String(month) });
+      let anyVisible = false;
+      [1,2,3,4].forEach(n => {
+        const title    = row ? (row[`accomplished${n}_title`]    || '') : '';
+        const subtitle = row ? (row[`accomplished${n}_subtitle`] || '') : '';
+        const body     = row ? (row[`accomplished${n}_body`]     || '') : '';
+        const card = document.getElementById(`acc-card-${n}`);
+        if (title) {
+          anyVisible = true;
+          card.style.display = '';
+          document.getElementById(`acc-title-${n}`).textContent = title;
+          const subEl = document.getElementById(`acc-subtitle-${n}`);
+          if (subtitle) { subEl.textContent = subtitle; subEl.style.display = ''; }
+          else { subEl.textContent = ''; subEl.style.display = 'none'; }
+          document.getElementById(`acc-body-${n}`).textContent = body;
+        } else {
+          card.style.display = 'none';
+        }
+        const set = (id, v) => { const el = document.getElementById(id); if (el) el.value = v; };
+        set(`textarea-acc${n}-title`, title);
+        set(`textarea-acc${n}-subtitle`, subtitle);
+        set(`textarea-acc${n}-body`, body);
+        const urls = [];
+        for (let i = 1; i <= (IMG_SLOTS[n] || 0); i++) {
+          const u = row ? (row[`accomplished${n}_image${i}`] || '') : '';
+          urls.push(u);
+          set(`acc${n}-image${i}-input`, u);
+        }
+        if (IMG_SLOTS[n]) renderImages(n, title ? urls : []); // images only show with a visible card
+      });
+      document.getElementById('acc-empty-state').style.display = anyVisible ? 'none' : 'block';
+      return row;
+    }
+
+    editBtn.addEventListener('click', () => {
+      const open = getComputedStyle(editorEl).display !== 'none';
+      editorEl.style.display = open ? 'none' : 'block';
+    });
+    cancelBtn.addEventListener('click', () => { editorEl.style.display = 'none'; });
+
+    saveBtn.addEventListener('click', async () => {
+      const origLabel = saveBtn.textContent;
+      saveBtn.disabled = true; saveBtn.textContent = 'Saving…';
+      try {
+        const { year, month } = lastFullMonth();
+        const val = id => ((document.getElementById(id) || {}).value || '').trim();
+        const fields = {};
+        [1,2,3,4].forEach(n => {
+          fields[`accomplished${n}_title`]    = val(`textarea-acc${n}-title`);
+          fields[`accomplished${n}_subtitle`] = val(`textarea-acc${n}-subtitle`);
+          fields[`accomplished${n}_body`]     = val(`textarea-acc${n}-body`);
+          for (let i = 1; i <= (IMG_SLOTS[n] || 0); i++) fields[`accomplished${n}_image${i}`] = val(`acc${n}-image${i}-input`);
+        });
+        await window.reportInsightsSaveFields({ scope: 'monthly', year, month, fields, action: 'save' });
+        await load();
+        editorEl.style.display = 'none';
+      } catch (e) {
+        alert('Save failed: ' + e.message);
+      } finally {
+        saveBtn.disabled = false; saveBtn.textContent = origLabel;
+      }
+    });
+
+    load();
+  })();
+
   (function wireOpportunities() {
     const BRAND = 'cloud-cafe';
     const editBtn = document.getElementById('opp-edit-btn');
@@ -12641,7 +12931,7 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     editBtn.addEventListener('click', () => {
-      editorEl.style.display = editorEl.style.display === 'none' ? 'block' : 'none';
+      editorEl.style.display = getComputedStyle(editorEl).display !== 'none' ? 'none' : 'block';
     });
     cancelBtn.addEventListener('click', () => { editorEl.style.display = 'none'; });
 
@@ -13383,6 +13673,209 @@ function getProductMaster() {
   })();
   return _productMasterPromise;
 }
+
+// ══════════════════════════════════════════════════════════════════════
+// Sales > Insights > Unit Sales by Product Category — added 2026-10-05.
+// Layout matches Dazzle Dry's Insights tab; data path is évolis's
+// loadInsCategoryChart (SHEET_ORDERS_HISTORICAL joined to the Master SKU
+// List's Product Category) since Cloud Cafe has no per-ASIN monthly sheet
+// like DD's. Differences from évolis, all deliberate:
+//  - categories are DISCOVERED from the data (not hardcoded), ordered by
+//    units, so Mugs / Stickers / Collagen Gummies etc. appear on their own
+//    the first month they sell instead of being silently dropped;
+//  - the category brand prefix ("CLC • ") is already stripped by
+//    getProductMaster → stripCategoryBrandPrefix;
+//  - cancelled orders excluded; "-SF" suffix stripped before matching.
+// unit_count is split evenly across the SKUs listed on a multi-SKU row
+// (exact for single-SKU rows, which is nearly all of Cloud Cafe's data).
+// ══════════════════════════════════════════════════════════════════════
+window.loadInsCategoryChart = async function () {
+  if (window._categorySalesChart) return;
+  const canvas = document.getElementById('chart-category-sales');
+  if (!canvas) return;
+  try {
+    const hist = window.SHEET_CFG && window.SHEET_CFG.SHEET_ORDERS_HISTORICAL;
+    if (!hist || !hist.fileId) { console.warn('[loadInsCategoryChart] SHEET_ORDERS_HISTORICAL missing from SHEET_CFG'); return; }
+    const [master, histCsv] = await Promise.all([
+      getProductMaster(),
+      fetch(ovCsvUrl(hist.fileId, hist.gid) + `&_cb=${Date.now()}`).then(r => r.ok ? r.text() : '').catch(() => ''),
+    ]);
+    const histRows = parseCsvToRows(histCsv);
+    const f = v => parseFloat((v || '0').toString().replace(/[^0-9.-]/g, '')) || 0;
+
+    const byPeriod = {}; // 'YYYY-M' -> { category: units }
+    histRows.forEach(r => {
+      if ((r.status || '').trim().toLowerCase() === 'cancelled') return;
+      const m = (r.date || '').trim().match(/^(\d{4})-(\d{2})/);
+      if (!m) return;
+      const key = `${Number(m[1])}-${Number(m[2])}`;
+      const skus = (r.skus || '').split(',').map(x => x.trim().toUpperCase().replace(/-SF$/, '')).filter(Boolean);
+      if (!skus.length) return;
+      const perSku = f(r.unit_count) / skus.length;
+      skus.forEach(sku => {
+        const entry = master.bySku[sku];
+        const cat = entry ? entry.category : '';
+        if (!cat) return;
+        byPeriod[key] = byPeriod[key] || {};
+        byPeriod[key][cat] = (byPeriod[key][cat] || 0) + perSku;
+      });
+    });
+
+    const periods = Object.keys(byPeriod)
+      .map(k => { const [yr, mo] = k.split('-'); return { key: k, year: Number(yr), month: Number(mo) }; })
+      .sort((a, b) => (a.year * 12 + a.month) - (b.year * 12 + b.month))
+      .slice(-13);
+    if (!periods.length) { console.warn('[loadInsCategoryChart] no category rows matched — check Product Category column and SKUs'); return; }
+
+    // Categories with units inside the visible window only, biggest first.
+    const totals = {};
+    periods.forEach(p => Object.entries(byPeriod[p.key]).forEach(([c, u]) => { totals[c] = (totals[c] || 0) + u; }));
+    const cats = Object.keys(totals).filter(c => totals[c] > 0).sort((a, b) => totals[b] - totals[a]);
+    const PALETTE = ['#001F60', '#24E9A3', '#6B7BA2', '#F4DFD0', '#CCD3D5', '#C87D2F', '#8FA3D1', '#0E8A63'];
+
+    const MONTH_ABBR = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    // 13 months means one month name repeats — tag the first bar and every
+    // January with the year so the two "Sep"s are distinguishable.
+    const labels = periods.map((p, i) => MONTH_ABBR[p.month - 1] + ((i === 0 || p.month === 1) ? " '" + String(p.year).slice(2) : ''));
+    const datasets = cats.map((c, i) => ({
+      label: c,
+      data: periods.map(p => Math.round(((byPeriod[p.key] && byPeriod[p.key][c]) || 0) * 10) / 10),
+      backgroundColor: PALETTE[i % PALETTE.length],
+      borderRadius: 2,
+    }));
+
+    window._categorySalesChart = new Chart(canvas, {
+      type: 'bar',
+      data: { labels, datasets },
+      options: {
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: {
+          legend: { position: 'top', align: 'end', labels: { boxWidth: 12, boxHeight: 12, font: { family: 'DM Sans, sans-serif', size: 11 }, color: '#001F60', padding: 10 } },
+          tooltip: {
+            backgroundColor: '#fff', borderColor: 'rgba(0,31,96,0.1)', borderWidth: 1,
+            titleColor: '#001F60', bodyColor: '#6B7BA2',
+            titleFont: { family: 'DM Sans, sans-serif', size: 11, weight: '600' },
+            bodyFont: { family: 'DM Sans, sans-serif', size: 11 },
+            padding: 12,
+            callbacks: { label: ctx => ` ${ctx.dataset.label}: ${Math.round(ctx.parsed.y).toLocaleString()}` },
+          },
+        },
+        scales: {
+          x: { border: { display: false }, grid: { display: false }, ticks: { font: { family: 'DM Sans, sans-serif', size: 10 }, color: '#6B7BA2' } },
+          y: { border: { display: false }, grid: { color: 'rgba(0,31,96,0.05)' }, ticks: { precision: 0, font: { family: 'DM Sans, sans-serif', size: 10 }, color: '#6B7BA2' } },
+        },
+      },
+    });
+  } catch (err) {
+    console.error('[loadInsCategoryChart]', err);
+  }
+};
+
+// ══════════════════════════════════════════════════════════════════════
+// Sales > Reviews — added 2026-10-05, ported from Vivian Valenty's
+// loadVVSReviews (vbc index). Same behavior: all-time stats per product
+// (count, average, 1–5 distribution) from EVERY row, plus the hand-tagged
+// (YEAR / MONTH) featured reviews for the last FULL month, one section per
+// product. Differences from VVS: reads Cloud Cafe's rows through the
+// existing fetchAmazonReviews() (shared workbook, tab "cloud-cafe"), falls
+// back to the Master SKU List's short name when a row has no product_name,
+// and carries its own escape/format helpers (escapeHtml/mktNum are not
+// global on this dashboard).
+// ══════════════════════════════════════════════════════════════════════
+window.loadSalesReviews = async function () {
+  if (window._salesReviewsLoaded) return;
+  const container = document.getElementById('reviews-container');
+  if (!container) return;
+  window._salesReviewsLoaded = true;
+  const esc = v => String(v == null ? '' : v).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;');
+  const stars = rating => { const r = Math.max(0, Math.min(5, Math.round(Number(rating) || 0))); return '★'.repeat(r) + '☆'.repeat(5 - r); };
+  const num = n => Number(n || 0).toLocaleString('en-US');
+  const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+  const pending = msg => { container.innerHTML = '<div class="evo-pending">' + msg + '</div>'; };
+  try {
+    const [rows, master] = await Promise.all([fetchAmazonReviews(), getProductMaster()]);
+    if (!rows.length) {
+      window._salesReviewsLoaded = false; // allow a retry on the next visit
+      pending('No reviews loaded yet — the “cloud-cafe” tab in the shared Amazon Reviews workbook is missing or empty. Once it is added and populated, this tab activates automatically.');
+      return;
+    }
+    const col = n => Object.keys(rows[0]).find(k => k.toLowerCase() === n);
+    const yearKey = col('year'), monthKey = col('month');
+    if (!yearKey || !monthKey) {
+      pending('Waiting on YEAR and MONTH columns in the reviews sheet — once they are added and populated, this tab activates automatically.');
+      return;
+    }
+    const nameKey = col('product_name') || 'product_name';
+    const skuKey = col('sku') || 'sku';
+    const ratingKey = col('star_rating') || 'star_rating';
+    const titleKey = col('review_title') || 'review_title';
+    const textKey = col('review_text') || 'review_text';
+    const nameOf = r => {
+      const direct = (r[nameKey] || '').trim();
+      if (direct) return direct;
+      const sku = (r[skuKey] || '').trim().toUpperCase().replace(/-SF$/, '');
+      return (master.bySku[sku] && master.bySku[sku].name) || sku;
+    };
+
+    // Reviews are tagged by month AFTER the month closes, so target the
+    // last FULL month (same rule as VVS), never the open current month.
+    const now = new Date();
+    const lastMonth = new Date(now.getFullYear(), now.getMonth() - 1, 1);
+    const targetYear = String(lastMonth.getFullYear());
+    const targetMonth = String(lastMonth.getMonth() + 1);
+
+    const statsByProduct = {};
+    rows.forEach(r => {
+      const name = nameOf(r);
+      if (!name) return;
+      const rating = Math.round(Number(r[ratingKey]) || 0);
+      const st = statsByProduct[name] = statsByProduct[name] || { count: 0, sum: 0, dist: { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 } };
+      st.count++;
+      st.sum += Number(r[ratingKey]) || 0;
+      if (rating >= 1 && rating <= 5) st.dist[rating]++;
+    });
+
+    const featuredByProduct = {}, productOrder = [];
+    rows.forEach(r => {
+      if (String(r[yearKey] || '').trim() !== targetYear) return;
+      if (String(Number(r[monthKey]) || '') !== String(Number(targetMonth))) return;
+      const name = nameOf(r);
+      if (!name) return;
+      if (!featuredByProduct[name]) { featuredByProduct[name] = []; productOrder.push(name); }
+      featuredByProduct[name].push(r);
+    });
+
+    if (!productOrder.length) {
+      pending('No reviews tagged for ' + MONTHS[Number(targetMonth) - 1] + ' ' + targetYear + ' yet — tag rows in the sheet with YEAR=' + targetYear + ' and MONTH=' + targetMonth + ' to feature them here.');
+      return;
+    }
+
+    container.innerHTML = productOrder.map(name => {
+      const stats = statsByProduct[name];
+      const avg = stats.count ? (stats.sum / stats.count) : 0;
+      const maxDist = Math.max(1, ...Object.values(stats.dist));
+      const barsHtml = [5, 4, 3, 2, 1].map(n => {
+        const c = stats.dist[n] || 0;
+        const pct = Math.round((c / maxDist) * 100);
+        return '<div class="review-bar-row"><div class="review-bar-label">' + n + '★</div><div class="review-bar-track"><div class="review-bar-fill" style="width:' + pct + '%"></div></div><div class="review-bar-count">' + c + '</div></div>';
+      }).join('');
+      const cardsHtml = featuredByProduct[name].map(r =>
+        '<div class="review-card"><div class="review-card-stars">' + stars(r[ratingKey]) + '</div>' +
+        '<div class="review-card-title">' + esc((r[titleKey] || '').trim()) + '</div>' +
+        '<div class="review-card-text">' + esc((r[textKey] || '').trim()) + '</div></div>'
+      ).join('');
+      return '<div class="review-section"><div class="review-hd"><div class="review-hd-title">' + esc(name) + '</div>' +
+        '<div class="review-hd-right"><span>' + num(stats.count) + ' Reviews</span><span class="review-stars">' + stars(avg) + '</span>' +
+        '<span class="review-avg">' + avg.toFixed(1) + '<span class="review-avg-of"> /5</span></span></div></div>' +
+        '<div class="review-bars">' + barsHtml + '</div><div class="review-cards">' + cardsHtml + '</div></div>';
+    }).join('');
+  } catch (err) {
+    console.error('[Sales Reviews]', err);
+    window._salesReviewsLoaded = false; // allow retry
+    pending('Could not load — ' + esc(err.message || ''));
+  }
+};
 
 // Bundle product list — added 2026-08-10 per Jaclyn. Built dynamically
 // from Product Short Name (skuType === 'BUNDLE') rather than a hardcoded
@@ -15225,399 +15718,290 @@ async function ppcLoadBlendedPerformance(periodKey) {
 }
 
 // ═══════════════════════════════════════════════════════════════════
-// BRAND MOMENTUM TAB — restyled 2026-09-15 per Jaclyn, ported from
-// Cosmette's real build: one card per product, replacing the earlier
-// 4-separate-tables layout (Sessions/Keyword Indexing/Subcategory BSR/
-// Review Velocity, each re-listing every product). Reuses
-// fetchAmazonReviews()/getProductMaster() (already cached, memoized, in
-// this same script scope — confirmed, not assumed) plus the same
-// Keyword Tracker (per-keyword AND summary tabs) and Business Report
-// sheets already used elsewhere on this dashboard.
-//
-// KNOWN GAP, flagged rather than silently hidden: SHEET_KEYWORD_TRACKER_
-// SUMMARY is not yet configured in Cloud Cafe's SHEET_CONFIG at all
-// (confirmed 2026-09-15 — the key itself is missing, not just blank).
-// The OLD version of this code referenced it with no null-guard at all,
-// which would throw on every single load. Subcategory BSR shows "—" on
-// every card until that sheet gets added; nothing else on this page
-// depends on it, so the rest of the page works fine in the meantime.
-//
-// Also fixed while porting: the Amazon Reviews sheet fetch now falls
-// back to fetching by tab name ("cloud-cafe") when the gid is blank —
-// true for Cloud Cafe today, since no cloud-cafe tab exists yet on that
-// shared workbook (confirmed directly — Cosmette's own tab on the same
-// file has real data). The moment that tab gets added, Reviews Collected
-// and the per-card review counts start working with zero further changes.
+// BRAND MOMENTUM TAB — REBUILT 2026-10-05 per Jaclyn to match évolis's
+// Brand Momentum page exactly (evolis index: initBrandMomentum /
+// bmRenderMomentumCards). Same data model and behavior as évolis:
+//  - KPIs: Reviews Collected, Keywords with Organic Rank (distinct ranked
+//    keywords on the latest tracker date), Sessions with MoM;
+//  - one card per product that has Sessions this month, sorted by
+//    Sessions; Sessions "% vs prior month"; BSR is SUBCATEGORY BSR with
+//    "% change since first recorded"; Hide-negative-BSR hides the card;
+//  - top-10 keyword table, movers first.
+// Cloud Cafe adaptations (the only differences from évolis):
+//  - brand match is accent/space/hyphen-insensitive ("Cloud Cafe",
+//    "cloud-cafe" -> cloudcafe) with a CLC SKU-prefix fallback, because
+//    the Master SKU List mixes brands (dearcloud DEC* rows share it);
+//  - the three sheet fetches reuse this dashboard's existing SHEET_CFG
+//    fetch expressions verbatim;
+//  - CLC0011 / CLC0011-STICKERLESS share one ASIN, and every lookup here
+//    is keyed by ASIN, so they land on a single card automatically.
+// Failure never latches: _bmInit is set only after a successful load, so
+// reopening the tab retries.
 // ═══════════════════════════════════════════════════════════════════
-(function () {
-  'use strict';
-  function escapeHtml(s) {
-    return String(s ?? '').replace(/[&<>"']/g, c => ({ '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]));
-  }
-  function pctChange(curr, prevVal) { if (!prevVal) return null; return Math.round(((curr - prevVal) / prevVal) * 100); }
-  // Local copy — confirmed normalizeDate() is NOT reachable from this
-  // script block (7 separate copies exist elsewhere in this file, none
-  // in scope here). Used on the reviews sheet's own date_logged column
-  // (already ISO, "2026-08-11"-style) for the cumulative-through-month
-  // MoM calc below — NOT the "date" column, which is human-readable
-  // ("Feb 24, 2026") and wouldn't sort correctly as a plain string.
-  function bmNormalizeDate(val) {
-    if (!val) return '';
-    if (/^\d{4}-\d{2}/.test(val)) return val.substring(0, 10);
-    const parts = String(val).split('/');
-    if (parts.length === 3) {
-      const m = parts[0].padStart(2, '0');
-      const d = parts[1].padStart(2, '0');
-      const y = parts[2].length === 2 ? '20' + parts[2] : parts[2];
-      return `${y}-${m}-${d}`;
+let window_bmLastKwRows = null; // cached for the "hide negative" re-render, avoids re-fetching on toggle
+
+// Round-then-empty-star, not a half-star renderer (same as évolis).
+function bmReviewStarsHtml(rating) {
+  const r = Math.max(0, Math.min(5, Math.round(Number(rating) || 0)));
+  return '★'.repeat(r) + '☆'.repeat(5 - r);
+}
+
+// Per-keyword tracker tab. SHEET_KEYWORD_TRACKER has no gid for Cloud Cafe
+// (the shared tracker workbook has one tab per brand — "evolis", "cosmette"
+// — and no "cloud-cafe" tab exists yet; confirmed 2026-10-05). A gid of null
+// used to build a "...&gid=null" URL that Google answers with an HTML error
+// page. Fall back to the tab NAME instead, so keyword data starts flowing
+// the moment that tab is created, with no code change.
+function bmFetchKeywordTrackerCsv() {
+  const cfg = window.SHEET_CFG.SHEET_KEYWORD_TRACKER;
+  const url = (cfg.gid != null && cfg.gid !== '')
+    ? ovCsvUrl(cfg.fileId, cfg.gid)
+    : `https://docs.google.com/spreadsheets/d/${cfg.fileId}/gviz/tq?tqx=out:csv&sheet=cloud-cafe`;
+  return fetch(url + `&_cb=${Date.now()}`).then(r => r.ok ? r.text() : '').catch(() => '');
+}
+
+window.initBrandMomentum = async function () {
+  if (window._bmInit || window._bmLoading) return;
+  window._bmLoading = true;
+  const esc = v => String(v == null ? '' : v).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+
+  try {
+    const kwSummaryCfg = window.SHEET_CFG.SHEET_KEYWORD_TRACKER_SUMMARY;
+    const [bizCsv, kwCsv, kwSummaryCsv, master, reviews] = await Promise.all([
+      fetch(ovCsvUrl(window.SHEET_CFG.SHEET_BUSINESS_REPORT.fileId, window.SHEET_CFG.SHEET_BUSINESS_REPORT.gid) + `&_cb=${Date.now()}`).then(r => r.ok ? r.text() : '').catch(() => ''),
+      bmFetchKeywordTrackerCsv(),
+      kwSummaryCfg ? fetch(ovCsvUrl(kwSummaryCfg.fileId, kwSummaryCfg.gid) + `&_cb=${Date.now()}`).then(r => r.ok ? r.text() : '').catch(() => '') : Promise.resolve(''),
+      getProductMaster(),
+      fetchAmazonReviews(),
+    ]);
+
+    const bizRows = parseCsvToRows(bizCsv);
+    const kwRows = parseCsvToRows(kwCsv).filter(r => r.date && r.asin && r.keyword);
+    const kwSummaryRows = parseCsvToRows(kwSummaryCsv);
+    window_bmLastKwRows = { bizRows, kwRows, kwSummaryRows, master, reviews };
+
+    const { year, month } = getLastFullMonthShared();
+    let prevYear = year, prevMonth = month - 1;
+    if (prevMonth === 0) { prevMonth = 12; prevYear--; }
+
+    // Catalog (non-bundle) Amazon products for this brand only.
+    const normBrand = v => (v || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]/g, '');
+    const brandAsins = new Set(
+      Object.values(master.byAsin)
+        .filter(e => (normBrand(e.brand) === 'cloudcafe' || /^CLC/i.test(e.sku || '')) && (e.channel || '').toLowerCase().includes('amazon') && (e.skuType || '').trim().toUpperCase() === 'CATALOG')
+        .map(e => e.asin)
+    );
+
+    // ── KPI 1: Reviews Collected ──
+    const brandReviewRows = reviews.filter(r => brandAsins.has((r.asin || '').trim().toUpperCase()));
+    const reviewsKpiEl = document.getElementById('bm-kpi-reviews');
+    if (reviewsKpiEl) reviewsKpiEl.querySelector('.kpi-value').textContent = brandReviewRows.length.toLocaleString();
+
+    // ── KPI 2: Keywords with Organic Rank ──
+    const brandKwRows = kwRows.filter(r => brandAsins.has((r.asin || '').trim().toUpperCase()));
+    const latestKwDate = brandKwRows.reduce((max, r) => (r.date > max ? r.date : max), '');
+    const latestKwRows = brandKwRows.filter(r => r.date === latestKwDate);
+    const rankedKeywordSet = new Set();
+    latestKwRows.forEach(r => {
+      const rankStr = String(r.organic_rank || '').trim();
+      if (rankStr.startsWith('>')) return;
+      const rank = parseInt(rankStr.replace(/[^\d]/g, ''), 10);
+      if (!isNaN(rank) && rank >= 1 && r.keyword) rankedKeywordSet.add(r.keyword.trim().toLowerCase());
+    });
+    const rankedKwEl = document.getElementById('bm-kpi-ranked-keywords');
+    if (rankedKwEl) rankedKwEl.querySelector('.kpi-value').textContent = rankedKeywordSet.size.toLocaleString();
+
+    // ── KPI 3: Sessions (MoM) ──
+    const sumSessions = (y, m) => bizRows
+      .filter(r => parseInt(r.year, 10) === y && parseInt(r.month, 10) === m && brandAsins.has((r.asin || '').trim().toUpperCase()))
+      .reduce((t, r) => t + (parseInt(r.sessions, 10) || 0), 0);
+    const currSessions = sumSessions(year, month);
+    const prevSessions = sumSessions(prevYear, prevMonth);
+    const sessionsEl = document.getElementById('bm-kpi-sessions');
+    if (sessionsEl) {
+      sessionsEl.querySelector('.kpi-value').textContent = currSessions.toLocaleString();
+      const momEl = sessionsEl.querySelector('.kpi-mom');
+      if (momEl && prevSessions > 0) {
+        const pct = Math.round(((currSessions - prevSessions) / prevSessions) * 1000) / 10;
+        momEl.className = 'kpi-mom ' + (pct === 0 ? 'flat' : pct > 0 ? 'up' : 'dn');
+        momEl.textContent = (pct === 0 ? '' : pct > 0 ? '▲ ' : '▼ ') + Math.abs(pct) + '% vs prior month';
+      }
     }
-    return val;
-  }
-  function setBmKpi(cardId, value, pctVal) {
-    const card = document.getElementById(cardId);
-    if (!card) return;
-    const valEl = card.querySelector('.kpi-value');
-    const momEl = card.querySelector('.kpi-mom');
-    if (valEl) valEl.textContent = value;
-    if (momEl) {
-      if (pctVal == null) { momEl.className = 'kpi-mom flat'; momEl.textContent = '—'; return; }
-      const cls = pctVal === 0 ? 'flat' : pctVal > 0 ? 'up' : 'dn';
-      momEl.className = 'kpi-mom ' + cls;
-      momEl.textContent = `${pctVal > 0 ? '▲ ' : pctVal < 0 ? '▼ ' : ''}${Math.abs(pctVal)}% vs prior month`;
+
+    // ── Sessions by product (feeds the cards) ──
+    const prevMonthSessionsBySku = {};
+    const currSessionsBySku = {};
+    bizRows.forEach(r => {
+      const asin = (r.asin || '').trim().toUpperCase();
+      if (!brandAsins.has(asin)) return;
+      const entry = master.byAsin[asin];
+      const sku = entry ? entry.sku : asin;
+      const sessions = parseInt(r.sessions, 10) || 0;
+      const rYear = parseInt(r.year, 10), rMonth = parseInt(r.month, 10);
+      if (rYear === year && rMonth === month) currSessionsBySku[sku] = (currSessionsBySku[sku] || 0) + sessions;
+      if (rYear === prevYear && rMonth === prevMonth) prevMonthSessionsBySku[sku] = (prevMonthSessionsBySku[sku] || 0) + sessions;
+    });
+
+    // ── Keyword rows (feeds both the table AND per-product counts) ──
+    function pickPrevRankForKeyword(keyword, asin) {
+      const priorRows = brandKwRows.filter(r => r.date < latestKwDate && r.keyword.trim().toLowerCase() === keyword && (r.asin || '').trim().toUpperCase() === asin);
+      if (!priorRows.length) return null;
+      const priorDate = priorRows.reduce((max, r) => (r.date > max ? r.date : max), '');
+      return priorRows.find(r => r.date === priorDate) || null;
     }
-  }
-
-  // Brand match, normalized — Master SKU List's real "Brand" value for
-  // Cloud Cafe is "Cloud Cafe" (title case, space), not "cloud-cafe" —
-  // confirmed the hard way earlier this session (the exact same class of
-  // bug this Brand Momentum tab already hit once, on Sessions). SKU-
-  // prefix fallback for resilience, matching the pattern used elsewhere
-  // on this dashboard (isEvolisRow).
-  const normBrand = s => (s || '').trim().toLowerCase().replace(/[\s-]/g, '');
-  function isCloudCafeEntry(entry) {
-    return !!entry && (normBrand(entry.brand) === 'cloudcafe' || (entry.sku || '').toUpperCase().startsWith('CLC')) && (entry.channel || '').toLowerCase().includes('amazon');
-  }
-
-  // CLC0011 / CLC0011-STICKERLESS — same physical product, same shared
-  // ASIN (B0H52P18CZ), listed as two SKUs for the sticker vs. stickerless
-  // packaging variant — per Jaclyn, same merge already applied to the
-  // Internal Inventory page. Sessions/BSR/reviews here are all already
-  // keyed by ASIN under the hood, so there's no risk of double-counting
-  // — this just makes sure both SKUs collapse onto ONE predictable card
-  // key ("CLC0011") instead of silently landing on whichever of the two
-  // happens to win Master SKU List's byAsin lookup that particular load
-  // (fragile — depends on row order, not guaranteed stable).
-  function normalizeMomentumSku(sku) {
-    return sku === 'CLC0011-STICKERLESS' ? 'CLC0011' : sku;
-  }
-
-  // Is `reportYear`/`reportMonth` within the first 3 months (enrollment
-  // month + the following 2) after `vineDate`? Per Jaclyn: Vine can skew
-  // session traffic for up to 3 months from reviewers, not real shoppers.
-  function isWithinVineWindow(vineDate, reportYear, reportMonth) {
-    if (!vineDate) return false;
-    const vy = parseInt(vineDate.substring(0,4), 10), vm = parseInt(vineDate.substring(5,7), 10);
-    if (!vy || !vm) return false;
-    const monthsSince = (reportYear * 12 + reportMonth) - (vy * 12 + vm);
-    return monthsSince >= 0 && monthsSince <= 2;
-  }
-
-  function pickSummaryRowForAsin(rows, asin) {
-    const matches = rows.filter(r => (r.asin||'').trim().toUpperCase() === asin.toUpperCase());
-    if (!matches.length) return null;
-    return matches.reduce((best,r) => (!best || (r.date||'') > (best.date||'')) ? r : best, null);
-  }
-  function pickPreviousSummaryRowForAsin(rows, asin, currentDate) {
-    const matches = rows.filter(r => (r.asin||'').trim().toUpperCase() === asin.toUpperCase() && (r.date||'') < currentDate);
-    if (!matches.length) return null;
-    return matches.reduce((best,r) => (!best || (r.date||'') > (best.date||'')) ? r : best, null);
-  }
-  // improved: true when the change is a genuine improvement (lower BSR
-  // number = better rank). null when there's nothing to compare or
-  // values are unchanged.
-  function bsrTrendInfo(curValue, prevRow, field) {
-    if (!prevRow || !prevRow[field]) return null;
-    const cur = Number(curValue) || 0, prev = Number(prevRow[field]) || 0;
-    if (!cur || !prev || cur === prev) return null;
-    const improved = cur < prev;
-    const delta = Math.abs(prev - cur);
-    return { improved, delta };
-  }
-
-  let _momentumCache = null; // fetched once, re-rendered on checkbox toggle without re-fetching
-
-  function reviewStarsHalfHtml(rating) {
-    const r = Math.max(0, Math.min(5, Number(rating) || 0));
-    const full = Math.floor(r);
-    const half = (r - full) >= 0.25 && (r - full) < 0.75 ? 1 : 0;
-    const roundedUp = (r - full) >= 0.75 ? 1 : 0;
-    return '★'.repeat(full + roundedUp) + (half ? '½' : '');
-  }
-
-  // MoM pill for Sessions/Organic Keywords — colored pill instead of
-  // plain colored text, so it "pops" per Jaclyn.
-  function momentumMomPill(curr, prev) {
-    if (!prev) return '<span class="momentum-pill" style="background:var(--bg2);color:var(--muted);">—</span>';
-    const pct = Math.round(((curr - prev) / prev) * 100);
-    if (pct === 0) return '<span class="momentum-pill" style="background:var(--bg2);color:var(--muted);">flat</span>';
-    const cls = pct > 0 ? 'momentum-pill-up' : 'momentum-pill-dn';
-    return `<span class="momentum-pill ${cls}">${pct > 0 ? '▲' : '▼'} ${Math.abs(pct)}%</span>`;
-  }
-  // Same BSR trend logic as bsrTrendInfo, restyled as a colored pill.
-  function bsrTrendPill(curValue, prevRow, field, hideNegative) {
-    const info = bsrTrendInfo(curValue, prevRow, field);
-    if (!info) return '';
-    if (!info.improved && hideNegative) return '';
-    const cls = info.improved ? 'momentum-pill-up' : 'momentum-pill-dn';
-    return ` <span class="momentum-pill ${cls}">${info.improved?'▼':'▲'} ${info.delta.toLocaleString()}</span>`;
-  }
-
-  function renderProductCards(hideNegative) {
-    const c = _momentumCache;
-    const grid = document.getElementById('momentum-cards-grid');
-    if (!grid || !c) return;
-    if (!c.skus.length) { grid.innerHTML = '<div class="ppc-card" style="color:var(--muted);font-style:italic;grid-column:1/-1;">No product data found.</div>'; return; }
-
-    grid.innerHTML = c.skus.map(sku => {
-      const entry = c.master.bySku[sku];
-      const asin = entry ? entry.asin : '';
-      const productName = entry ? entry.name : sku;
-
-      // Sessions + MoM
-      const sess = c.sessionsBySku[sku];
-      const sessionsMomHtml = sess && sess.prev != null ? momentumMomPill(sess.value, sess.prev) : '';
-      const sessionsHtml = sess ? sess.value.toLocaleString() : '—';
-
-      // Subcategory BSR only, per Jaclyn — matches Cosmette's own
-      // restyle (overall Beauty & Personal Care BSR removed, subcategory
-      // kept, labeled just "BSR"). Blank until SHEET_KEYWORD_TRACKER_
-      // SUMMARY is configured for Cloud Cafe (see note above).
-      const row = asin ? pickSummaryRowForAsin(c.summaryRows, asin) : null;
-      const prevRow = row ? pickPreviousSummaryRowForAsin(c.summaryRows, asin, row.date||'') : null;
-      let subBsrValueHtml = '—', subBsrMomHtml = '', subBsrCategoryHtml = '';
-      if (row && row.subcategory_bsr) {
-        subBsrValueHtml = '#' + (Number(row.subcategory_bsr)||0).toLocaleString();
-        subBsrMomHtml = bsrTrendPill(row.subcategory_bsr, prevRow, 'subcategory_bsr', hideNegative);
-        if (row.subcategory) subBsrCategoryHtml = `<div class="momentum-pcard-subcategory">${escapeHtml(row.subcategory)}</div>`;
-      }
-
-      // Organic Keywords (count with a real organic rank) + % change,
-      // styled with the same pill as Sessions.
-      const okw = c.organicKwBySku[sku];
-      const organicKwMomHtml = okw && okw.prev != null ? momentumMomPill(okw.value, okw.prev) : '';
-      const organicKwHtml = okw ? okw.value.toLocaleString() : '—';
-
-      // Reviews — total row count matching this product's ASIN on the
-      // reviews sheet (direct ASIN join, not a name-substring match).
-      const rv = c.reviewCountByAsin[asin];
-      const reviewsHtml = rv != null ? rv.toLocaleString() : '—';
-
-      const avgRating = c.reviewAvgByAsin[asin];
-      const ratingBadgeHtml = avgRating != null
-        ? `<div class="momentum-pcard-rating"><span class="momentum-pcard-rating-stars">${reviewStarsHalfHtml(avgRating)}</span><span class="momentum-pcard-rating-num">${avgRating.toFixed(1)}</span></div>`
-        : '';
-
-      const vineFlag = sku && isWithinVineWindow(entry ? entry.vineDate : '', c.year, c.month);
-
-      return `<div class="momentum-pcard">
-        <div class="momentum-pcard-hd">
-          <div class="momentum-pcard-name">${escapeHtml(productName)}${vineFlag ? ' <span style="color:var(--sand);font-size:11px;font-weight:400;">· Vine period</span>' : ''}</div>
-          ${ratingBadgeHtml}
-        </div>
-        <div class="momentum-pcard-body">
-          <div class="momentum-pcard-row"><span class="momentum-pcard-label">Sessions</span><span class="momentum-pcard-value">${sessionsHtml}</span>${sessionsMomHtml}</div>
-          <div class="momentum-pcard-row"><span class="momentum-pcard-label">Organic Keywords</span><span class="momentum-pcard-value">${organicKwHtml}</span>${organicKwMomHtml}</div>
-          <div class="momentum-pcard-row"><span class="momentum-pcard-label">BSR</span><span class="momentum-pcard-value">${subBsrValueHtml}</span>${subBsrMomHtml}${subBsrCategoryHtml}</div>
-          <div class="momentum-pcard-row"><span class="momentum-pcard-label">Reviews</span><span class="momentum-pcard-value">${reviewsHtml}</span></div>
-        </div>
-      </div>`;
-    }).join('');
-  }
-
-  document.addEventListener('change', function (e) {
-    if (e.target && e.target.id === 'momentum-hide-negative-bsr') renderProductCards(e.target.checked);
-  });
-
-  window.initBrandMomentum = async function () {
-    if (window._bmInit) return;
-    const grid = document.getElementById('momentum-cards-grid');
-    if (!grid) return;
-
-    try {
-      const { year, month } = getLastFullMonthShared();
-      let prevMonth = month - 1, prevYear = year;
-      if (prevMonth === 0) { prevMonth = 12; prevYear--; }
-
-      const monthNames = ['January','February','March','April','May','June','July','August','September','October','November','December'];
-      const subEl = document.getElementById('momentum-page-sub');
-      if (subEl) subEl.textContent = `${monthNames[month-1]} ${year}`;
-
-      // SHEET_KEYWORD_TRACKER_SUMMARY isn't configured for Cloud Cafe
-      // yet (confirmed — the key is missing from SHEET_CONFIG entirely).
-      // Guarded so this fetch is skipped rather than throwing; add the
-      // key to SHEET_CONFIG and this starts working with no code change.
-      const kwSummaryCfg = window.SHEET_CFG.SHEET_KEYWORD_TRACKER_SUMMARY;
-
-      const [bizCsv, kwCsv, kwSummaryCsv, master, reviews] = await Promise.all([
-        fetch(ovCsvUrl(window.SHEET_CFG.SHEET_BUSINESS_REPORT.fileId, window.SHEET_CFG.SHEET_BUSINESS_REPORT.gid) + `&_cb=${Date.now()}`).then(r => r.ok ? r.text() : '').catch(() => ''),
-        fetch(ovCsvUrl(window.SHEET_CFG.SHEET_KEYWORD_TRACKER.fileId, window.SHEET_CFG.SHEET_KEYWORD_TRACKER.gid) + `&_cb=${Date.now()}`).then(r => r.ok ? r.text() : '').catch(() => ''),
-        kwSummaryCfg ? fetch(ovCsvUrl(kwSummaryCfg.fileId, kwSummaryCfg.gid) + `&_cb=${Date.now()}`).then(r => r.ok ? r.text() : '').catch(() => '') : Promise.resolve(''),
-        getProductMaster(),
-        fetchAmazonReviews(),
-      ]);
-
-      const bizRows = parseCsvToRows(bizCsv);
-      const rowsThis = bizRows.filter(r => parseInt(r.month, 10) === month && parseInt(r.year, 10) === year);
-      const rowsPrev = bizRows.filter(r => parseInt(r.month, 10) === prevMonth && parseInt(r.year, 10) === prevYear);
-      const prevSessionsByAsin = {};
-      rowsPrev.forEach(r => { prevSessionsByAsin[(r.asin || '').trim().toUpperCase()] = parseInt(r.sessions, 10) || 0; });
-
-      // ── Sessions by SKU (this month + prior month for MoM) ──────────
-      const sessionsBySku = {};
-      rowsThis.forEach(r => {
-        const asin = (r.asin || '').trim().toUpperCase();
-        const entry = master.byAsin[asin];
-        if (!entry || !isCloudCafeEntry(entry) || !entry.sku) return;
-        const value = parseInt(r.sessions, 10) || 0;
-        const prev = prevSessionsByAsin[asin];
-        sessionsBySku[normalizeMomentumSku(entry.sku)] = { value, prev: prev != null ? prev : null };
-      });
-
-      // ── KPI: Sessions (MoM) — excludes bundle-sourced sessions, same
-      // as the product cards below, so this total stays consistent with
-      // what's actually shown on the page.
-      const isCloudCafeNonBundleRow = r => {
-        const entry = master.byAsin[(r.asin || '').trim().toUpperCase()];
-        return isCloudCafeEntry(entry) && entry.skuType !== 'BUNDLE';
-      };
-      const totalSessions = rowsThis.filter(isCloudCafeNonBundleRow).reduce((s, r) => s + (parseInt(r.sessions, 10) || 0), 0);
-      const totalSessionsPrev = rowsPrev.filter(isCloudCafeNonBundleRow).reduce((s, r) => s + (parseInt(r.sessions, 10) || 0), 0);
-      setBmKpi('momentum-kpi-sessions', totalSessions.toLocaleString(), totalSessionsPrev ? pctChange(totalSessions, totalSessionsPrev) : null);
-
-      // ── Targeted Keyword Indexing Progress (top 10, movement-first
-      // then rank ascending) — bundles excluded, same as the rest of
-      // this page. ──────────────────────────────────────────────────
-      const kwRows = parseCsvToRows(kwCsv).filter(r => r.date && r.asin && r.keyword);
-
-      // Organic Keywords per SKU + % change vs the prior snapshot date —
-      // same source as Keyword Indexing Progress, counted per product.
-      const organicKwBySku = {};
-      {
-        const datesSeen = [...new Set(kwRows.map(r => r.date))].sort().reverse();
-        const latestDate = datesSeen[0], prevDate = datesSeen[1];
-        if (latestDate) {
-          const countForDate = (asin, date) => kwRows.filter(r => r.asin.toUpperCase() === asin && r.date === date && parseInt(r.organic_rank, 10) > 0).length;
-          Object.keys(master.byAsin).forEach(asin => {
-            const entry = master.byAsin[asin];
-            if (!isCloudCafeEntry(entry) || !entry.sku) return;
-            const value = countForDate(asin, latestDate);
-            const prev = prevDate ? countForDate(asin, prevDate) : null;
-            organicKwBySku[normalizeMomentumSku(entry.sku)] = { value, prev };
-          });
-        }
-      }
-
-      const kwIndexingTbody = document.getElementById('momentum-indexing-tbody');
-      let keywordsWithRank = 0;
-      if (kwIndexingTbody) {
-        const byKey = {};
-        kwRows.forEach(r => {
-          const key = r.asin.toUpperCase() + '||' + r.keyword.toLowerCase();
-          if (!byKey[key]) byKey[key] = [];
-          byKey[key].push(r);
-        });
-        const entries = Object.values(byKey).map(rowsForKey => {
-          const sorted = [...rowsForKey].sort((a, b) => (b.date || '').localeCompare(a.date || ''));
-          const latest = sorted[0];
-          const prev = sorted.find(r => (r.date || '') < (latest.date || ''));
-          const rank = parseInt(latest.organic_rank, 10);
-          if (!rank || rank <= 0) return null;
-          const prevRank = prev ? parseInt(prev.organic_rank, 10) : null;
-          const movement = (prevRank && prevRank !== rank) ? (prevRank - rank) : 0; // positive = improved
-          const entry = master.byAsin[latest.asin.toUpperCase()];
-          if (!isCloudCafeEntry(entry)) return null;
-          if (entry && entry.skuType === 'BUNDLE') return null;
-          return {
-            keyword: latest.keyword, rank, movement,
-            searchVolume: parseInt(latest.search_volume, 10) || 0,
-            productName: (entry && entry.name) || latest.asin,
-          };
-        }).filter(Boolean);
-        keywordsWithRank = entries.length;
-        entries.sort((a, b) => {
-          const aMoved = a.movement !== 0, bMoved = b.movement !== 0;
-          if (aMoved !== bMoved) return aMoved ? -1 : 1;
-          return a.rank - b.rank;
-        });
-        const top10 = entries.slice(0, 10);
-        kwIndexingTbody.innerHTML = top10.length ? top10.map(e => `<tr>
-          <td>${escapeHtml(e.keyword)}</td>
-          <td>${escapeHtml(e.productName)}</td>
-          <td>#${e.rank}${e.movement !== 0 ? ` <span class="${e.movement>0?'bsr-trend-improved':'bsr-trend-worsened'}" style="font-size:11px;">${e.movement>0?'▲':'▼'} ${Math.abs(e.movement)}</span>` : ''}</td>
-          <td>${e.searchVolume.toLocaleString()}</td>
-        </tr>`).join('') : '<tr><td colspan="4" style="text-align:center;padding:20px;color:var(--muted);font-style:italic;">No tracked keywords with a real organic rank yet.</td></tr>';
-      }
-      setBmKpi('momentum-kpi-indexed', keywordsWithRank.toLocaleString(), null);
-
-      // ── Subcategory BSR summary rows — blank array if the sheet isn't
-      // configured yet (kwSummaryCfg null) or returns nothing. ────────
-      const summaryRows = kwSummaryCsv ? parseCsvToRows(kwSummaryCsv).filter(r => {
-        const b = (r.brand || '').trim().toLowerCase().replace(/[\s-]/g, '');
-        return b === 'cloudcafe';
-      }) : [];
-
-      // ── Reviews — total row count + average rating, joined directly
-      // on ASIN (not a name-substring match). ─────────────────────────
-      const reviewCountByAsin = {};
-      const reviewAvgByAsin = {};
-      if (reviews && reviews.length) {
-        const sumByAsin = {};
-        reviews.forEach(r => {
-          const a = (r.asin || '').trim().toUpperCase();
-          if (!a) return;
-          reviewCountByAsin[a] = (reviewCountByAsin[a] || 0) + 1;
-          sumByAsin[a] = (sumByAsin[a] || 0) + (Number(r.star_rating) || 0);
-        });
-        Object.keys(reviewCountByAsin).forEach(a => { reviewAvgByAsin[a] = sumByAsin[a] / reviewCountByAsin[a]; });
-      }
-      // KPI: Reviews Collected — TOTAL review count for the whole
-      // catalog (not scoped to one month), with a real MoM % using the
-      // sheet's own "date" field: cumulative total through the end of
-      // the current reporting month vs through the end of the prior one.
-      let totalReviewsMomPct = null;
-      if (reviews && reviews.length) {
-        const cumulativeThroughMonth = (y, m) => {
-          const lastDay = new Date(y, m, 0).getDate();
-          const cutoff = `${y}-${String(m).padStart(2,'0')}-${String(lastDay).padStart(2,'0')}`;
-          return reviews.filter(r => bmNormalizeDate(r.date_logged) <= cutoff).length;
-        };
-        const throughCurrent = cumulativeThroughMonth(year, month);
-        const throughPrior = cumulativeThroughMonth(prevYear, prevMonth);
-        totalReviewsMomPct = throughPrior ? pctChange(throughCurrent, throughPrior) : null;
-      }
-      setBmKpi('momentum-kpi-reviews', (reviews ? reviews.length : 0).toLocaleString(), totalReviewsMomPct);
-
-      // ── Consolidate + render one card per product — bundles excluded
-      // (Master SKU List's SKU Type column marks a SKU "BUNDLE"), and
-      // CLC0011/CLC0011-STICKERLESS collapsed onto one card (see
-      // normalizeMomentumSku above). ───────────────────────────────────
-      const skus = [...new Set(rowsThis.map(r => {
-        const entry = master.byAsin[(r.asin || '').trim().toUpperCase()];
-        return isCloudCafeEntry(entry) ? normalizeMomentumSku(entry.sku) : null;
-      }).filter(Boolean))].filter(sku => (master.bySku[sku] || {}).skuType !== 'BUNDLE');
-
-      _momentumCache = { skus, master, summaryRows, sessionsBySku, organicKwBySku, reviewCountByAsin, reviewAvgByAsin, year, month };
-      window._bmInit = true; // only latch "done" once everything above actually succeeded
-      renderProductCards(!!document.getElementById('momentum-hide-negative-bsr')?.checked);
-    } catch (err) {
-      console.error('[CloudCafeBrandMomentum]', err);
-      // _bmInit intentionally left false — a failed load should not
-      // permanently brick this tab for the rest of the session;
-      // switching back to it will retry.
-      grid.innerHTML = '<div class="ppc-card" style="color:var(--muted);font-style:italic;grid-column:1/-1;">Error loading — ' + escapeHtml(err.message||'') + '</div>';
+    const seenKeywordAsin = new Set();
+    const keywordRows = [];
+    latestKwRows.forEach(r => {
+      const asin = (r.asin || '').trim().toUpperCase();
+      const key = r.keyword.trim().toLowerCase() + '||' + asin;
+      if (seenKeywordAsin.has(key)) return;
+      seenKeywordAsin.add(key);
+      const rankStr = String(r.organic_rank || '').trim();
+      const isRanking = rankStr && !rankStr.startsWith('>');
+      const rank = isRanking ? parseInt(rankStr.replace(/[^\d]/g, ''), 10) : null;
+      const prevRow = pickPrevRankForKeyword(r.keyword.trim().toLowerCase(), asin);
+      const prevRankStr = prevRow ? String(prevRow.organic_rank || '').trim() : '';
+      const prevRank = (prevRankStr && !prevRankStr.startsWith('>')) ? parseInt(prevRankStr.replace(/[^\d]/g, ''), 10) : null;
+      const hasMovement = rank != null && prevRank != null && rank !== prevRank;
+      const entry = master.byAsin[asin];
+      keywordRows.push({ keyword: r.keyword, asin, product: entry ? entry.name : r.asin, rank, hasMovement, volume: parseInt(r.search_volume, 10) || 0 });
+    });
+    keywordRows.sort((a, b) => {
+      if (a.hasMovement !== b.hasMovement) return a.hasMovement ? -1 : 1;
+      const ra = a.rank == null ? 9999 : a.rank, rb = b.rank == null ? 9999 : b.rank;
+      return ra - rb;
+    });
+    const kwTbody = document.getElementById('bm-keyword-tbody');
+    if (kwTbody) {
+      const top10 = keywordRows.slice(0, 10);
+      kwTbody.innerHTML = top10.length ? top10.map(r =>
+        `<tr><td>${esc(r.keyword)}</td><td>${esc(r.product)}</td><td>${r.rank == null ? 'Not ranking' : '#' + r.rank}</td><td>${r.volume.toLocaleString()}</td></tr>`
+      ).join('') : '<tr><td colspan="4" style="color:var(--muted);">No keyword data available</td></tr>';
     }
-  };
-})();
+    // Per-product organic keyword COUNT (real ranks only, same definition as KPI 2).
+    const kwCountBySku = {};
+    keywordRows.forEach(r => {
+      if (r.rank == null) return;
+      const entry = master.byAsin[r.asin];
+      const sku = entry ? entry.sku : r.asin;
+      kwCountBySku[sku] = (kwCountBySku[sku] || 0) + 1;
+    });
+
+    // ── Subcategory BSR by SKU: first vs latest recorded (lower BSR = improvement) ──
+    const bsrBySku = {};
+    kwSummaryRows.forEach(r => {
+      const asin = (r.asin || '').trim().toUpperCase();
+      if (!brandAsins.has(asin)) return;
+      if (!r.subcategory_bsr) return;
+      const entry = master.byAsin[asin];
+      const sku = entry ? entry.sku : asin;
+      if (!bsrBySku[sku]) bsrBySku[sku] = [];
+      bsrBySku[sku].push(r);
+    });
+    window._bmBsrBySku = {}; // {sku: {latestBsr, changePct, subcategory}} — cached for re-renders
+    Object.keys(bsrBySku).forEach(sku => {
+      const rows = bsrBySku[sku].sort((a, b) => (a.date || '').localeCompare(b.date || ''));
+      if (!rows.length) return;
+      const first = rows[0], latest = rows[rows.length - 1];
+      const firstBsr = Number(first.subcategory_bsr) || 0;
+      const latestBsr = Number(latest.subcategory_bsr) || 0;
+      const changePct = firstBsr > 0 ? Math.round(((firstBsr - latestBsr) / firstBsr) * 1000) / 10 : 0;
+      window._bmBsrBySku[sku] = { latestBsr, changePct, subcategory: latest.subcategory || '' };
+    });
+
+    // ── Reviews per product: count + average rating ──
+    const reviewStatsBySku = {};
+    brandReviewRows.forEach(r => {
+      const asin = (r.asin || '').trim().toUpperCase();
+      const entry = master.byAsin[asin];
+      const sku = entry ? entry.sku : asin;
+      const name = entry ? entry.name : asin;
+      if (!reviewStatsBySku[sku]) reviewStatsBySku[sku] = { name, count: 0, ratingSum: 0 };
+      reviewStatsBySku[sku].count++;
+      reviewStatsBySku[sku].ratingSum += parseFloat(r.star_rating) || 0;
+    });
+
+    window._bmCardData = { master, currSessionsBySku, prevMonthSessionsBySku, kwCountBySku, reviewStatsBySku, year, month };
+    window.bmRenderMomentumCards();
+    window._bmInit = true; // latch only after a fully successful load
+  } catch (err) {
+    console.warn('[BrandMomentum] failed:', err.message);
+    const grid = document.getElementById('bm-momentum-cards-grid');
+    if (grid) grid.innerHTML = '<div style="color:var(--muted);font-size:12px;">Could not load — ' + String(err.message || '').replace(/</g, '&lt;') + '</div>';
+  } finally {
+    window._bmLoading = false;
+  }
+};
+
+// Re-renders the card grid from cached data so the "Hide negative BSR
+// changes" checkbox toggles instantly without re-fetching.
+window.bmRenderMomentumCards = function () {
+  const grid = document.getElementById('bm-momentum-cards-grid');
+  if (!grid || !window._bmCardData) return;
+  const esc = v => String(v == null ? '' : v).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  const { master, currSessionsBySku, prevMonthSessionsBySku, kwCountBySku, reviewStatsBySku } = window._bmCardData;
+  const hideNegativeBsr = document.getElementById('bm-hide-negative-bsr')?.checked;
+
+  const skus = Object.keys(currSessionsBySku).sort((a, b) => currSessionsBySku[b] - currSessionsBySku[a]);
+  if (!skus.length) {
+    grid.innerHTML = '<div style="color:var(--muted);font-size:12px;">No data synced for this month yet</div>';
+    return;
+  }
+
+  const cardsHtml = skus.map(sku => {
+    const entry = master.bySku[sku];
+    const name = entry ? entry.name : sku;
+
+    const sessions = currSessionsBySku[sku];
+    // undefined (no row last month) is distinct from 0 — a genuinely new SKU shows "New SKU", not "+∞%".
+    const prevSessions = prevMonthSessionsBySku[sku];
+    const pctVsPrevMonth = (prevSessions !== undefined && prevSessions > 0)
+      ? Math.round(((sessions - prevSessions) / prevSessions) * 1000) / 10
+      : null;
+    const sessPillHtml = pctVsPrevMonth != null
+      ? `<span class="momentum-pill ${pctVsPrevMonth > 0 ? 'momentum-pill-up' : 'momentum-pill-dn'}">${pctVsPrevMonth > 0 ? '▲' : '▼'} ${Math.abs(pctVsPrevMonth)}% vs prior month</span>`
+      : `<span class="momentum-pill" style="background:var(--bg2);color:var(--muted);">${prevSessions === undefined ? 'New SKU' : '—'}</span>`;
+
+    const kwCount = kwCountBySku[sku] || 0;
+
+    const bsr = window._bmBsrBySku ? window._bmBsrBySku[sku] : null;
+    let bsrValueHtml = '—', bsrPillHtml = '', bsrSubcatHtml = '', bsrRowAttr = '';
+    if (bsr) {
+      bsrValueHtml = '#' + bsr.latestBsr.toLocaleString();
+      if (bsr.changePct !== 0) {
+        const cls = bsr.changePct > 0 ? 'momentum-pill-up' : 'momentum-pill-dn';
+        const arrow = bsr.changePct > 0 ? '▲' : '▼';
+        bsrPillHtml = `<span data-bsr-chng class="momentum-pill ${cls}">${arrow} ${Math.abs(bsr.changePct)}%</span>`;
+      }
+      bsrRowAttr = bsr.changePct < 0 ? ' data-bsr-neg="true"' : '';
+      if (bsr.subcategory) bsrSubcatHtml = `<div class="momentum-pcard-subcategory">${esc(bsr.subcategory)}</div>`;
+    }
+    // Hides the whole card when its BSR change is negative (a half-empty card would be confusing).
+    if (hideNegativeBsr && bsr && bsr.changePct < 0) return '';
+
+    const rev = reviewStatsBySku[sku];
+    const reviewsCount = rev ? rev.count : 0;
+    const avgRating = rev && rev.count > 0 ? rev.ratingSum / rev.count : 0;
+    const ratingBadgeHtml = rev && rev.count > 0
+      ? `<div class="momentum-pcard-rating"><span class="momentum-pcard-rating-stars">${bmReviewStarsHtml(avgRating)}</span><span class="momentum-pcard-rating-num">${avgRating.toFixed(1)}</span></div>`
+      : '';
+
+    return `<div class="momentum-pcard">
+      <div class="momentum-pcard-hd">
+        <div class="momentum-pcard-name">${esc(name)}</div>
+        ${ratingBadgeHtml}
+      </div>
+      <div class="momentum-pcard-body">
+        <div class="momentum-pcard-row"><span class="momentum-pcard-label">Sessions</span><span class="momentum-pcard-value">${sessions}</span>${sessPillHtml}</div>
+        <div class="momentum-pcard-row"><span class="momentum-pcard-label">Organic Keywords</span><span class="momentum-pcard-value">${kwCount || '—'}</span></div>
+        <div class="momentum-pcard-row"${bsrRowAttr}><span class="momentum-pcard-label">BSR</span><span class="momentum-pcard-value">${bsrValueHtml}</span>${bsrPillHtml}${bsrSubcatHtml}</div>
+        <div class="momentum-pcard-row"><span class="momentum-pcard-label">Reviews</span><span class="momentum-pcard-value">${reviewsCount || '—'}</span></div>
+      </div>
+    </div>`;
+  }).filter(Boolean).join('');
+
+  grid.innerHTML = cardsHtml || '<div style="color:var(--muted);font-size:12px;">No products left after filtering.</div>';
+};
 
 // Shared getLastFullMonth logic, duplicated here per the established
 // pattern in this file (each scope keeps its own local copy rather than
@@ -19391,8 +19775,8 @@ async function loadAuditResultsFromSheet() {
   // much padding), remaining cards continue on page 2. KPIs + section
   // title live on the first products page only, not repeated.
   function buildMomentumProductsPages(monthYear) {
-    const kpis = ['momentum-kpi-reviews', 'momentum-kpi-indexed', 'momentum-kpi-sessions'].map(pdfxKpi);
-    const cards = Array.prototype.slice.call(document.querySelectorAll('#momentum-cards-grid .momentum-pcard'));
+    const kpis = ['bm-kpi-reviews', 'bm-kpi-ranked-keywords', 'bm-kpi-sessions'].map(pdfxKpi);
+    const cards = Array.prototype.slice.call(document.querySelectorAll('#bm-momentum-cards-grid .momentum-pcard'));
     if (!cards.length) {
       return '<div class="pdfx-page"><div class="pdfx-inner">' +
         pdfxHeaderBand(monthYear, 'Brand Momentum') +
@@ -19426,7 +19810,7 @@ async function loadAuditResultsFromSheet() {
   }
 
   function buildMomentumPage2(monthYear) {
-    const indexingRows = pdfxTableRows('momentum-indexing-tbody');
+    const indexingRows = pdfxTableRows('bm-keyword-tbody');
     return '' +
       '<div class="pdfx-page">' +
         '<div class="pdfx-inner pdfx-momentum-page2">' +
@@ -19521,7 +19905,7 @@ async function loadAuditResultsFromSheet() {
   }
 
   function pdfxFutureOpportunitiesBlock() {
-    const cards = Array.prototype.map.call(document.querySelectorAll('#m-opportunities .opp-card'), function (card) {
+    const cards = Array.prototype.map.call(document.querySelectorAll('#opp-grid .opp-card'), function (card) {
       const title = pdfxText('.opp-title', card);
       if (!title) return ''; // blank Title = this slot is unused, per Jaclyn 2026-07-18
       const subtitle = pdfxText('.opp-subtitle', card);
