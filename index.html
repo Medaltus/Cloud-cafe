@@ -2267,7 +2267,7 @@ details.inci-toggle[open] summary::before{content:'▾ ';}
       <!-- What's Been Accomplished — added 2026-10-05, ported from Dazzle Dry's
            Opportunities page (vbc index). Four cards saved on the monthly
            report row as accomplished{1-4}_title/subtitle/body; cards 1 and 2
-           also take images (accomplished1_image1-3, accomplished2_image1-2),
+           also take up to 6 images each (accomplished1_image1-6, accomplished2_image1-6),
            uploaded through /api/upload-insight-image. Matches the backend's
            real columns, so nothing is dropped on save. -->
       <div class="card" style="margin-bottom:16px;">
@@ -12753,7 +12753,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
   (function wireAccomplished() {
     const BRAND = 'cloud-cafe';
-    const IMG_SLOTS = { 1: 3, 2: 2 }; // matches the sheet: accomplished1_image1-3, accomplished2_image1-2
+    const IMG_SLOTS = { 1: 6, 2: 6 }; // matches Dazzle Dry: 6 image slots on each of the first two cards (accomplished1_image1-6, accomplished2_image1-6)
     const editBtn = document.getElementById('acc-edit-btn');
     const saveBtn = document.getElementById('acc-save-btn');
     const cancelBtn = document.getElementById('acc-cancel-btn');
