@@ -22336,15 +22336,31 @@ async function loadAuditResultsFromSheet() {
       // cancelled" flag, so there was no clean way to net an order COUNT
       // against them).
 
-      // Pending Orders — a live snapshot, intentionally NOT date-scoped
-      // (an order still sitting in Pending from any date is still open and
-      // worth surfacing, not just ones placed this month). Amazon only,
-      // per Jaclyn's source (SHEET_ORDERS).
+      // Pending Orders — changed 2026-10-06 per Jaclyn to match Cosmette's card. Counts orders
+      // whose status is pending AND whose order date falls in the month the toggle points at
+      // (Month to Date = current month, Last Month = last full month). It is a live status
+      // read, not a snapshot: last month's number shrinks toward zero as Amazon resolves those
+      // orders on later syncs. Reads the RAW sync-sheet rows — none of the usual validity
+      // filters apply, because they remove pending orders, which is the whole point here.
+      // Two deliberate differences from Cosmette's version: it counts UNIQUE order_ids, not
+      // rows (the sheet has one row per item, so a two-item order would count twice — for
+      // October that was 36 rows vs 31 orders), and there is no Newderm-only rule to apply.
+      const pendRefPrefix = `${cfg.year}-${String(cfg.month).padStart(2, '0')}`;
+      const pendNormDate = v => {
+        v = String(v || '').trim();
+        if (/^\d{4}-\d{2}/.test(v)) return v.substring(0, 10);
+        const pp = v.split('/'); // M/D/YYYY (the sync sheet mixes formats)
+        return pp.length === 3 ? `${pp[2].length === 2 ? '20' + pp[2] : pp[2]}-${pp[0].padStart(2, '0')}-${pp[1].padStart(2, '0')}` : '';
+      };
+      const pendBrandOk = r => { const bb = (r.brand || '').toLowerCase().replace(/[^a-z0-9]/g, ''); return !bb || bb === 'cloudcafe'; };
       const pendingOrderIds = new Set(
-        amzRows.filter(r => (r.status || '').trim().toLowerCase() === 'pending')
-               .map(r => r.order_id).filter(Boolean)
+        amzRows.filter(r => {
+          const d = pendNormDate(r.date);
+          if (!d || d.substring(0, 7) !== pendRefPrefix) return false;
+          return pendBrandOk(r) && (r.status || '').trim().toLowerCase() === 'pending';
+        }).map(r => r.order_id).filter(Boolean)
       );
-      setKpiPlain('ov-kpi-pending', pendingOrderIds.size.toLocaleString(), 'Currently open');
+      setKpiPlain('ov-kpi-pending', pendingOrderIds.size.toLocaleString(), cfg.isPartial ? 'Current month' : 'Last month');
 
       const heroRevEl = document.getElementById('ov-hero-revenue');
       if (heroRevEl) heroRevEl.textContent = mtd.revenue >= 1000 ? '$' + (mtd.revenue / 1000).toFixed(1) + 'K' : '$' + mtd.revenue.toFixed(0);
