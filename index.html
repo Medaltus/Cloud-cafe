@@ -12226,7 +12226,7 @@ async function initSnsExternal() {
 
         const dateEl = document.getElementById('pd-event-dates');
         if (dates.current) {
-          if (dateEl) dateEl.innerHTML = eventDatesHtml(dates.current, dates.previous);
+          if (dateEl) { dateEl.innerHTML = eventDatesHtml(dates.current, dates.previous); dateEl.dataset.compact = window.compactEventDate(dates.current); }
         } else if (dateEl) {
           dateEl.textContent = 'Event dates not found on Events tab.';
         }
@@ -12631,7 +12631,7 @@ async function initSnsExternal() {
 
           const dateEl = document.getElementById(`${cfg.prefix}-event-dates`);
           if (dates.current) {
-            if (dateEl) dateEl.innerHTML = eventDatesHtml(dates.current, dates.previous);
+            if (dateEl) { dateEl.innerHTML = eventDatesHtml(dates.current, dates.previous); dateEl.dataset.compact = window.compactEventDate(dates.current); }
           } else if (dateEl) {
             dateEl.textContent = 'Event dates not found on Events tab.';
           }
@@ -18543,6 +18543,26 @@ function parseCsvToRows(text) {
 // <script> block deliberately, right after parseCsvToRows, so that
 // function is actually in scope here rather than assumed to be — this
 // file's <script> tags don't share scope with each other.
+// Compact event-date string for the PDF header sub-line, e.g. "Oct 6-7, 2026" (or
+// "Nov 28 - Dec 1, 2025" across a month boundary). Same format initEventStrategyHeader
+// uses for the Strategy page. Takes an Events-sheet row ({start_date, end_date}); returns
+// "Dates TBD" when either date is blank/TBD/unparseable and '' when there is no row at all.
+// Each event tab stashes this on its #<prefix>-event-dates element (dataset.compact) so the
+// PDF's per-event header can show that event's MOST RECENT dates.
+window.compactEventDate = function (ev) {
+  if (!ev) return '';
+  const isTbd = v => !v || !String(v).trim() || String(v).trim().toUpperCase() === 'TBD';
+  if (isTbd(ev.start_date) || isTbd(ev.end_date)) return 'Dates TBD';
+  const parse = d => { const dt = new Date(String(d).trim() + 'T00:00:00'); return isNaN(dt.getTime()) ? null : dt; };
+  const st = parse(ev.start_date), en = parse(ev.end_date);
+  if (!st || !en) return 'Dates TBD';
+  const mon = dt => dt.toLocaleDateString('en-US', { month: 'short' });
+  const same = st.getMonth() === en.getMonth() && st.getFullYear() === en.getFullYear();
+  return same
+    ? `${mon(st)} ${st.getDate()}-${en.getDate()}, ${en.getFullYear()}`
+    : `${mon(st)} ${st.getDate()} - ${mon(en)} ${en.getDate()}, ${en.getFullYear()}`;
+};
+
 window.initEventStrategyHeader = async function () {
   const headlineEl = document.getElementById('evs-headline');
   const datesEl = document.getElementById('evs-dates');
@@ -20914,7 +20934,8 @@ async function loadAuditResultsFromSheet() {
     'lead-out': { title: 'var(--warn)', pillBg: 'rgba(200,125,47,.12)', pillColor: 'var(--warn)' },
   };
   function pdfxStrategyItem(title, text) {
-    return '<div style="margin-bottom:6px;"><div style="font-size:10.5px;font-weight:700;color:var(--navy);margin-bottom:1px;">' + pdfxEscape(title) + '</div>' +
+    // Item gap 6px -> 4px (2026-10-08): the footer now closes this page, and it was 16px over without this.
+    return '<div style="margin-bottom:4px;"><div style="font-size:10.5px;font-weight:700;color:var(--navy);margin-bottom:1px;">' + pdfxEscape(title) + '</div>' +
       '<div style="font-size:9.5px;color:var(--muted);line-height:1.35;">' + text + '</div></div>';
   }
   function pdfxStrategyPhase(variant, numLabel, title, pillLabel, itemsHtml) {
@@ -20993,6 +21014,7 @@ async function loadAuditResultsFromSheet() {
       pdfxHeaderBand(monthYear, 'Events', null, eventName, eventDatesCompact) +
       '<div class="pdfx-chlabel">Event Strategy</div>' +
       leadUp + during + leadOut + outlook +
+      pdfxFooter(monthYear, true) +   // footer moved here from the event pages, 2026-10-08 per Jaclyn
       '</div></div>';
     return page1;
   }
@@ -21006,6 +21028,11 @@ async function loadAuditResultsFromSheet() {
     const headline = pdfxText('#' + prefix + '-exec-summary-headline') || eventLabel;
     const body = pdfxHTML('#' + prefix + '-exec-summary-body') || '<span style="color:var(--muted);font-style:italic;">No summary added yet.</span>';
     const dates = pdfxById(prefix + '-event-dates') ? pdfxHTML('#' + prefix + '-event-dates') : '';
+    // Header matches the Strategy page: the event's name hard-coded (these reports are each
+    // for ONE event, so eventLabel is the title) plus that event's MOST RECENT dates, stashed
+    // on the dates element by the tab's init (window.compactEventDate).
+    const datesElForHeader = pdfxById(prefix + '-event-dates');
+    const eventDatesCompact = datesElForHeader ? (datesElForHeader.dataset.compact || '') : '';
 
     // Orange-background callout, matching .pdfx-insight exactly (same
     // sand background + orange left border) — this is the actual "pop"
@@ -21024,19 +21051,30 @@ async function loadAuditResultsFromSheet() {
             .map(pdfxKpiCardHtml).join('') +
         '</div>'
       : '';
+    // Year legend (e.g. 2025 / 2026) — on the live page this is a separate HTML element
+    // (#<prefix>-legend, filled in when the chart is built), NOT part of the chart canvas, so it
+    // was missing from the PDF. Copied into the card's title row, as on the live page.
+    const legendInner = pdfxById(prefix + '-legend') ? pdfxHTML('#' + prefix + '-legend') : '';
     const chartHtml = hasKpis
-      ? '<div class="pdfx-card" style="margin-top:14px;"><div class="pdfx-card-title">Top Sellers — Units Sold</div>' + pdfxChartBlock('_' + prefix + 'TopSellersChart') + '</div>'
+      ? '<div class="pdfx-card" style="margin-top:14px;">' +
+          '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;">' +
+            '<div class="pdfx-card-title" style="margin-bottom:0;">Top Sellers — Units Sold</div>' +
+            (legendInner ? '<div class="pd-legend">' + legendInner + '</div>' : '') +
+          '</div>' +
+          pdfxChartBlock('_' + prefix + 'TopSellersChart') +
+        '</div>'
       : '';
 
     return '' +
       '<div class="pdfx-page">' +
         '<div class="pdfx-inner">' +
-          pdfxHeaderBand(monthYear, 'Events') +
-          '<div class="pdfx-chlabel">' + pdfxEscape(eventLabel) + '</div>' +
+          pdfxHeaderBand(monthYear, 'Events', null, eventLabel, eventDatesCompact) +
+          '<div class="pdfx-chlabel">Event Performance</div>' +
           datesHtml +
           '<div class="pdfx-card"><div class="pdfx-card-title">' + pdfxEscape(headline) + '</div><div style="font-size:11.5px;color:#48557a;line-height:1.6;">' + body + '</div></div>' +
           kpisHtml + chartHtml +
-          pdfxFooter(monthYear) +
+          // Footer removed 2026-10-08 per Jaclyn — it now closes the report on the Strategy page
+          // (Strategy always exports last).
         '</div>' +
       '</div>';
   }
