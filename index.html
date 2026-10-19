@@ -9339,14 +9339,32 @@ async function initSns() {
     return out;
   }
   function parseCsv(text) {
-    const lines = text.trim().split('\n');
-    const headers = parseCsvLine(lines[0]).map(h => h.replace(/^"|"$/g,'').trim());
+    // Quote-aware (RFC-4180) reader. Quoted cells can hold commas, doubled quotes AND line
+    // breaks — e.g. multi-paragraph Executive Summary / Opportunity text typed into the
+    // editor. The old reader split the whole file on '\n' first, which cut any row at its
+    // first line break and lost every column to the right of it (status, Category Key
+    // Insight, Accomplished cards...), so saved content never displayed.
+    const t = String(text || '').replace(/^\uFEFF/, '');
+    const recs = []; let rec = [], cur = '', inQ = false;
+    for (let i = 0; i < t.length; i++) {
+      const c = t[i];
+      if (inQ) {
+        if (c === '"') { if (t[i + 1] === '"') { cur += '"'; i++; } else inQ = false; }
+        else cur += c;
+      } else if (c === '"') inQ = true;
+      else if (c === ',') { rec.push(cur); cur = ''; }
+      else if (c === '\n') { rec.push(cur); recs.push(rec); rec = []; cur = ''; }
+      else if (c !== '\r') cur += c;
+    }
+    if (cur !== '' || rec.length) { rec.push(cur); recs.push(rec); }
+    if (!recs.length) return [];
+    const headers = recs[0].map(h => h.trim());
     const rows = [];
-    for (let i = 1; i < lines.length; i++) {
-      if (!lines[i].trim()) continue;
-      const cols = parseCsvLine(lines[i]);
+    for (let i = 1; i < recs.length; i++) {
+      const cols = recs[i];
+      if (cols.every(x => !String(x).trim())) continue;
       const row = {};
-      headers.forEach((h, idx) => { row[h] = (cols[idx] || '').replace(/^"|"$/g,'').trim(); });
+      headers.forEach((h, idx) => { row[h] = (cols[idx] || '').trim(); });
       rows.push(row);
     }
     return rows;
@@ -11663,14 +11681,32 @@ async function initSnsExternal() {
     return out;
   }
   function parseCsv(text) {
-    const lines = text.trim().split('\n');
-    const headers = parseCsvLine(lines[0]).map(h => h.replace(/^"|"$/g,'').trim());
+    // Quote-aware (RFC-4180) reader. Quoted cells can hold commas, doubled quotes AND line
+    // breaks — e.g. multi-paragraph Executive Summary / Opportunity text typed into the
+    // editor. The old reader split the whole file on '\n' first, which cut any row at its
+    // first line break and lost every column to the right of it (status, Category Key
+    // Insight, Accomplished cards...), so saved content never displayed.
+    const t = String(text || '').replace(/^\uFEFF/, '');
+    const recs = []; let rec = [], cur = '', inQ = false;
+    for (let i = 0; i < t.length; i++) {
+      const c = t[i];
+      if (inQ) {
+        if (c === '"') { if (t[i + 1] === '"') { cur += '"'; i++; } else inQ = false; }
+        else cur += c;
+      } else if (c === '"') inQ = true;
+      else if (c === ',') { rec.push(cur); cur = ''; }
+      else if (c === '\n') { rec.push(cur); recs.push(rec); rec = []; cur = ''; }
+      else if (c !== '\r') cur += c;
+    }
+    if (cur !== '' || rec.length) { rec.push(cur); recs.push(rec); }
+    if (!recs.length) return [];
+    const headers = recs[0].map(h => h.trim());
     const rows = [];
-    for (let i = 1; i < lines.length; i++) {
-      if (!lines[i].trim()) continue;
-      const cols = parseCsvLine(lines[i]);
+    for (let i = 1; i < recs.length; i++) {
+      const cols = recs[i];
+      if (cols.every(x => !String(x).trim())) continue;
       const row = {};
-      headers.forEach((h, idx) => { row[h] = (cols[idx] || '').replace(/^"|"$/g,'').trim(); });
+      headers.forEach((h, idx) => { row[h] = (cols[idx] || '').trim(); });
       rows.push(row);
     }
     return rows;
