@@ -1237,8 +1237,6 @@ details.inci-toggle[open] summary::before{content:'▾ ';}
   Chart.defaults.devicePixelRatio = 2;
 </script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 </head>
 <body>
 
@@ -11950,10 +11948,14 @@ async function initSnsExternal() {
   // convention already used on the Master SKU List's own YOY% column for
   // Big Spring Sale / Prime Day (e.g. "0.01 | 20 | 199900%"), rather than
   // showing Infinity/NaN or silently hiding a 0→N change.
+  // No last-year base to compare against: 'new' (units appeared this year) or null (nothing either year).
+  // This used to divide by 0.01, which printed figures like +529900% on the event pages and PDF.
   function pct(current, previous) {
-    const p = (!previous || previous === 0) ? 0.01 : previous;
-    return Math.round(((current - p) / p) * 100);
+    if (!previous) return current > 0 ? 'new' : null;
+    return Math.round(((current - previous) / previous) * 100);
   }
+  function yoyText(p) { return p === 'new' ? 'New' : p == null ? '\u2014' : `${p > 0 ? '+' : ''}${p}%`; }
+  function yoyIsGood(p) { return p === 'new' || p == null || p >= 0; }
   function setKpiValue(id, value) {
     const el = document.getElementById(id);
     if (!el) return;
@@ -11966,6 +11968,7 @@ async function initSnsExternal() {
     const badge = el.querySelector('.kpi-mom');
     if (!badge) return;
     if (pctVal == null) { badge.className = 'kpi-mom flat'; badge.textContent = ''; return; }
+    if (pctVal === 'new') { badge.className = 'kpi-mom up'; badge.textContent = 'New vs last year'; return; }
     const cls = pctVal === 0 ? 'flat' : pctVal > 0 ? 'up' : 'dn';
     badge.className = 'kpi-mom ' + cls;
     badge.textContent = `${pctVal > 0 ? '+' : ''}${pctVal}% YOY`;
@@ -12187,8 +12190,8 @@ async function initSnsExternal() {
         ctx.textAlign = 'left';
         entries.forEach((e, i) => {
           const p = pct(e.curr, e.prev);
-          const label = `${p > 0 ? '+' : ''}${p}%`;
-          const isGood = p >= 0;
+          const label = yoyText(p);
+          const isGood = yoyIsGood(p);
           const meta2025 = chart.getDatasetMeta(0).data[i];
           const meta2026 = chart.getDatasetMeta(1).data[i];
           if (!meta2025 || !meta2026) return;
@@ -12231,7 +12234,7 @@ async function initSnsExternal() {
             callbacks: {
               afterBody: (items) => {
                 const e = entries[items[0].dataIndex];
-                return [`YOY: ${pct(e.curr, e.prev) > 0 ? '+' : ''}${pct(e.curr, e.prev)}%`];
+                return [`YOY: ${yoyText(pct(e.curr, e.prev))}`];
               }
             }
           }
@@ -12395,10 +12398,14 @@ async function initSnsExternal() {
     const n = parseFloat(String(v).replace(/[$,]/g, ''));
     return isNaN(n) ? 0 : n;
   }
+  // No last-year base to compare against: 'new' (units appeared this year) or null (nothing either year).
+  // This used to divide by 0.01, which printed figures like +529900% on the event pages and PDF.
   function pct(current, previous) {
-    const p = (!previous || previous === 0) ? 0.01 : previous;
-    return Math.round(((current - p) / p) * 100);
+    if (!previous) return current > 0 ? 'new' : null;
+    return Math.round(((current - previous) / previous) * 100);
   }
+  function yoyText(p) { return p === 'new' ? 'New' : p == null ? '\u2014' : `${p > 0 ? '+' : ''}${p}%`; }
+  function yoyIsGood(p) { return p === 'new' || p == null || p >= 0; }
   function setKpiValue(id, value) {
     const el = document.getElementById(id);
     if (!el) return;
@@ -12411,6 +12418,7 @@ async function initSnsExternal() {
     const badge = el.querySelector('.kpi-mom');
     if (!badge) return;
     if (pctVal == null) { badge.className = 'kpi-mom flat'; badge.textContent = ''; return; }
+    if (pctVal === 'new') { badge.className = 'kpi-mom up'; badge.textContent = 'New vs last year'; return; }
     const cls = pctVal === 0 ? 'flat' : pctVal > 0 ? 'up' : 'dn';
     badge.className = 'kpi-mom ' + cls;
     badge.textContent = `${pctVal > 0 ? '+' : ''}${pctVal}% YOY`;
@@ -12593,8 +12601,8 @@ async function initSnsExternal() {
         ctx.textAlign = 'left';
         entries.forEach((e, i) => {
           const p = pct(e.curr, e.prev);
-          const label = `${p > 0 ? '+' : ''}${p}%`;
-          const isGood = p >= 0;
+          const label = yoyText(p);
+          const isGood = yoyIsGood(p);
           const metaPrev = chart.getDatasetMeta(0).data[i];
           const metaCurr = chart.getDatasetMeta(1).data[i];
           if (!metaPrev || !metaCurr) return;
@@ -12638,7 +12646,7 @@ async function initSnsExternal() {
             callbacks: {
               afterBody: (items) => {
                 const e = entries[items[0].dataIndex];
-                return [`YOY: ${pct(e.curr, e.prev) > 0 ? '+' : ''}${pct(e.curr, e.prev)}%`];
+                return [`YOY: ${yoyText(pct(e.curr, e.prev))}`];
               }
             }
           }
@@ -13809,21 +13817,46 @@ window.loadInsCategoryChart = async function () {
   if (!canvas) return;
   try {
     const hist = window.SHEET_CFG && window.SHEET_CFG.SHEET_ORDERS_HISTORICAL;
+    const syncCfg = window.SHEET_CFG && window.SHEET_CFG.SHEET_ORDERS;
     if (!hist || !hist.fileId) { console.warn('[loadInsCategoryChart] SHEET_ORDERS_HISTORICAL missing from SHEET_CFG'); return; }
-    const [master, histCsv] = await Promise.all([
-      getProductMaster(),
-      fetch(ovCsvUrl(hist.fileId, hist.gid) + `&_cb=${Date.now()}`).then(r => r.ok ? r.text() : '').catch(() => ''),
-    ]);
-    const histRows = parseCsvToRows(histCsv);
+    const csvOf = c => (c && c.fileId)
+      ? fetch(ovCsvUrl(c.fileId, c.gid) + `&_cb=${Date.now()}`).then(r => r.ok ? r.text() : '').catch(() => '')
+      : Promise.resolve('');
+    // The historical sheet stops at the end of the last month it was archived; the
+    // current orders sync sheet carries everything after that (this is why the most
+    // recent completed month was missing). Same precedence rule as
+    // getAmazonMonthlySales(): months from the first sync date onward come from the
+    // sync sheet, earlier months from the historical sheet, so the two never double count.
+    const [master, histCsv, syncCsv] = await Promise.all([getProductMaster(), csvOf(hist), csvOf(syncCfg)]);
     const f = v => parseFloat((v || '0').toString().replace(/[^0-9.-]/g, '')) || 0;
+    const nd = v => {
+      v = String(v || '').trim();
+      if (/^\d{4}-\d{2}/.test(v)) return v.substring(0, 10);
+      const p = v.split('/');
+      if (p.length === 3) return `${p[2].length === 2 ? '20' + p[2] : p[2]}-${p[0].padStart(2, '0')}-${p[1].padStart(2, '0')}`;
+      return '';
+    };
+    const normBrand = v => (v || '').normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]/g, '');
+    // Same validity rules as the Amazon tab's unit totals (no cancelled / pending / Vine).
+    const valid = r => {
+      const st = (r.status || '').trim().toLowerCase();
+      if (st === 'cancelled' || st === 'pending') return false;
+      if ((r.promotion_ids || '').toLowerCase().includes('vine')) return false;
+      const b = normBrand(r.brand);
+      return !b || b === 'cloudcafe';
+    };
+    const prep = rows => rows.map(r => ({ r, d: nd(r.date) })).filter(x => x.d);
+    const sync = prep(parseCsvToRows(syncCsv)), histPrepped = prep(parseCsvToRows(histCsv));
+    const syncStart = sync.reduce((m, x) => (!m || x.d < m ? x.d : m), '');
+    const syncCovers = ym => !!syncStart && `${ym}-01` >= syncStart;
 
     const byPeriod = {}; // 'YYYY-M' -> { category: units }
-    histRows.forEach(r => {
-      if ((r.status || '').trim().toLowerCase() === 'cancelled') return;
-      const m = (r.date || '').trim().match(/^(\d{4})-(\d{2})/);
-      if (!m) return;
-      const key = `${Number(m[1])}-${Number(m[2])}`;
-      const skus = (r.skus || '').split(',').map(x => x.trim().toUpperCase().replace(/-SF$/, '')).filter(Boolean);
+    const addRows = (list, useMonth) => list.forEach(({ r, d }) => {
+      const ym = d.substring(0, 7);
+      if (!useMonth(ym) || !valid(r)) return;
+      const key = `${Number(ym.substring(0, 4))}-${Number(ym.substring(5, 7))}`;
+      // Historical rows carry a "skus" column, the sync sheet a "sku" column.
+      const skus = (r.skus || r.sku || '').split(',').map(x => x.trim().toUpperCase().replace(/-SF$/, '')).filter(Boolean);
       if (!skus.length) return;
       const perSku = f(r.unit_count) / skus.length;
       skus.forEach(sku => {
@@ -13834,12 +13867,23 @@ window.loadInsCategoryChart = async function () {
         byPeriod[key][cat] = (byPeriod[key][cat] || 0) + perSku;
       });
     });
+    addRows(sync, ym => syncCovers(ym));
+    addRows(histPrepped, ym => !syncCovers(ym));
 
-    const periods = Object.keys(byPeriod)
-      .map(k => { const [yr, mo] = k.split('-'); return { key: k, year: Number(yr), month: Number(mo) }; })
-      .sort((a, b) => (a.year * 12 + a.month) - (b.year * 12 + b.month))
-      .slice(-13);
-    if (!periods.length) { console.warn('[loadInsCategoryChart] no category rows matched — check Product Category column and SKUs'); return; }
+    // 13 months ending at the LAST COMPLETED month (always shown, even if it has no
+    // rows yet) — never the in-progress current month.
+    const nowD = new Date();
+    let endYear = nowD.getFullYear(), endMonth = nowD.getMonth(); // getMonth() is 0-based, so this already equals last month, 1-based
+    if (endMonth === 0) { endMonth = 12; endYear--; }
+    const periods = [];
+    for (let i = 12; i >= 0; i--) {
+      let m = endMonth - i, y = endYear;
+      while (m < 1) { m += 12; y--; }
+      periods.push({ key: `${y}-${m}`, year: y, month: m });
+    }
+    // Trim leading months before the data starts (but never the trailing ones).
+    while (periods.length > 1 && !byPeriod[periods[0].key]) periods.shift();
+    if (!periods.some(p => byPeriod[p.key])) { console.warn('[loadInsCategoryChart] no category rows matched — check Product Category column and SKUs'); return; }
 
     // Categories with units inside the visible window only, biggest first.
     const totals = {};
@@ -20082,6 +20126,209 @@ async function loadAuditResultsFromSheet() {
     return '';
   }
 
+  // ── Vector chart capture ──────────────────────────────────────────────
+  // Charts used to be exported as PNG snapshots (toBase64Image), which prints as a
+  // bitmap. Instead, the live Chart.js instance is redrawn once while every canvas
+  // drawing call (paths, fills, strokes, text, clips) is also written out as SVG, so
+  // the PDF gets real vector shapes and real, selectable text — including anything
+  // custom plugins draw (YoY pills, bar labels, legend). Same pixels, same layout:
+  // this records exactly what Chart.js itself paints. Returns '' (caller falls back
+  // to PNG and says so in the console) if the chart uses a call it can't express.
+  let PDFX_SVG_SEQ = 0;
+  function pdfxRecordChartSvg(chart) {
+    const ctx = chart && chart.ctx, cv = chart && chart.canvas;
+    if (!ctx || !cv || !cv.width || !cv.height || typeof ctx.getTransform !== 'function') return '';
+    let W = cv.width, H = cv.height; // re-read below, AFTER any pending resize has been applied
+    const uid = 'pdxc' + (++PDFX_SVG_SEQ) + '_';
+    const TAU = Math.PI * 2;
+    const body = [], defs = [], unsupported = {};
+    let clipN = 0, path = [], cur = null, startPt = null;
+    const frames = [0]; // clip groups opened inside each save() level
+    const r2 = n => Math.round(n * 100) / 100;
+    const T = (x, y) => { const m = ctx.getTransform(); return [m.a * x + m.c * y + m.e, m.b * x + m.d * y + m.f]; };
+    const P = (x, y) => { const q = T(x, y); return r2(q[0]) + ' ' + r2(q[1]); };
+    const scaleOf = () => { const m = ctx.getTransform(); return Math.sqrt(Math.abs(m.a * m.d - m.b * m.c)) || 1; };
+    const esc = t => String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    const attrEsc = t => String(t).replace(/&/g, '&amp;').replace(/"/g, '&quot;').replace(/</g, '&lt;');
+    const colorOf = v => { if (typeof v === 'string') return v; unsupported.gradientOrPattern = true; return '#000000'; };
+    const alphaAttr = () => (ctx.globalAlpha < 1 ? ' opacity="' + r2(ctx.globalAlpha * 1000) / 1000 + '"' : '');
+    const startOrLine = (X, Y) => { path.push((cur ? 'L' : 'M') + r2(X) + ' ' + r2(Y)); cur = [X, Y]; if (!startPt) startPt = cur; };
+
+    function arcPath(x, y, r, a0, a1, ccw) {
+      let d = a1 - a0;
+      if (!ccw) { d = d >= TAU ? TAU : (((d % TAU) + TAU) % TAU); }
+      else { d = d <= -TAU ? -TAU : -((((a0 - a1) % TAU) + TAU) % TAU); }
+      const s = T(x + r * Math.cos(a0), y + r * Math.sin(a0));
+      startOrLine(s[0], s[1]);
+      if (r === 0 || d === 0) return;
+      const m = ctx.getTransform();
+      const R = r2(r * scaleOf());
+      let sweep = d > 0 ? 1 : 0;
+      if (m.a * m.d - m.b * m.c < 0) sweep = 1 - sweep;
+      if (Math.abs(d) >= TAU - 1e-9) { // full circle = two half arcs
+        const mid = T(x + r * Math.cos(a0 + Math.PI), y + r * Math.sin(a0 + Math.PI));
+        path.push('A' + R + ' ' + R + ' 0 0 ' + sweep + ' ' + r2(mid[0]) + ' ' + r2(mid[1]));
+        path.push('A' + R + ' ' + R + ' 0 0 ' + sweep + ' ' + r2(s[0]) + ' ' + r2(s[1]));
+        cur = s; return;
+      }
+      const e = T(x + r * Math.cos(a0 + d), y + r * Math.sin(a0 + d));
+      path.push('A' + R + ' ' + R + ' 0 ' + (Math.abs(d) > Math.PI ? 1 : 0) + ' ' + sweep + ' ' + r2(e[0]) + ' ' + r2(e[1]));
+      cur = e;
+    }
+    function rectPath(x, y, w, h) {
+      path.push('M' + P(x, y) + 'L' + P(x + w, y) + 'L' + P(x + w, y + h) + 'L' + P(x, y + h) + 'Z');
+      cur = T(x, y); startPt = cur;
+    }
+    function strokeAttrs() {
+      const k = scaleOf();
+      let a = ' fill="none" stroke="' + attrEsc(colorOf(ctx.strokeStyle)) + '" stroke-width="' + r2(ctx.lineWidth * k * 1000) / 1000 + '"';
+      if (ctx.lineCap && ctx.lineCap !== 'butt') a += ' stroke-linecap="' + ctx.lineCap + '"';
+      if (ctx.lineJoin && ctx.lineJoin !== 'miter') a += ' stroke-linejoin="' + ctx.lineJoin + '"';
+      const dash = ctx.getLineDash ? ctx.getLineDash() : [];
+      if (dash && dash.length) a += ' stroke-dasharray="' + dash.map(v => r2(v * k)).join(' ') + '"';
+      return a + alphaAttr();
+    }
+    function paintFill(d, rule) {
+      body.push('<path d="' + d + '" fill="' + attrEsc(colorOf(ctx.fillStyle)) + '"' + (rule === 'evenodd' ? ' fill-rule="evenodd"' : '') + alphaAttr() + '/>');
+    }
+    function paintStroke(d) { if (ctx.lineWidth > 0) body.push('<path d="' + d + '"' + strokeAttrs() + '/>'); }
+    function fontParts(f) {
+      const m = /([\d.]+)px/.exec(f || '');
+      const size = m ? parseFloat(m[1]) : 10;
+      const before = m ? f.slice(0, m.index) : '';
+      const after = m ? f.slice(m.index + m[0].length) : '';
+      const wm = /\b(bold|bolder|lighter|[1-9]00)\b/.exec(before);
+      return { size: size, weight: wm ? wm[1] : '400', italic: /\b(italic|oblique)\b/.test(before), family: after.trim().replace(/"/g, "'") || 'sans-serif' };
+    }
+    function paintText(kind, text, x, y) {
+      const m = ctx.getTransform(), f = fontParts(ctx.font);
+      const anchor = { left: 'start', start: 'start', center: 'middle', right: 'end', end: 'end' }[ctx.textAlign] || 'start';
+      const base = { middle: 'central', top: 'hanging', hanging: 'hanging', bottom: 'text-after-edge', ideographic: 'text-after-edge' }[ctx.textBaseline] || '';
+      const paint = kind === 'fill'
+        ? ' fill="' + attrEsc(colorOf(ctx.fillStyle)) + '"'
+        : ' fill="none" stroke="' + attrEsc(colorOf(ctx.strokeStyle)) + '" stroke-width="' + r2(ctx.lineWidth * 1000) / 1000 + '"';
+      body.push('<text x="' + r2(x) + '" y="' + r2(y) + '" transform="matrix(' + [m.a, m.b, m.c, m.d, m.e, m.f].map(v => Math.round(v * 10000) / 10000).join(' ') + ')"' +
+        ' font-family="' + attrEsc(f.family) + '" font-size="' + f.size + '" font-weight="' + f.weight + '"' + (f.italic ? ' font-style="italic"' : '') +
+        ' text-anchor="' + anchor + '"' + (base ? ' dominant-baseline="' + base + '"' : '') + paint + alphaAttr() + ' xml:space="preserve">' + esc(text) + '</text>');
+    }
+
+    function replayOps(ops) {
+      const keep = [path, cur, startPt];
+      path = []; cur = null; startPt = null;
+      ops.forEach(function (o) {
+        if (o[0] === 'addPath') { unsupported.addPath = true; return; }
+        try { rec[o[0]].apply(null, o[1]); } catch (e) { unsupported.replay = e && e.message; }
+      });
+      const d = path.join('');
+      path = keep[0]; cur = keep[1]; startPt = keep[2];
+      return d;
+    }
+
+    const rec = {
+      beginPath() { path = []; cur = null; startPt = null; },
+      closePath() { path.push('Z'); if (startPt) cur = startPt; },
+      moveTo(x, y) { path.push('M' + P(x, y)); cur = T(x, y); startPt = cur; },
+      lineTo(x, y) { const q = T(x, y); startOrLine(q[0], q[1]); },
+      bezierCurveTo(a, b, c, d, x, y) {
+        if (!cur) { const q = T(a, b); startOrLine(q[0], q[1]); }
+        path.push('C' + P(a, b) + ' ' + P(c, d) + ' ' + P(x, y)); cur = T(x, y);
+      },
+      quadraticCurveTo(a, b, x, y) {
+        if (!cur) { const q = T(a, b); startOrLine(q[0], q[1]); }
+        path.push('Q' + P(a, b) + ' ' + P(x, y)); cur = T(x, y);
+      },
+      arc(x, y, r, a0, a1, ccw) { arcPath(x, y, r, a0, a1, !!ccw); },
+      arcTo(x1, y1, x2, y2) { unsupported.arcTo = true; const q = T(x1, y1); startOrLine(q[0], q[1]); const w = T(x2, y2); startOrLine(w[0], w[1]); },
+      ellipse(x, y, rx, ry, rot, a0, a1, ccw) { if (rx === ry && !rot) arcPath(x, y, rx, a0, a1, !!ccw); else unsupported.ellipse = true; },
+      rect(x, y, w, h) { rectPath(x, y, w, h); },
+      roundRect(x, y, w, h, radii) {
+        let r = typeof radii === 'number' ? radii : Array.isArray(radii) ? (+radii[0] || 0) : (radii && +radii.x) || 0;
+        r = Math.max(0, Math.min(r, Math.abs(w) / 2, Math.abs(h) / 2));
+        if (!r) { rectPath(x, y, w, h); return; }
+        arcPath(x + r, y + r, r, Math.PI, Math.PI * 1.5, false); arcPath(x + w - r, y + r, r, Math.PI * 1.5, 0, false);
+        arcPath(x + w - r, y + h - r, r, 0, Math.PI * 0.5, false); arcPath(x + r, y + h - r, r, Math.PI * 0.5, Math.PI, false);
+        path.push('Z'); if (startPt) cur = startPt;
+      },
+      // Chart.js 4 draws lines through a cached Path2D (ctx.stroke(path2d)); those objects are
+      // introspected through the recording below, then replayed under the CURRENT transform.
+      fill(a, b) {
+        if (a && typeof a === 'object') { if (!a.__pdxOps) { unsupported.untrackedPath2D = true; return; } paintFill(replayOps(a.__pdxOps), b); return; }
+        if (path.length) paintFill(path.join(''), a);
+      },
+      stroke(a) {
+        if (a && typeof a === 'object') { if (!a.__pdxOps) { unsupported.untrackedPath2D = true; return; } paintStroke(replayOps(a.__pdxOps)); return; }
+        if (path.length) paintStroke(path.join(''));
+      },
+      fillRect(x, y, w, h) { const keep = [path, cur, startPt]; path = []; cur = null; startPt = null; rectPath(x, y, w, h); paintFill(path.join('')); path = keep[0]; cur = keep[1]; startPt = keep[2]; },
+      strokeRect(x, y, w, h) { const keep = [path, cur, startPt]; path = []; cur = null; startPt = null; rectPath(x, y, w, h); paintStroke(path.join('')); path = keep[0]; cur = keep[1]; startPt = keep[2]; },
+      fillText(t, x, y) { paintText('fill', t, x, y); },
+      strokeText(t, x, y) { paintText('stroke', t, x, y); },
+      clip(a) {
+        let clipD = path.join('');
+        if (a && typeof a === 'object') { if (!a.__pdxOps) { unsupported.untrackedPath2D = true; return; } clipD = replayOps(a.__pdxOps); }
+        if (!clipD) return;
+        const id = uid + (++clipN);
+        defs.push('<clipPath id="' + id + '"><path d="' + clipD + '"/></clipPath>');
+        body.push('<g clip-path="url(#' + id + ')">'); frames[frames.length - 1]++;
+      },
+      save() { frames.push(0); },
+      restore() { if (frames.length > 1) { const n = frames.pop(); for (let i = 0; i < n; i++) body.push('</g>'); } },
+      drawImage() { unsupported.drawImage = true; },
+    };
+
+    // Chart.js defers a resize() until the next draw. Apply it with an ordinary (unrecorded) paint FIRST
+    // and only then read the canvas size — otherwise the viewBox describes the old size while the
+    // recorded drawing is the new one, and the chart comes out cropped.
+    const qa = function (tag) { console.log('[pdf-export][qa][vector]', cv.id, tag, '| canvas', cv.width + 'x' + cv.height, '| chart', chart.width + 'x' + chart.height, '| pendingResize', JSON.stringify(chart._resizeBeforeDraw || null)); };
+    qa('before flush');
+    try { chart.draw(); } catch (e) { /* a real problem will surface again in the recorded draw below */ }
+    qa('after flush draw');
+    try { chart.update('none'); } catch (e) { /* noop */ }
+    qa('after update(none)');
+    W = cv.width; H = cv.height;
+
+    // Path2D objects can't be read back, so for the duration of this one redraw their builder
+    // methods also log what they're given, and every line element drops its cached path so it
+    // gets rebuilt (and therefore logged) by the redraw below.
+    const p2proto = (typeof Path2D === 'function') ? Path2D.prototype : null;
+    const p2saved = {};
+    if (p2proto) {
+      ['moveTo', 'lineTo', 'bezierCurveTo', 'quadraticCurveTo', 'arc', 'arcTo', 'rect', 'roundRect', 'ellipse', 'closePath', 'addPath'].forEach(function (n) {
+        const o = p2proto[n];
+        if (typeof o !== 'function') return;
+        p2saved[n] = o;
+        p2proto[n] = function () { (this.__pdxOps = this.__pdxOps || []).push([n, Array.prototype.slice.call(arguments)]); return o.apply(this, arguments); };
+      });
+      (chart.data && chart.data.datasets || []).forEach(function (_, i) {
+        const meta = chart.getDatasetMeta(i);
+        if (meta && meta.dataset) meta.dataset._path = undefined;
+      });
+    }
+
+    const wrapped = Object.keys(rec);
+    wrapped.forEach(function (name) {
+      const orig = ctx[name];
+      if (typeof orig !== 'function') return;
+      ctx[name] = function () {
+        try { rec[name].apply(null, arguments); } catch (e) { unsupported['error_' + name] = e && e.message; }
+        return orig.apply(ctx, arguments);
+      };
+    });
+    try {
+      chart.draw(); // one more paint of the final, already-laid-out chart — recorded as it happens
+    } finally {
+      wrapped.forEach(function (name) { delete ctx[name]; }); // back to the native methods on the live context
+      if (p2proto) Object.keys(p2saved).forEach(function (n) { p2proto[n] = p2saved[n]; });
+    }
+    frames.forEach(function (n) { for (let i = 0; i < n; i++) body.push('</g>'); });
+    if (cv.width !== W || cv.height !== H) unsupported.sizeChangedWhileRecording = true;
+    const bad = Object.keys(unsupported);
+    if (bad.length || !body.length) { console.warn('[pdf-export] vector chart capture skipped (' + (bad.join(', ') || 'nothing drawn') + ') — using PNG for this chart'); return ''; }
+    return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ' + W + ' ' + H + '" preserveAspectRatio="none">' +
+      (defs.length ? '<defs>' + defs.join('') + '</defs>' : '') + body.join('') + '</svg>';
+  }
+  window.pdfxRecordChartSvg = pdfxRecordChartSvg; // console debugging
+
   // 2026-07-15: this used to be where a pdfxDeepClone() helper lived, meant
   // to give a temporary Chart.js instance a fully independent options/data
   // graph so it wouldn't collide with the live chart's. That turned out to
@@ -20360,6 +20607,7 @@ async function loadAuditResultsFromSheet() {
       }
 
       let img = '';
+      let svg = '';
       let capturedWidth = liveCanvas.width;
       let capturedHeight = liveCanvas.height;
       const hasScales = !!(liveChart.options && liveChart.options.scales);
@@ -20375,7 +20623,8 @@ async function loadAuditResultsFromSheet() {
         console.log('[pdf-export][qa]', varName, '— canvas dims right before update():', liveCanvas.width + 'x' + liveCanvas.height);
         liveChart.update('none'); // synchronous, no animation — picks up both the scale/font change above and the tension change above
         console.log('[pdf-export][qa]', varName, '— canvas dims right after update(), before capture:', liveCanvas.width + 'x' + liveCanvas.height);
-        img = liveChart.toBase64Image('image/png');
+        try { svg = pdfxRecordChartSvg(liveChart); } catch (svgErr) { svg = ''; console.warn('[pdf-export] vector capture threw for', varName, '-', svgErr && svgErr.message); }
+        if (!svg) { console.warn('[pdf-export] ' + varName + ' will be exported as an IMAGE (vector capture unavailable)'); img = liveChart.toBase64Image('image/png'); }
         // Captured HERE, at the same moment as the image itself — NOT
         // re-read later after the finally block's unrelated restore-update
         // runs. Confirmed by direct log evidence 2026-07-21 that reading
@@ -20415,7 +20664,7 @@ async function loadAuditResultsFromSheet() {
         try { liveChart.update('none'); } catch (e) { console.warn('[pdf-export] restore update() failed for', varName, '-', e.message); }
       }
 
-      const result = { img: img, width: capturedWidth, height: capturedHeight, displayHeightPx: dashboardHeightPx * PDFX_HEIGHT_FACTOR };
+      const result = { img: img, svg: svg, width: capturedWidth, height: capturedHeight, displayHeightPx: dashboardHeightPx * PDFX_HEIGHT_FACTOR };
 
       // Restore the live dashboard's own chart to its original size —
       // explicit numeric resize again, same validated synchronous technique,
@@ -20487,6 +20736,15 @@ async function loadAuditResultsFromSheet() {
 
   function pdfxChartBlock(varName, fallbackLabel) {
     const img = pdfxChartImg(varName);
+    const cached = PDFX_CHART_CACHE && PDFX_CHART_CACHE[varName];
+    const svg = cached && cached.svg;
+    if (svg) {
+      // Inline <svg>, not an <img>: stays vector in the PDF, text stays selectable, and it
+      // picks up the page's own fonts (an SVG loaded through <img> can't).
+      const a = pdfxChartAspect(varName);
+      const h = a ? Math.round(686 * a) : 230;
+      return svg.replace('<svg ', '<svg style="display:block;width:686px;height:' + h + 'px;" ');
+    }
     if (img) {
       // Height computed from the chart's OWN real captured aspect ratio at
       // a fixed 100% width, rather than forcing every chart into an
@@ -20850,15 +21108,10 @@ async function loadAuditResultsFromSheet() {
     // single export log seen so far — reusing that proven path here
     // instead of continuing to fight inline SVG sizing.
     const mapInner = pdfxHTML('#mfc-us-svg') || '';
-    const mapSvgFull = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 959 593" width="959" height="593">' + mapInner + '</svg>';
-    let mapImgSrc = '';
-    try {
-      mapImgSrc = 'data:image/svg+xml;base64,' + btoa(mapSvgFull);
-    } catch (e) {
-      console.warn('[pdf-export] map svg->base64 conversion failed:', e.message);
-    }
-    const mapHtml = mapImgSrc
-      ? '<img src="' + mapImgSrc + '" style="width:377px;height:233px;display:block;margin:0 auto;" />'
+    // Inline <svg> (vector, selectable state labels). It used to be a base64 <img>, which the
+    // SVG rasterizer below then turned into a PNG. Server-side Chrome prints inline SVG fine.
+    const mapHtml = mapInner
+      ? '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 959 593" style="width:377px;height:233px;display:block;margin:0 auto;">' + mapInner + '</svg>'
       : '<div style="color:var(--muted);font-size:11px;">Map failed to render for this export.</div>';
 
     return '' +
@@ -21122,9 +21375,10 @@ async function loadAuditResultsFromSheet() {
   // the VBC reference + the "PDF Export Pipeline — Porting Guide" notes.
   // The report is built as HTML pages in #pdfx-root, then printed to a real
   // text PDF by headless Chrome (api/render-pdf.js). If the server call
-  // fails for ANY reason, pdfxScreenshotPagesToPdf (html2canvas + jsPDF) is
-  // the fallback, so an export never hard-fails. The console says which path
-  // ran: "mode: text (server, real text)" or "mode: image (fallback)".
+  // fails for ANY reason, the browser's own print-to-PDF ("Save as PDF") opens
+  // instead — also real text and vector charts, never screenshots. The console
+  // says which path ran: "mode: text + vector charts (server)" or
+  // "mode: browser print (vector fallback)".
   // ══════════════════════════════════════════════════════════════════════
   const PDFX_RENDER_ENDPOINT = '/api/render-pdf';
   const PDFX_RENDER_TIMEOUT_MS = 55000;
@@ -21136,7 +21390,7 @@ async function loadAuditResultsFromSheet() {
   // these and the server's Chrome has no system fonts, so they'd print as boxes.
   const PDFX_SYMBOL_RE = /[\u2190-\u21FF\u2500-\u27BF\u2B00-\u2BFF]/;
   const PDFX_SYMBOL_SPLIT_RE = /([\u2190-\u21FF\u2500-\u27BF\u2B00-\u2BFF]+)/;
-  const PDFX_FALLBACK_TOAST = 'Heads up: the real-text PDF service didn\'t respond, so this PDF was made from screenshots (text isn\'t selectable). Try exporting again in a minute.';
+  const PDFX_FALLBACK_TOAST = 'Heads up: the PDF service didn\'t respond, so your browser\'s print window opened instead. Choose "Save as PDF" as the destination, set Margins to None, and turn on Background graphics. The text and charts stay vector either way.';
 
   function pdfxToast(msg) {
     // Own element (not the dashboard's #toast) so this works on any layout.
@@ -21162,8 +21416,10 @@ async function loadAuditResultsFromSheet() {
       textNode.nodeValue.split(PDFX_SYMBOL_SPLIT_RE).forEach(function (part) {
         if (!part) return;
         if (PDFX_SYMBOL_RE.test(part)) {
-          const span = document.createElement('span');
-          span.style.fontFamily = PDFX_SYMBOL_FONT_STACK;
+          // Inside an inline chart/map <svg>, an HTML <span> would be ignored — use <tspan>.
+          const inSvg = !!(textNode.parentNode && textNode.parentNode.closest && textNode.parentNode.closest('svg'));
+          const span = inSvg ? document.createElementNS('http://www.w3.org/2000/svg', 'tspan') : document.createElement('span');
+          if (inSvg) span.setAttribute('font-family', PDFX_SYMBOL_FONT_STACK); else span.style.fontFamily = PDFX_SYMBOL_FONT_STACK;
           span.textContent = part;
           frag.appendChild(span);
         } else {
@@ -21174,8 +21430,10 @@ async function loadAuditResultsFromSheet() {
     });
   }
 
-  // SVG logos/watermarks print wrong in the server's headless Chrome (masks /
-  // color-matrix filters), so every SVG <img> is rasterized HERE, client-side,
+  // The brand logo + watermark SVGs are bitmaps wrapped in SVG (embedded PNGs with masks / color-matrix
+  // filters — they were never vector art) and print wrong in the server's headless Chrome, so every
+  // SVG <img> is rasterized HERE, client-side. Charts and the map are NOT <img>s any more (inline SVG),
+  // so this no longer touches them.
   // before the document is sent. 800px longest side is plenty — the logo
   // prints ~80px tall and repeats in every page header, so a bigger raster
   // just burns the 4.5MB upload budget.
@@ -21299,35 +21557,22 @@ async function loadAuditResultsFromSheet() {
     }
   }
 
-  // Fallback only: html2canvas at scale 3, JPEG 0.95. A page that runs long
-  // shrinks width AND height together (never squishes height alone).
-  async function pdfxScreenshotPagesToPdf(pageEls) {
-    const jsPDFCtor = (window.jspdf && window.jspdf.jsPDF) || window.jsPDF;
-    if (typeof jsPDFCtor !== 'function') throw new Error('jsPDF constructor not found on window.jspdf.jsPDF or window.jsPDF.');
-    if (typeof html2canvas !== 'function') throw new Error('html2canvas is not available as a global.');
-    const pdf = new jsPDFCtor({ unit: 'in', format: 'letter', orientation: 'portrait', compress: true });
-    const pageWidthIn = 8.5, pageHeightIn = 11;
-    for (let i = 0; i < pageEls.length; i++) {
-      const el = pageEls[i];
-      const pageImgs = Array.from(el.querySelectorAll('img'));
-      await Promise.all(pageImgs.map(function (img) { return typeof img.decode === 'function' ? img.decode().catch(function () {}) : Promise.resolve(); }));
-      const canvas = await html2canvas(el, {
-        scale: 3,
-        backgroundColor: '#ffffff',
-        ignoreElements: function (node) { return node.tagName === 'CANVAS' && !node.closest('#pdfx-root'); },
-      });
-      const imgData = canvas.toDataURL('image/jpeg', 0.95);
-      if (i > 0) pdf.addPage();
-      let renderedWidthIn = pageWidthIn;
-      let renderedHeightIn = pageWidthIn * (canvas.height / canvas.width);
-      if (renderedHeightIn > pageHeightIn) {
-        const shrink = pageHeightIn / renderedHeightIn;
-        renderedHeightIn = pageHeightIn;
-        renderedWidthIn = pageWidthIn * shrink;
-      }
-      pdf.addImage(imgData, 'JPEG', (pageWidthIn - renderedWidthIn) / 2, 0, renderedWidthIn, renderedHeightIn, undefined, 'FAST');
-    }
-    return pdf.output('blob');
+  // Fallback only, and still VECTOR: if the server render is unavailable, the same document is loaded
+  // into a hidden frame and handed to the browser's own print-to-PDF ("Save as PDF"), which keeps real
+  // text and real SVG charts. (The old fallback screenshotted every page to a JPEG — removed on
+  // purpose: a PDF made of pictures is never what we want to hand a client.)
+  async function pdfxPrintViaBrowser(root, pageEls) {
+    const html = await pdfxBuildRenderDocument(root, pageEls);
+    const frame = document.createElement('iframe');
+    frame.setAttribute('aria-hidden', 'true');
+    frame.style.cssText = 'position:fixed;left:-10000px;top:0;width:8.5in;height:11in;border:0;';
+    document.body.appendChild(frame);
+    await new Promise(function (resolve) { frame.onload = resolve; frame.srcdoc = html; });
+    try { await frame.contentDocument.fonts.ready; } catch (e) { /* noop */ }
+    await new Promise(function (r) { setTimeout(r, 600); });
+    frame.contentWindow.focus();
+    frame.contentWindow.print();
+    setTimeout(function () { frame.remove(); }, 120000);
   }
 
   // The ONE entry point: server first, fallback on any error. { blob, mode }.
@@ -21338,11 +21583,10 @@ async function loadAuditResultsFromSheet() {
       console.log('[pdf-export] real-text PDF rendered server-side:', (blob.size / 1048576).toFixed(2) + 'MB');
       return { blob: blob, mode: 'text' };
     } catch (err) {
-      console.warn('[pdf-export] server render failed — using screenshot fallback:', err.message);
+      console.warn('[pdf-export] server render failed ? using the browser print (vector) fallback:', err.message);
     }
-    const blob = await pdfxScreenshotPagesToPdf(pageEls);
-    console.log('[pdf-export] screenshot-fallback PDF:', (blob.size / 1048576).toFixed(2) + 'MB');
-    return { blob: blob, mode: 'image' };
+    await pdfxPrintViaBrowser(root, pageEls);
+    return { blob: null, mode: 'print' };
   }
 
   function pdfxDownloadBlob(blob, filename) {
@@ -21659,10 +21903,13 @@ async function loadAuditResultsFromSheet() {
       await pdfxRasterizeRemoteImages(root);
       pdfxGrowAccomplishedImages(root);
       const pdfResult = await pdfxRenderPagesToPdf(root, pageEls);
-      console.log('[pdf-export] download triggered, mode:', pdfResult.mode === 'text' ? 'text (server, real text)' : 'image (fallback)');
-      if (pdfResult.mode === 'image') pdfxToast(PDFX_FALLBACK_TOAST);
-      const filename = 'Cloud_Cafe_Partnership_Report_' + (monthYear ? monthYear.replace(' ', '_') : 'Report') + '.pdf';
-      pdfxDownloadBlob(pdfResult.blob, filename);
+      console.log('[pdf-export] mode:', pdfResult.mode === 'text' ? 'text + vector charts (server)' : 'browser print (vector fallback)');
+      if (pdfResult.mode === 'print') {
+        pdfxToast(PDFX_FALLBACK_TOAST);
+      } else {
+        const filename = 'Cloud_Cafe_Partnership_Report_' + (monthYear ? monthYear.replace(' ', '_') : 'Report') + '.pdf';
+        pdfxDownloadBlob(pdfResult.blob, filename);
+      }
 
       root.style.display = 'none';
       root.style.position = ''; root.style.top = ''; root.style.left = ''; root.style.zIndex = ''; root.style.opacity = '';
