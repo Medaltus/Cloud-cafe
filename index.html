@@ -1154,6 +1154,9 @@ details.inci-toggle[open] summary::before{content:'▾ ';}
 .pdfx-ltd-lbl{font-size:9.5px;color:var(--muted);}
 .pdfx-footer{display:flex;justify-content:space-between;align-items:center;margin-top:36px;padding-top:16px;border-top:1px solid var(--border);}
 .pdfx-footer.pdfx-footer-compact{margin-top:14px;padding-top:0;border-top:none;}
+/* Opportunities page: footer pinned to the bottom of the page (2026-11-18) instead of following the content. Absolute
+   so .pdfx-inner's height (which the Accomplished-image sizing measures) is unaffected; the inner reserves the room. */
+.pdfx-footer.pdfx-footer-pinned{position:absolute;left:46px;right:46px;bottom:26px;margin-top:0;padding-top:0;border-top:none;}
 .pdfx-pill-sand{background:#f4dfd0;border-color:rgba(0,31,96,.12);color:var(--navy);}
 .pdfx-acc-imgs{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px;}
 .pdfx-acc-img{width:120px;height:120px;object-fit:cover;border-radius:6px;border:1px solid var(--border);display:block;}
@@ -21503,8 +21506,8 @@ async function loadAuditResultsFromSheet() {
       '<div class="pdfx-header-divider"></div>';
   }
 
-  function pdfxFooter(monthYear, compact) {
-    return '<div class="pdfx-footer' + (compact ? ' pdfx-footer-compact' : '') + '">' +
+  function pdfxFooter(monthYear, compact, pinned) {
+    return '<div class="pdfx-footer' + (compact ? ' pdfx-footer-compact' : '') + (pinned ? ' pdfx-footer-pinned' : '') + '">' +
       '<div><div class="pdfx-footer-brand">medaltus.</div><div class="pdfx-footer-tag">A trusted partner for your brand.</div></div>' +
       '<div class="pdfx-footer-right">Generated: ' + pdfxEscape(monthYear) + '<br><span class="pdfx-footer-conf">CONFIDENTIAL</span></div>' +
       '</div>';
@@ -21893,11 +21896,11 @@ async function loadAuditResultsFromSheet() {
     const fut = pdfxFutureOpportunitiesBlock();
     return '' +
       '<div class="pdfx-page">' +
-        '<div class="pdfx-inner" style="padding:22px 46px 26px;">' +
+        '<div class="pdfx-inner" style="padding:22px 46px 78px;">' +
           pdfxHeaderBand(monthYear, 'Opportunities') +
           acc + fut +
           ((!acc && !fut) ? '<div style="color:var(--muted);font-style:italic;font-size:12px;margin-top:18px;">Nothing has been added for this month yet.</div>' : '') +
-          pdfxFooter(monthYear, true) +
+          pdfxFooter(monthYear, true, true) +
         '</div>' +
       '</div>';
   }
